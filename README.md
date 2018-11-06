@@ -23,14 +23,9 @@
 
 ```php
 // 添加路由 App/Config/router.php
-use One\Http\Router;
 Router::get('/', \App\Controllers\IndexController::class . '@index');
 
 // 控制器代码 App/Controllers/IndexController.php
-namespace App\Controllers;
-
-use One\Http\Controller;
-
 class IndexController extends Controller
 {
     public function index()
