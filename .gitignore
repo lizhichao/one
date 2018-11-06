@@ -1,0 +1,4 @@
+.idea
+.svn
+.DS_Store
+composer.lock

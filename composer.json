@@ -1,0 +1,17 @@
+{
+    "name": "lizhichao/one",
+    "authors": [
+        {
+            "name": "tanszhe",
+            "email": "1018595261@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "One\\" : "src/"
+        }
+    }
+}
