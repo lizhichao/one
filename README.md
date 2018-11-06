@@ -18,6 +18,11 @@
 - 自动使用数据库连接池（`apache/php-fpm`下一个连接）
 - `trance_id|request_id` 方便bug追踪调用链追踪
 
+### 安装
+
+```shell
+composer create-project lizhichao/one-app
+```
 
 #### hello word
 
