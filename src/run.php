@@ -11,8 +11,6 @@ if (!defined('_DEBUG_')) {
 }
 require __DIR__ . '/helper.php';
 
-require __DIR__ . '/../vendor/autoload.php';
-
 require _APP_PATH_ . '/config.php';
 
 \One\Http\Router::loadRouter();
