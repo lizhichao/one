@@ -476,8 +476,8 @@ class Build
         $build = [];
         $data = $this->filter($data);
         foreach ($data as $k => $v) {
-            if (is_numeric($k)) {
-                $sql .= "{$v[0]}={$v[1]}";
+            if (is_array($v)) {
+                $sql .= "{$k}={$v[0]},";
             } else {
                 $sql .= "{$k}=?,";
                 $build[] = $v;
