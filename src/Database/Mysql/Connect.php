@@ -48,6 +48,7 @@ class Connect
             }
             $res->setFetchMode(\PDO::FETCH_CLASS, $this->model);
             $res->execute($data);
+            $this->debugLog($sql, $time, $data, '');
             if ($return_pdo) {
                 return [$res, $pdo];
             } else {
@@ -55,6 +56,7 @@ class Connect
                 return $res;
             }
         } catch (\PDOException $e) {
+            $this->debugLog($sql, $time, $data, $e->getMessage());
             return $this->retry($sql, $time, $data, $e->getMessage(), $retry, $return_pdo);
         } catch (\Throwable $e) {
             throw new DbException(json_encode(['info' => $e->getMessage(), 'sql' => $sql]), 7);
@@ -81,9 +83,10 @@ class Connect
                 }
             }
             $s = implode('', $info);
-            $id = md5(str_replace(['?', ','], '', $sql));
+            $sql = str_replace(['?', ','], '', $sql);
+            $id = md5(str_replace('()', '', $sql));
 
-            Log::debug(['sql' => $s, 'id' => $id, 'time' => $time, 'err' => $err], 'sql', 10);
+            Log::debug(['sql' => $s, 'id' => $id, 'time' => $time, 'err' => $err], 'sql', 8 + $this->log_k);
         }
     }
 
@@ -117,6 +120,9 @@ class Connect
     }
 
 
+    private $log_k = 0;
+
+
     /**
      * @param string $sql
      * @param array $data
@@ -124,6 +130,7 @@ class Connect
      */
     public function find($sql, $data = [])
     {
+        $this->log_k = 2;
         return $this->execute($sql, $data)->fetch();
     }
 
@@ -134,6 +141,7 @@ class Connect
      */
     public function findAll($sql, $data = [])
     {
+        $this->log_k = 2;
         return $this->execute($sql, $data)->fetchAll();
     }
 

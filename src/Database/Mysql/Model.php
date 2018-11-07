@@ -7,7 +7,7 @@ namespace One\Database\Mysql;
  * Class Model
  * @mixin CacheBuild
  * @method static transaction(\Closure $call)
- * @method int insert(array $data) static
+ * @method int insert(array $data,$is_mulit = false) static
  * @method Model find($val) static
  * @method Build where($key, $operator = null, $val = null, $link = ' and ') static
  * @method Build whereIn($key, array $val) static

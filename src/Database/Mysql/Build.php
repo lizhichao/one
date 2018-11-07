@@ -448,21 +448,21 @@ class Build
     private function getInsertSql($data, $is_mulit = false)
     {
         $sql = 'insert into ' . $this->from;
-        $data = $this->filter($data);
-        $build = [];
-        $keys = array_keys($data);
-        $sql .= ' (' . implode(',', $keys) . ')';
         if ($is_mulit) {
+            $build = [];
+            $keys = array_keys($data[0]);
+            $sql .= ' (' . implode(',', $keys) . ')';
             $values = [];
-            $val = array_values($data);
-            foreach ($val[0] as $i => $v) {
-                foreach ($val as $j => $el) {
-                    $build[] = $val[$j][$i];
-                }
+            foreach ($data as $v) {
+                $v = $this->filter($v);
+                $build = array_merge($build,array_values($v));
                 $values[] = '(' . substr(str_repeat(',?', count($keys)), 1) . ')';
             }
             $sql .= ' values ' . implode(',', $values);
         } else {
+            $data = $this->filter($data);
+            $keys = array_keys($data);
+            $sql .= ' (' . implode(',', $keys) . ')';
             $build = array_values($data);
             $sql .= ' values (' . substr(str_repeat(',?', count($keys)), 1) . ')';
         }
