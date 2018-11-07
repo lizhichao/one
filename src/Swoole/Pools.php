@@ -43,7 +43,7 @@ trait Pools
 
     /**
      * @param bool $sw 是否事物
-     * @return $this->createRes()
+     * @return \PDO | \Redis
      */
     public function pop($sw = false)
     {

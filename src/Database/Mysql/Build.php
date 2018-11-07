@@ -15,6 +15,9 @@ class Build
 
     protected $build = [];
 
+    /**
+     * @var Connect
+     */
     private $connect;
 
     /**
@@ -196,7 +199,15 @@ class Build
      */
     public function getConnect()
     {
-        return $this->connect->getPdo();
+        return $this->connect->pop();
+    }
+
+    /**
+     * 返回pdo对象到列队
+     */
+    public function push($pdo)
+    {
+        $this->connect->push($pdo);
     }
 
     /**

@@ -13,7 +13,8 @@ trait StructTrait
         if (!isset(self::$struct[$this->from])) {
             $key = md5(__FILE__ . $this->connect->getDns() . $this->from);
             $str = Cache::get($key, function () {
-                $arr = $this->connect->getPdo()->query('desc ' . $this->from)->fetchAll(\PDO::FETCH_ASSOC);
+                $pdo = $this->getConnect();
+                $arr = $pdo->query('desc ' . $this->from)->fetchAll(\PDO::FETCH_ASSOC);
                 $fields = [];
                 $pri = '';
                 foreach ($arr as $v) {
@@ -25,6 +26,7 @@ trait StructTrait
                         $fields[$v['Field']] = 1;
                     }
                 }
+                $this->push($pdo);
                 return ['field' => $fields, 'pri' => $pri];
             }, 60 * 60 * 24);
             self::$struct[$this->from] = $str;
