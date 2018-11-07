@@ -86,7 +86,14 @@ class Connect
             $sql = str_replace(['?', ','], '', $sql);
             $id = md5(str_replace('()', '', $sql));
 
-            Log::debug(['sql' => $s, 'id' => $id, 'time' => $time, 'err' => $err], 'sql', 8);
+            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 13);
+            foreach ($trace as $i => $v){
+                if(strpos($v['file'],DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'lizhichao'.DIRECTORY_SEPARATOR) === false){
+                    $k = $i + 1;
+                    break;
+                }
+            }
+            Log::debug(['sql' => $s, 'id' => $id, 'time' => $time, 'err' => $err], 'sql', $k);
         }
     }
 
