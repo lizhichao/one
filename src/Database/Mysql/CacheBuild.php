@@ -109,10 +109,12 @@ class CacheBuild extends Build
 
     private function flushCache($data = [])
     {
-        $table = $this->from;
-        $key = $this->getCacheColumnValue($data);
-        Cache::delRegex("*#{$table}{$key}#*");
-        Cache::flush('join+' . $table);
+        if ($this->cache_time > 0) {
+            $table = $this->from;
+            $key = $this->getCacheColumnValue($data);
+            Cache::delRegex("*#{$table}{$key}#*");
+            Cache::flush('join+' . $table);
+        }
     }
 
     private function isIgnoreColumn($data)

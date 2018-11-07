@@ -455,7 +455,7 @@ class Build
             $values = [];
             foreach ($data as $v) {
                 $v = $this->filter($v);
-                $build = array_merge($build,array_values($v));
+                $build = array_merge($build, array_values($v));
                 $values[] = '(' . substr(str_repeat(',?', count($keys)), 1) . ')';
             }
             $sql .= ' values ' . implode(',', $values);

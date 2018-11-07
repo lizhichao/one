@@ -86,7 +86,7 @@ class Connect
             $sql = str_replace(['?', ','], '', $sql);
             $id = md5(str_replace('()', '', $sql));
 
-            Log::debug(['sql' => $s, 'id' => $id, 'time' => $time, 'err' => $err], 'sql', 8 + $this->log_k);
+            Log::debug(['sql' => $s, 'id' => $id, 'time' => $time, 'err' => $err], 'sql', 8);
         }
     }
 
@@ -130,7 +130,6 @@ class Connect
      */
     public function find($sql, $data = [])
     {
-        $this->log_k = 2;
         return $this->execute($sql, $data)->fetch();
     }
 
@@ -141,7 +140,6 @@ class Connect
      */
     public function findAll($sql, $data = [])
     {
-        $this->log_k = 2;
         return $this->execute($sql, $data)->fetchAll();
     }
 
