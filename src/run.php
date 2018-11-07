@@ -4,7 +4,7 @@ if (!defined('_APP_PATH_')) {
 }
 define('_START_TIME_', microtime(true));
 
-define('_CLI_', php_sapi_name() === 'cli' && class_exists('\Swoole\Coroutine'));
+define('_CLI_', defined('_SHELL_') === false && php_sapi_name() === 'cli' && class_exists('\Swoole\Coroutine'));
 
 if (!defined('_DEBUG_')) {
     define('_DEBUG_', false);
