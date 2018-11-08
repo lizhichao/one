@@ -105,7 +105,11 @@ class Controller
      */
     final protected function display($tpl, $data = [])
     {
-        $dir = strtolower(substr(get_called_class(), 16, -10));
+        $dir = substr(get_called_class(), 4);
+        $dir = str_replace(['Controllers','Controller'],'',$dir);
+        $dir = str_replace('\\','/',$dir);
+        $dir = str_replace('//','/',$dir);
+        $dir = strtolower(trim($dir,'/'));
         return $this->response->tpl($dir . '/' . $tpl, $data);
     }
 
