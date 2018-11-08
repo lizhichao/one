@@ -8,8 +8,6 @@
 
 namespace One\Swoole;
 
-
-use App\Protocol\AppWebSocket;
 use One\Facades\Log;
 
 class WsController
@@ -24,7 +22,12 @@ class WsController
      */
     protected $server;
 
-    public function __construct(\swoole_websocket_frame $frame, $server)
+    /**
+     * @var Session
+     */
+    protected $session;
+
+    public function __construct($frame, $server, $session = null)
     {
         $this->frame = $frame;
         $this->server = $server;
@@ -33,22 +36,6 @@ class WsController
     public function __destruct()
     {
         Log::flushTraceId();
-    }
-
-    /**
-     * @return Session
-     */
-    final protected function session()
-    {
-        return $this->request->session();
-    }
-
-    /**
-     * @return Protocol
-     */
-    final protected function server()
-    {
-        return Protocol::getServer();
     }
 
 }

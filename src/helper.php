@@ -79,23 +79,25 @@ function array_get_not_null($arr, $keys)
 }
 
 /**
- * uuid生成 php7+
- * @param string $prefix
+ * @param bool $base62
  * @return string
  */
-function uuid($prefix = '')
+function uuid($base62 = true)
 {
     $str = uniqid('', true);
     $arr = explode('.', $str);
-    $str = $prefix . base_convert($arr[0], 16, 36) . base_convert($arr[1], 10, 36) . base_convert(bin2hex(random_bytes(5)), 16, 36);
-    $len = 24;
+    $str = $arr[0] . base_convert($arr[1], 10, 16);
+    $len = 32;
+    while (strlen($str) <= $len) {
+        $str .= bin2hex(random_bytes(4));
+    }
     $str = substr($str, 0, $len);
-    if (strlen($str) < $len) {
-        $mt = base_convert(bin2hex(random_bytes(5)), 16, 36);
-        $str = $str . substr($mt, 0, $len - strlen($str));
+    if($base62){
+        $str = str_replace(['+','/','='],'',base64_encode(hex2bin($str)));
     }
     return $str;
 }
+
 
 
 /**
