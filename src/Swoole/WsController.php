@@ -31,6 +31,7 @@ class WsController
     {
         $this->frame = $frame;
         $this->server = $server;
+        $this->session = $session;
     }
 
     public function __destruct()
