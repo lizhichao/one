@@ -10,7 +10,3 @@ if (!defined('_DEBUG_')) {
     define('_DEBUG_', false);
 }
 require __DIR__ . '/helper.php';
-
-require _APP_PATH_ . '/config.php';
-
-\One\Http\Router::loadRouter();
