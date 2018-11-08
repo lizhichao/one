@@ -18,7 +18,7 @@ class WsController
     protected $frame;
 
     /**
-     * @var AppWebSocket
+     * @var WebSocket
      */
     protected $server;
 
