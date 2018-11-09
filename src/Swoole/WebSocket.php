@@ -17,13 +17,14 @@ class WebSocket extends HttpServer
     protected $request;
 
     /**
-     * @var [Session]
+     * @var array
      */
-    protected $session=[];
+    protected $session = [];
+    
 
     public function onMessage(\swoole_websocket_server $server, \swoole_websocket_frame $frame)
     {
-        $server->push($frame->fd,'请完成 onMessage 方法');
+        $server->push($frame->fd, '请完成 onMessage 方法');
     }
 
     public function onHandShake(\swoole_http_request $request, \swoole_http_response $response)
@@ -35,13 +36,13 @@ class WebSocket extends HttpServer
             return false;
         }
         $this->request = new Request($request);
-        $this->session[$request->fd] = new Session(null,$this->request->cookie(config('session.name')));
-        if($this->onOpen($this->server,$request) === false){
+        $this->session[$request->fd] = new Session(null, $this->request->cookie(config('session.name')));
+        if ($this->onOpen($this->server, $request) === false) {
             $response->end();
             return false;
         }
 
-        $key = base64_encode(sha1($request->header['sec-websocket-key'] . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11',true));
+        $key = base64_encode(sha1($request->header['sec-websocket-key'] . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11', true));
 
         $headers = [
             'Upgrade' => 'websocket',
