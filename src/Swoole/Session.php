@@ -33,11 +33,16 @@ class Session
             $this->session_id = $id;
         } else if ($response) {
             $this->session_id = $response->getHttpRequest()->cookie($this->name);
+            if(!$this->session_id)
+            {
+                $this->session_id = sha1(uuid());
+            }
         }
-        if(!$this->session_id)
-        {
-            $this->session_id = sha1(uuid());
+
+        if(!$this->session_id){
+            return;
         }
+
 
         $this->time = intval(ini_get('session.gc_maxlifetime'));
 

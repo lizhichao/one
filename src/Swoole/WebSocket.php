@@ -17,9 +17,9 @@ class WebSocket extends HttpServer
     protected $request;
 
     /**
-     * @var Session
+     * @var [Session]
      */
-    protected $session;
+    protected $session=[];
 
     public function onMessage(\swoole_websocket_server $server, \swoole_websocket_frame $frame)
     {
@@ -35,7 +35,7 @@ class WebSocket extends HttpServer
             return false;
         }
         $this->request = new Request($request);
-        $this->session = new Session(null,$this->request->cookie(config('session.name')));
+        $this->session[$request->fd] = new Session(null,$this->request->cookie(config('session.name')));
         if($this->onOpen($this->server,$request) === false){
             $response->end();
             return false;
