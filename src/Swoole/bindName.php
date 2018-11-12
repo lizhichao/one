@@ -60,7 +60,7 @@ trait bindName
     public function bindName($fd, $name)
     {
         if ($this->globalData->connected !== 1) {
-            echo 'WARN global server can not connect';
+            return 0;
         }
         $this->globalData->bindName($fd, $name);
     }
@@ -72,7 +72,7 @@ trait bindName
     public function unBindFd($fd)
     {
         if ($this->globalData->connected !== 1) {
-            echo 'WARN global server can not connect';
+            return 0;
         }
         $this->globalData->unBindFd($fd);
     }
@@ -85,7 +85,7 @@ trait bindName
     public function unBindName($name)
     {
         if ($this->globalData->connected !== 1) {
-            echo 'WARN global server can not connect';
+            return 0;
         }
         $this->globalData->unBindName($name);
     }
@@ -97,7 +97,7 @@ trait bindName
     public function getFdByName($name)
     {
         if ($this->globalData->connected !== 1) {
-            echo 'WARN global server can not connect';
+            return 0;
         }
         return $this->globalData->getFdByName($name);
     }
@@ -127,6 +127,8 @@ trait bindName
                 } else if ($info) {
                     $this->send($fd, $data);
                 }
+            }else{
+                $this->unBindFd($fd);
             }
         }
     }
