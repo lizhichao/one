@@ -24,7 +24,7 @@ class WebSocket extends HttpServer
 
     public function onMessage(\swoole_websocket_server $server, \swoole_websocket_frame $frame)
     {
-        $server->push($frame->fd, '请完成 onMessage 方法');
+
     }
 
     public function onHandShake(\swoole_http_request $request, \swoole_http_response $response)
