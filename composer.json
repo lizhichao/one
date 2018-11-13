@@ -1,6 +1,9 @@
 {
     "name": "lizhichao/one",
-    "license": "Apache-2.0",
+    "type": "library",
+    "description": "一个极简的php框架，可运行在fpm或者swoole协程模式下",
+    "keywords" : ["swoole", "framework", "async","one"],
+    "license" : "Apache-2.0",
     "authors": [
         {
             "name": "tanszhe",
