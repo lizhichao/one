@@ -14,18 +14,16 @@ trait bindName
     /**
      * @var GlobalData|AsyncClient
      */
-    protected $globalData = null;
+    public $globalData = null;
 
     /**
      * @return null|AsyncClient
      */
-    public function globalData()
+    public function globalData(array $conf)
     {
         if ($this->globalData === null) {
-            if (isset(self::$conf['server']['global_data'])) {
-                OneClient::setConfig(self::$conf['server']['global_data']);
-                $this->globalData = OneClient::start();
-            }
+            OneClient::setConfig($conf);
+            $this->globalData = OneClient::start();
         }
         return $this->globalData;
     }
@@ -52,6 +50,10 @@ trait bindName
         return $this->globalData->getAndDel($key);
     }
 
+    private function isUnConnected()
+    {
+        return $this->globalData === null || $this->globalData->connected !== 1;
+    }
 
     /**
      * 给fd绑定别名
@@ -59,7 +61,7 @@ trait bindName
      */
     public function bindName($fd, $name)
     {
-        if ($this->globalData->connected !== 1) {
+        if ($this->isUnConnected()) {
             return 0;
         }
         $this->globalData->bindName($fd, $name);
@@ -71,7 +73,7 @@ trait bindName
      */
     public function unBindFd($fd)
     {
-        if ($this->globalData->connected !== 1) {
+        if ($this->isUnConnected()) {
             return 0;
         }
         $this->globalData->unBindFd($fd);
@@ -84,7 +86,7 @@ trait bindName
 
     public function unBindName($name)
     {
-        if ($this->globalData->connected !== 1) {
+        if ($this->isUnConnected()) {
             return 0;
         }
         $this->globalData->unBindName($name);
@@ -96,7 +98,7 @@ trait bindName
      */
     public function getFdByName($name)
     {
-        if ($this->globalData->connected !== 1) {
+        if ($this->isUnConnected()) {
             return 0;
         }
         return $this->globalData->getFdByName($name);
@@ -127,7 +129,7 @@ trait bindName
                 } else if ($info) {
                     $this->send($fd, $data);
                 }
-            }else{
+            } else {
                 $this->unBindFd($fd);
             }
         }

@@ -18,7 +18,7 @@ use One\ConfigTrait;
  */
 class OneServer
 {
-    use ConfigTrait,bindName;
+    use ConfigTrait;
 
     const SWOOLE_SERVER = 0;
     const SWOOLE_HTTP_SERVER = 1;
@@ -42,30 +42,11 @@ class OneServer
 
     }
 
-
-    public function __call($name, $arguments)
-    {
-        if (method_exists(self::$_server, $name)) {
-            return self::$_server->$name(...$arguments);
-        } else {
-            throw new \Exception('方法不存在:' . $name);
-        }
-    }
-
-
     /**
      * 返回全局server
-     * @return $this
+     * @return Server
      */
     public static function getServer()
-    {
-        if (self::$_pro === null) {
-            self::$_pro = new self();
-        }
-        return self::$_pro;
-    }
-
-    public static function getSwooleServer()
     {
         return self::$_server;
     }
@@ -80,22 +61,22 @@ class OneServer
     {
         if (self::$_server === null) {
             self::_check();
-            $server = self::startServer(self::$conf['server']);
-            self::addServer($server);
+            list($swoole, $server) = self::startServer(self::$conf['server']);
+            self::addServer($swoole, $server);
             self::$_server = $server;
             self::e('server start');
-            swoole_set_process_name('one_master_'.md5(serialize(self::$conf)));
+            swoole_set_process_name('one_master_' . md5(serialize(self::$conf)));
             $server->start();
         }
     }
 
-    private static function addServer(\swoole_server $server)
+    private static function addServer(\swoole_server $swoole, $server)
     {
         if (!isset(self::$conf['add_listener'])) {
             return false;
         }
         foreach (self::$conf['add_listener'] as $conf) {
-            $port = $server->addListener($conf['ip'], $conf['port'], $conf['type']);
+            $port = $swoole->addListener($conf['ip'], $conf['port'], $conf['type']);
             self::e("addListener {$conf['ip']} {$conf['port']}");
             if (isset($conf['set'])) {
                 $port->set($conf['set']);
@@ -124,8 +105,8 @@ class OneServer
         }
         $_server_name = [
             self::SWOOLE_WEBSOCKET_SERVER => 'swoole_websocket_server',
-            self::SWOOLE_HTTP_SERVER => 'swoole_http_server',
-            self::SWOOLE_SERVER => 'swoole_server',
+            self::SWOOLE_HTTP_SERVER      => 'swoole_http_server',
+            self::SWOOLE_SERVER           => 'swoole_server',
         ];
 
         self::e("server {$_server_name[$conf['server_type']]} {$conf['ip']} {$conf['port']}");
@@ -134,24 +115,25 @@ class OneServer
             $server->set($conf['set']);
         }
 
-        $e = ['close' => 'onClose','workerstart' => 'onWorkerStart','managerstart' => 'onManagerStart'];
-        self::onEvent($server, $conf['action'], $server, $conf, $e);
+        $e = ['close' => 'onClose', 'workerstart' => 'onWorkerStart', 'managerstart' => 'onManagerStart'];
 
-        return $server;
+        $obj = self::onEvent($server, $conf['action'], $server, $conf, $e);
+
+        return [$server, $obj];
     }
 
 
     private static function onEvent($sev, $class, $server, $conf, $call = [])
     {
         $base = [
-            Server::class => 1,
+            Server::class     => 1,
             HttpServer::class => 1,
-            WebSocket::class => 1
+            WebSocket::class  => 1
         ];
 
-        $rf = new \ReflectionClass($class);
+        $rf    = new \ReflectionClass($class);
         $funcs = $rf->getMethods(\ReflectionMethod::IS_PUBLIC);
-        $obj = new $class($server, $conf);
+        $obj   = new $class($server, $conf);
 
         foreach ($funcs as $func) {
             if (!isset($base[$func->class])) {
@@ -161,13 +143,15 @@ class OneServer
             }
         }
 
-        if(isset($call['receive'])){
+        if (isset($call['receive'])) {
             $call['receive'] = '__receive';
         }
 
         foreach ($call as $e => $f) {
             $sev->on($e, [$obj, $f]);
         }
+
+        return $obj;
 
     }
 
@@ -179,20 +163,20 @@ class OneServer
             exit;
         }
 
-        if(!isset(self::$conf['server'])){
+        if (!isset(self::$conf['server'])) {
             echo "请配置主服务信息\n";
             exit;
         }
 
-        if(isset(self::$conf['add_listener'])){
+        if (isset(self::$conf['add_listener'])) {
             $arr = self::$conf['add_listener'];
-        }else{
+        } else {
             $arr = [];
         }
 
         $arr[] = self::$conf['server'];
 
-        $l = count($arr);
+        $l   = count($arr);
         $arr = set_arr_key($arr, 'port');
 
         if (count($arr) != $l) {
