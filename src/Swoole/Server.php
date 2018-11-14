@@ -44,8 +44,16 @@ class Server
         if (isset($conf['protocol'])) {
             $this->protocol = $conf['protocol'];
         }
-
     }
+
+    public function send($fd, $data, $from_id = 0, $use_protocol = true)
+    {
+        if ($this->protocol && $use_protocol) {
+            $data = $this->protocol::encode($data);
+        }
+        $this->server->send($fd, $data, $from_id);
+    }
+
 
     public function onStart(\swoole_server $server)
     {

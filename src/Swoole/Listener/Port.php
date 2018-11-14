@@ -45,7 +45,7 @@ class Port
         if ($this->protocol) {
             $data = $this->protocol::encode($data);
         }
-        $this->server->send($fd, $data, $from_id);
+        $this->server->send($fd, $data, $from_id, false);
     }
 
 
