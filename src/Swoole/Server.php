@@ -94,7 +94,6 @@ class Server
 
     public function onClose(\swoole_server $server, $fd, $reactor_id)
     {
-        echo "close {$fd}\n";
         if ($this->globalData && $this->globalData->connected === 1) {
             $this->unBindFd($fd);
         }
