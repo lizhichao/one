@@ -11,8 +11,8 @@ namespace One\Swoole\Event;
 use One\Facades\Log;
 use One\Http\Router;
 use One\Http\RouterException;
-use One\Swoole\Response;
-use One\Swoole\Server;
+use One\Swoole\Request;
+use One\Swoole\Session;
 
 trait WsEvent
 {
@@ -29,8 +29,8 @@ trait WsEvent
             $response->end();
             return false;
         }
-        $req                         = new Response($request);
-        $this->session[$request->fd] = new Server(null, $req->cookie(config('session.name')));
+        $req                         = new Request($request);
+        $this->session[$request->fd] = new Session(null, $req->cookie(config('session.name')));
         if ($this->onOpen($this->server, $request) === false) {
             $response->end();
             return false;
