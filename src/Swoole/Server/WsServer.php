@@ -14,7 +14,7 @@ use One\Swoole\Server;
 
 class WsServer extends Server
 {
-    use WsEvent,HttpEvent;
+    use WsEvent;
 
     /**
      * @var array

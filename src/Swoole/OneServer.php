@@ -10,6 +10,9 @@ namespace One\Swoole;
 
 
 use One\ConfigTrait;
+use One\Swoole\Server\HttpServer;
+use One\Swoole\Server\UdpServer;
+use One\Swoole\Server\WsServer;
 
 /**
  * Class Protocol
@@ -81,7 +84,7 @@ class OneServer
             if (isset($conf['set'])) {
                 $port->set($conf['set']);
             }
-            self::onEvent($port, $conf['action'], $server, $conf);
+            self::onEvent($port, $conf['action'], $server, $conf, ['close' => 'onClose']);
         }
     }
 
@@ -125,18 +128,12 @@ class OneServer
 
     private static function onEvent($sev, $class, $server, $conf, $call = [])
     {
-        $base = [
-            Server::class     => 1,
-            HttpServer::class => 1,
-            WebSocket::class  => 1
-        ];
-
         $rf    = new \ReflectionClass($class);
         $funcs = $rf->getMethods(\ReflectionMethod::IS_PUBLIC);
         $obj   = new $class($server, $conf);
 
         foreach ($funcs as $func) {
-            if (!isset($base[$func->class])) {
+            if (strpos($func->class, 'One\\Swoole\\') === false) {
                 if (substr($func->name, 0, 2) == 'on') {
                     $call[strtolower(substr($func->name, 2))] = $func->name;
                 }

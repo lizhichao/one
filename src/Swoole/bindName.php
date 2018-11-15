@@ -9,10 +9,12 @@
 namespace One\Swoole;
 
 
+use App\GlobalData\Data;
+
 trait bindName
 {
     /**
-     * @var GlobalData|AsyncClient
+     * @var Data|AsyncClient
      */
     public $globalData = null;
 

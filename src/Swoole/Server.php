@@ -92,16 +92,9 @@ class Server
 
     }
 
-    public function __receive(\swoole_server $server, $fd, $reactor_id, $data)
-    {
-        if ($this->protocol) {
-            $data = $this->protocol::decode($data);
-        }
-        $this->onReceive($server, $fd, $reactor_id, $data);
-    }
-
     public function onClose(\swoole_server $server, $fd, $reactor_id)
     {
+        echo "close {$fd}\n";
         if ($this->globalData && $this->globalData->connected === 1) {
             $this->unBindFd($fd);
         }
