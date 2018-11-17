@@ -35,7 +35,7 @@ class Port
     public function __construct($server, $conf)
     {
         $this->server = $server;
-        $this->conf   = $conf;
+        $this->conf = $conf;
         if (isset($conf['protocol'])) {
             $this->protocol = $conf['protocol'];
         }

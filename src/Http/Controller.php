@@ -2,7 +2,6 @@
 
 namespace One\Http;
 
-use App\Protocol\AppHttpServer;
 use One\Exceptions\HttpException;
 use One\Facades\Log;
 
@@ -20,7 +19,7 @@ class Controller
     protected $response = null;
 
     /**
-     * @var AppHttpServer
+     * @var \App\Server\AppHttpServer
      */
     protected $server;
 
@@ -107,10 +106,10 @@ class Controller
     final protected function display($tpl, $data = [])
     {
         $dir = substr(get_called_class(), 4);
-        $dir = str_replace(['Controllers','Controller'],'',$dir);
-        $dir = str_replace('\\','/',$dir);
-        $dir = str_replace('//','/',$dir);
-        $dir = strtolower(trim($dir,'/'));
+        $dir = str_replace(['Controllers', 'Controller'], '', $dir);
+        $dir = str_replace('\\', '/', $dir);
+        $dir = str_replace('//', '/', $dir);
+        $dir = strtolower(trim($dir, '/'));
         return $this->response->tpl($dir . '/' . $tpl, $data);
     }
 

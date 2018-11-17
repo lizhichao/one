@@ -40,7 +40,7 @@ class Server
     public function __construct(\swoole_server $server, array $conf)
     {
         $this->server = $server;
-        $this->conf   = $conf;
+        $this->conf = $conf;
         if (isset($conf['protocol'])) {
             $this->protocol = $conf['protocol'];
         }
@@ -68,8 +68,8 @@ class Server
     public function onWorkerStart(\swoole_server $server, $worker_id)
     {
         $this->worker_id = $worker_id;
-        $this->is_task   = $server->taskworker ? true : false;
-        $this->pid       = $server->worker_pid;
+        $this->is_task = $server->taskworker ? true : false;
+        $this->pid = $server->worker_pid;
 
         if (isset($this->conf['global_data'])) {
             $this->globalData = $this->globalData($this->conf['global_data']);

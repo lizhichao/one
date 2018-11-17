@@ -21,6 +21,7 @@ class Request extends \One\Http\Request
         foreach ($request->header as $k => $v){
             $this->server['HTTP_'.str_replace('-','_',strtoupper($k))] = $v;
         }
+        $this->fd = $request->fd;
         $this->cookie = &$request->cookie;
         $this->get = &$request->get;
         $this->post = &$request->post;

@@ -42,7 +42,8 @@ trait HttpEvent
         } catch (\Throwable $e) {
             $data = $e->getMessage();
         }
-        if ($data) {
+        $response->exist = $this->server->exist($request->fd);
+        if ($data && $response->exist) {
             $response->write($data);
         }
 

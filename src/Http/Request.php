@@ -17,6 +17,8 @@ class Request
 
     protected $request = [];
 
+    public $fd = 0;
+
     public $args = [];
 
     public $class = '';
