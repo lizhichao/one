@@ -68,7 +68,7 @@ trait WsEvent
      * @param \swoole_websocket_frame $frame
      * @return bool
      */
-    protected function router(\swoole_websocket_server $server, \swoole_websocket_frame $frame)
+    protected function wsRouter(\swoole_websocket_server $server, \swoole_websocket_frame $frame)
     {
         $info = json_decode($frame->data, true);
         if (!$info || !isset($info['u']) || !isset($info['d'])) {

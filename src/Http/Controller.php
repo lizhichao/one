@@ -4,6 +4,7 @@ namespace One\Http;
 
 use App\Protocol\AppHttpServer;
 use One\Exceptions\HttpException;
+use One\Facades\Log;
 
 class Controller
 {
@@ -39,7 +40,7 @@ class Controller
 
     public function __destruct()
     {
-
+        Log::flushTraceId();
     }
 
     /**

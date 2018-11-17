@@ -55,7 +55,7 @@ trait TcpEvent
      * @param $reactor_id
      * @param TcpRouterData $data
      */
-    protected function router(\swoole_server $server, $fd, $reactor_id, $data)
+    protected function tcpRouter(\swoole_server $server, $fd, $reactor_id, $data)
     {
         $data->uuid = $data->uuid . '.' . uuid();
         $data->fd = $fd;

@@ -68,7 +68,7 @@ class OneServer
             self::addServer($swoole, $server);
             self::$_server = $server;
             self::e('server start');
-            swoole_set_process_name('one_master_' . md5(serialize(self::$conf)));
+            @swoole_set_process_name('one_master_' . md5(serialize(self::$conf)));
             $server->start();
         }
     }

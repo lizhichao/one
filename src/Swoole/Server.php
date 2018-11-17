@@ -74,7 +74,7 @@ class Server
         if (isset($this->conf['global_data'])) {
             $this->globalData = $this->globalData($this->conf['global_data']);
         }
-        swoole_set_process_name(($server->taskworker ? 'one_task' : 'one_worker') . '_' . $worker_id);
+        @swoole_set_process_name(($server->taskworker ? 'one_task' : 'one_worker') . '_' . $worker_id);
     }
 
     public function onWorkerStop(\swoole_server $server, $worker_id)
@@ -97,7 +97,6 @@ class Server
         if ($this->globalData && $this->globalData->connected === 1) {
             $this->unBindFd($fd);
         }
-        Log::flushTraceId();
     }
 
     public function onPipeMessage(\swoole_server $server, $src_worker_id, $message)
@@ -107,7 +106,7 @@ class Server
 
     public function onManagerStart(\swoole_server $server)
     {
-        swoole_set_process_name('one_manager');
+        @swoole_set_process_name('one_manager');
     }
 
     public function onManagerStop(\swoole_server $server)

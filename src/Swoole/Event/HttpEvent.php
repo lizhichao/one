@@ -25,7 +25,7 @@ trait HttpEvent
      * @param \swoole_http_request $request
      * @param \swoole_http_response $response
      */
-    protected function router(\swoole_http_request $request, \swoole_http_response $response)
+    protected function httpRouter(\swoole_http_request $request, \swoole_http_response $response)
     {
         $req = new \One\Swoole\Request($request);
         Log::setTraceId($req->id());
