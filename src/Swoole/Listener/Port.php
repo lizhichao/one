@@ -9,6 +9,7 @@
 namespace One\Swoole\Listener;
 
 
+use One\Facades\Log;
 use One\Swoole\Server;
 
 /**
@@ -34,7 +35,7 @@ class Port
     public function __construct($server, $conf)
     {
         $this->server = $server;
-        $this->conf   = $conf;
+        $this->conf = $conf;
         if (isset($conf['protocol'])) {
             $this->protocol = $conf['protocol'];
         }
@@ -51,7 +52,9 @@ class Port
 
     public function onClose(\swoole_server $server, $fd, $reactor_id)
     {
-        $this->server->onClose($server, $fd, $reactor_id);
+        if ($this->server->globalData && $this->server->globalData->connected === 1) {
+            $this->server->unBindFd($fd);
+        }
     }
 
     public function __call($name, $arguments)

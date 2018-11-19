@@ -28,7 +28,7 @@ class Text extends ProtocolAbstract
 
     public static function encode($buf)
     {
-        return $buf . "\n";
+        return trim($buf) . "\n";
     }
 
     public static function decode($buf)

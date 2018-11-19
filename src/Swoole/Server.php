@@ -40,7 +40,7 @@ class Server
     public function __construct(\swoole_server $server, array $conf)
     {
         $this->server = $server;
-        $this->conf   = $conf;
+        $this->conf = $conf;
         if (isset($conf['protocol'])) {
             $this->protocol = $conf['protocol'];
         }
@@ -68,13 +68,13 @@ class Server
     public function onWorkerStart(\swoole_server $server, $worker_id)
     {
         $this->worker_id = $worker_id;
-        $this->is_task   = $server->taskworker ? true : false;
-        $this->pid       = $server->worker_pid;
+        $this->is_task = $server->taskworker ? true : false;
+        $this->pid = $server->worker_pid;
 
         if (isset($this->conf['global_data'])) {
             $this->globalData = $this->globalData($this->conf['global_data']);
         }
-        swoole_set_process_name(($server->taskworker ? 'one_task' : 'one_worker') . '_' . $worker_id);
+        @swoole_set_process_name(($server->taskworker ? 'one_task' : 'one_worker') . '_' . $worker_id);
     }
 
     public function onWorkerStop(\swoole_server $server, $worker_id)
@@ -97,7 +97,6 @@ class Server
         if ($this->globalData && $this->globalData->connected === 1) {
             $this->unBindFd($fd);
         }
-        Log::flushTraceId();
     }
 
     public function onPipeMessage(\swoole_server $server, $src_worker_id, $message)
@@ -107,7 +106,7 @@ class Server
 
     public function onManagerStart(\swoole_server $server)
     {
-        swoole_set_process_name('one_manager');
+        @swoole_set_process_name('one_manager');
     }
 
     public function onManagerStop(\swoole_server $server)

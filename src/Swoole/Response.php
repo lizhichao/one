@@ -60,7 +60,9 @@ class Response extends \One\Http\Response
 
     public function __destruct()
     {
-        $this->httpResponse->end();
+        if ($this->httpResponse->exist) {
+            $this->httpResponse->end();
+        }
     }
 
 }
