@@ -59,12 +59,14 @@ class Connect
             $this->debugLog($sql, $time, $data, $e->getMessage());
             return $this->retry($sql, $time, $data, $e->getMessage(), $retry, $return_pdo);
         } catch (\Throwable $e) {
+            self::$connect_count--;
             throw new DbException(json_encode(['info' => $e->getMessage(), 'sql' => $sql]), 7);
         }
     }
 
     private function retry($sql, $time, $data, $err, $retry, $return_pdo)
     {
+        self::$connect_count--;
         $this->debugLog($sql, $time, $data, $err);
         if ($this->isBreak($err) && $retry < 3) {
             return $this->execute($sql, $data, ++$retry, $return_pdo);

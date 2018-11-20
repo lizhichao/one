@@ -20,6 +20,14 @@ trait Pools
 
     private static $sw = [];
 
+    /**
+     * 60秒内无请求 将逐渐释放连接
+     * @var int
+     */
+    private $free_time = 60;
+
+    private static $last_use_time = 0;
+
 
     /**
      * push对象进入连接池
@@ -65,15 +73,22 @@ trait Pools
 
     private function getCliRes($key)
     {
+        $time = time();
         if (!isset(static::$pools[$key])) {
             static::$pools[$key] = new Channel($this->config['max_connect_count']);
         }
         $sp = static::$pools[$key];
 
-        if ($sp->isEmpty() && self::$connect_count < $this->config['max_connect_count']) {
-            self::$connect_count++;
-            $sp->push($this->createRes());
+        if ($sp->isEmpty()) {
+            if (self::$connect_count < $this->config['max_connect_count']) {
+                self::$connect_count++;
+                $sp->push($this->createRes());
+            }
+        } else if (self::$last_use_time > 0 && (self::$last_use_time + $this->free_time) < $time && $sp->length() > 1) {
+            $sp->pop();
+            self::$connect_count--;
         }
+        self::$last_use_time = $time;
         return $sp->pop();
     }
 
