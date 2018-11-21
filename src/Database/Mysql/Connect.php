@@ -27,8 +27,8 @@ class Connect
      */
     public function __construct($key, $model)
     {
-        $this->key = $key;
-        $this->model = $model;
+        $this->key    = $key;
+        $this->model  = $model;
         $this->config = self::$conf[$key];
     }
 
@@ -39,7 +39,7 @@ class Connect
      */
     private function execute($sql, $data = [], $retry = 0, $return_pdo = false)
     {
-        $pdo = $this->pop();
+        $pdo  = $this->pop();
         $time = microtime(true);
         try {
             $res = $pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
@@ -84,18 +84,18 @@ class Connect
                     $v = $v . "'{$build[$i]}'";
                 }
             }
-            $s = implode('', $info);
+            $s   = implode('', $info);
             $sql = str_replace(['?', ','], '', $sql);
-            $id = md5(str_replace('()', '', $sql));
+            $id  = md5(str_replace('()', '', $sql));
 
             $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 13);
-            foreach ($trace as $i => $v){
-                if(strpos($v['file'],DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'lizhichao'.DIRECTORY_SEPARATOR) === false){
+            foreach ($trace as $i => $v) {
+                if (strpos($v['file'], DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'lizhichao' . DIRECTORY_SEPARATOR) === false) {
                     $k = $i + 1;
                     break;
                 }
             }
-            Log::debug(['sql' => $s, 'id' => $id, 'time' => $time, 'err' => $err], 'sql', $k);
+            Log::debug(['sql' => $s, 'id' => $id, 'time' => $time, 'err' => $err], $k, 'sql');
         }
     }
 
@@ -189,7 +189,7 @@ class Connect
         if ($this->inTransaction()) {
             $this->debugLog('rollBack');
             $pdo = $this->pop();
-            $r = $pdo->rollBack();
+            $r   = $pdo->rollBack();
             $this->push($pdo, true);
             return $r;
         }
@@ -204,7 +204,7 @@ class Connect
         if ($this->inTransaction()) {
             $this->debugLog('commit');
             $pdo = $this->pop();
-            $r = $pdo->commit();
+            $r   = $pdo->commit();
             $this->push($pdo, true);
             return $r;
         }
@@ -217,7 +217,7 @@ class Connect
     public function inTransaction()
     {
         $pdo = $this->pop();
-        $r = $pdo->inTransaction();
+        $r   = $pdo->inTransaction();
         if (!$r) {
             $this->push($pdo);
         }

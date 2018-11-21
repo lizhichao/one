@@ -20,7 +20,7 @@ class Log
      * @param int $k
      * @param $prefix
      */
-    public function debug($data, $prefix = 'debug', $k = 0)
+    public function debug($data, $k = 0, $prefix = 'debug')
     {
         $this->_log($data, $k + 2, 3, $prefix);
     }
@@ -30,7 +30,7 @@ class Log
      * @param int $k
      * @param $prefix
      */
-    public function notice($data, $prefix = 'notice', $k = 0)
+    public function notice($data, $k = 0, $prefix = 'notice')
     {
         $this->_log($data, $k + 2, 2, $prefix);
     }
@@ -40,7 +40,7 @@ class Log
      * @param int $k
      * @param $prefix
      */
-    public function warn($data, $prefix = 'warn', $k = 0)
+    public function warn($data, $k = 0, $prefix = 'warn')
     {
         $this->_log($data, $k + 2, 1, $prefix);
     }
@@ -50,7 +50,7 @@ class Log
      * @param int $k
      * @param $prefix
      */
-    public function error($data, $prefix = 'error', $k = 0)
+    public function error($data, $k = 0, $prefix = 'error')
     {
         $this->_log($data, $k + 2, 0, $prefix);
     }
@@ -69,8 +69,8 @@ class Log
         }
 
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 16);
-        $name = str_replace(_APP_PATH_,'',$trace[$k]['file']);
-        $line = $trace[$k]['line'];
+        $name  = str_replace(_APP_PATH_, '', $trace[$k]['file']);
+        $line  = $trace[$k]['line'];
 
         $code = $this->levels[$code];
 
@@ -94,13 +94,13 @@ class Log
      * @param $id
      * @return string
      */
-    public function bindTraceId($id,$is_pid = false)
+    public function bindTraceId($id, $is_pid = false)
     {
         if (_CLI_) {
-            if($is_pid){
+            if ($is_pid) {
                 $pid = $id;
-                $id = get_co_id();
-            }else{
+                $id  = get_co_id();
+            } else {
                 $pid = get_co_id();
             }
             if ($pid == -1 && _DEBUG_) {
@@ -121,7 +121,7 @@ class Log
     {
         if (_CLI_) {
             $cids = \Swoole\Coroutine::listCoroutines();
-            $t = [];
+            $t    = [];
             foreach ($cids as $id) {
                 if (isset($this->_traceId[$id])) {
                     $t[$id] = $this->_traceId[$id];
@@ -135,7 +135,7 @@ class Log
     public function getTraceId()
     {
         $trace_id = self::$conf['id'];
-        $cid = get_co_id();
+        $cid      = get_co_id();
         if ($cid > -1) {
             if (isset($this->_traceId[$cid])) {
                 $trace_id = $this->_traceId[$cid];

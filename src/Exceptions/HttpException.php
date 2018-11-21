@@ -16,6 +16,6 @@ class HttpException extends \Exception
     {
         $this->response = $response;
         parent::__construct($message, $code);
-        Log::error($message, 'http', 3);
+        Log::error($message, 3);
     }
 }
