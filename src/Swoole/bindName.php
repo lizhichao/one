@@ -32,23 +32,35 @@ trait bindName
 
     public function set($key, $val, $time = 0)
     {
+        if ($this->isUnConnected()) {
+            return 0;
+        }
         return $this->globalData->set($key, $val, $time);
     }
 
     public function get($key)
     {
+        if ($this->isUnConnected()) {
+            return 0;
+        }
         return $this->globalData->get($key);
     }
 
 
     public function del($key)
     {
+        if ($this->isUnConnected()) {
+            return 0;
+        }
         return $this->globalData->del($key);
     }
 
 
     public function getAndDel($key)
     {
+        if ($this->isUnConnected()) {
+            return 0;
+        }
         return $this->globalData->getAndDel($key);
     }
 
