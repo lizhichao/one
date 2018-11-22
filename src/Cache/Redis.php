@@ -3,6 +3,7 @@
 namespace One\Cache;
 
 use One\ConfigTrait;
+use One\Facades\Log;
 use One\Swoole\Pools;
 
 /**
@@ -23,6 +24,8 @@ class Redis extends Cache
 
     private $config = [];
 
+    private $retry_count = 3;
+
     public function __construct($key = 'default')
     {
         $this->setConnection($key);
@@ -31,15 +34,32 @@ class Redis extends Cache
     public function __call($name, $arguments)
     {
         $rs = $this->pop();
-        $ret = $rs->$name(...$arguments);
-        $this->push($rs);
-        return $ret;
+        try {
+            $ret = $rs->$name(...$arguments);
+            $this->push($rs);
+            $this->retry_count = 3;
+            return $ret;
+        } catch (\RedisException $e) {
+            return $this->retry($name, $arguments, $e->getMessage(), $e->getCode());
+        }
+    }
+
+    private function retry($name, $arguments, $msg, $code)
+    {
+        Log::warn('retry ' . $name);
+        self::$connect_count--;
+        if ($this->retry_count > 0) {
+            return $this->{$name}(...$arguments);
+        } else {
+            $this->retry_count = 3;
+            throw new \Exception($msg, $code);
+        }
     }
 
 
     public function setConnection($key)
     {
-        $this->key = $key;
+        $this->key    = $key;
         $this->config = self::$conf[$key];
         return $this;
     }
@@ -57,27 +77,38 @@ class Redis extends Cache
 
     public function get($key, \Closure $closure = null, $ttl = null, $tags = [])
     {
-        $rs = $this->pop();
-        $val = $rs->get($this->getTagKey($key, $tags));
-        if ((!$val) && $closure) {
-            $val = $closure();
-            $this->set($key, $val, $ttl, $tags);
-        } else if ($val) {
-            $val = unserialize($val);
+        try {
+            $rs  = $this->pop();
+            $val = $rs->get($this->getTagKey($key, $tags));
+            if ((!$val) && $closure) {
+                $val = $closure();
+                $this->set($key, $val, $ttl, $tags);
+            } else if ($val) {
+                $val = unserialize($val);
+            }
+            $this->push($rs);
+            $this->retry_count = 3;
+            return $val;
+        } catch (\RedisException $e) {
+            return $this->retry('get', func_get_args(), $e->getMessage(), $e->getCode());
         }
-        $this->push($rs);
-        return $val;
     }
 
     public function del($key)
     {
-        if (is_string($key)) {
-            $key = self::$conf['prefix'] . $key;
+        try {
+            if (is_string($key)) {
+                $key = self::$conf['prefix'] . $key;
+            }
+            $rs  = $this->pop();
+            $ret = $rs->del($key);
+            $this->push($rs);
+            $this->retry_count = 3;
+            return $ret;
+        } catch (\RedisException $e) {
+            return $this->retry('del', func_get_args(), $e->getMessage(), $e->getCode());
         }
-        $rs = $this->pop();
-        $ret = $rs->del($key);
-        $this->push($rs);
-        return $ret;
+
     }
 
     public function delRegex($key)
@@ -94,10 +125,16 @@ class Redis extends Cache
 
     public function set($key, $val, $ttl = null, $tags = [])
     {
-        $rs = $this->pop();
-        $ret = $rs->set($this->getTagKey($key, $tags), serialize($val), $ttl);
-        $this->push($rs);
-        return $ret;
+        try {
+            $rs  = $this->pop();
+            $ret = $rs->set($this->getTagKey($key, $tags), serialize($val), $ttl);
+            $this->push($rs);
+            $this->retry_count = 3;
+            return $ret;
+        } catch (\RedisException $e) {
+            return $this->retry('set', func_get_args(), $e->getMessage(), $e->getCode());
+        }
+
     }
 
 }
