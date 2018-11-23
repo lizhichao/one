@@ -24,6 +24,12 @@ Router::get('/', \App\Controllers\IndexController::class . '@index');
 // 带参数路由
 Router::get('/user/{id}', \App\Controllers\IndexController::class . '@user');
 
+// 路由分组 
+Router::group(['namespace'=>'App\\Test\\WebSocket'],function (){
+    Router::set('ws','/a','TestController@abc'); // websocket 路由
+    Router::set('ws','/b','TestController@bbb'); // websocket 路由
+});
+
 ```
 
 ## orm 模型
