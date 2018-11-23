@@ -1,76 +1,136 @@
-# One - 一个极简的php框架
+# One - 一个极简的基于swoole常驻内存框架
 
-> 支持在swoole（同步、异步、协程模式下运行）
+> 支持在fpm下运行
 
-## 主要功能特点
+## 安装&运行
 
-1. 独立的路由模块
-    - 支持中间件
-    - 支持路由分组
-    - 支持restful
-    - 支持在http,webSocket,tcp...下运行
-    - 除restful外可自定义任何方法
-    - 接口缓存（可对整个接口缓存 中间件依然会执行）
-    - 采用hashMap储存路由信息，超高的解析性能。比一般的正则表达式解析至少高出一个数量级,路由信息大小不影响解析速度。
-    
-2. orm（数据库模型）
-    - 自动sql注入过滤
-    - 自动过滤非表结构的字段
-    - 各种sql链式操作，IDE友好提示
-    - 数据表关系映射(hasOne,hasMany)
-    - 自动化缓存(保持与数据库同步更新)
-    - sql日志模板（可为后期优化提供全面的分析数据）
-    
-3. 日志
-    - 自动记录每条日志产生的文件名和行号
-    - 自动增加request_id全程跟踪
-    - 可高度自定义
-    
-4. 缓存(redis,file)
-    - 支持tag
+```shell
+composer create-project lizhichao/one-app app
+cd app
+php App/swoole.php 
+```
 
-5. session(redis,file)
-    
-### 以下特点仅在 swoole 运行下才有
-
-6. 数据库连接池
-   - 全程自动化完成(获取连接对象，放回连接对象到池中)。当代码运行在swoole下时自动使用连接池.
-   
-   - 列外：  
-        - 你手动pop出一个pdo原生对象，需要自己push放回池中
-   
-7. redis连接池
-   - 全程自动化完成(获取连接对象，放回连接对象到池中)
-   
-   - 列外：  
-       - 你手动pop出一个Redis原生对象，需要自己push放回池中
-
-8. 常驻内存服务器
-    - http服务器
-    - webSocket服务器
-    - tcp服务器
-    - ...
-    - 各种混合协议通讯
-    - 提供一对多关系绑定(用户id和fd绑定, 群id和用户id绑定...)
-
-9. 服务器之间内存共享
-    - 所有操作均为原子操作(不用考虑并发数据不一致问题)
-    - 性能和redis相当
-    - 支持任意层级数据操作(set a.b.c.d 1)
-    - 自己可以轻松扩展
-
-10. 后台进程Task任务处理
-
-
-[文档地址](https://www.kancloud.cn/vic-one/php-one/826876)
+[详细文档地址](https://www.kancloud.cn/vic-one/php-one/826876)
 
 [使用列子-DEMO](https://github.com/lizhichao/one-demo)
 
 QQ交流群: 731475644
 
-## 安装
+## 路由
 
-```shell
-composer create-project lizhichao/one-app
+```php
+Router::get('/', \App\Controllers\IndexController::class . '@index');
+
+// 带参数路由
+Router::get('/user/{id}', \App\Controllers\IndexController::class . '@user');
+
 ```
 
+## orm 模型
+
+### 定义模型
+```php
+namespace App\Model;
+
+use One\Database\Mysql\Model;
+
+class User extends Model
+{
+    CONST TABLE = 'users';
+
+    public function articles()
+    {
+        return $this->hasMany('id',Article::class,'user_id');
+    }
+}
+```
+
+### 使用
+
+在fpm下数据库连接为单列,  
+在swoole模式下数据库连接自动切换为连接池
+
+```php
+// 查询一条记录
+User::find(1);
+
+// 关联查询
+User::whereIn('id',[1,2,3])->with('articles')->findAll();
+
+// 更新
+user::where('id',1)->update(['name','aaa']);
+
+```
+
+## 日志
+```php
+Log::debug('abc');
+Log::debug(['12,312']);
+
+// 等级|时间|requestId|文件路径:行号|内容
+// DEBUG|2018-11-23 15:01:26|WelxrVb5UEoFaDrQ59XnQ|/Controllers/IndexController.php:12|abc
+// DEBUG|2018-11-23 15:01:26|WelxrVb5UEoFaDrQ59XnQ|/Controllers/IndexController.php:13|["12,312"]
+```
+
+## 缓存
+```php
+Cache::set('a',1);
+
+// ccc 在 tag1标签下
+Cache::set('ccc',3,['tag1']);
+
+// 刷新 tag1 下的所有缓存
+Cache::flush('tag1');
+```
+
+## session
+``` 
+$this->session()->get('aaa');
+$this->session()->set('aaa',123);
+
+```
+        
+## 添加一个webSocket服务监听
+
+需要开启什么事件就 重写父类相应事件
+
+```php
+
+[
+    'port' => 8082,
+    'action' =>  \App\Server\AppWsServer::class, //类名 作为server自带继承 WsServer ；作为监听添加继承 \One\Swoole\Listener\Ws
+    'type' => SWOOLE_SOCK_TCP,
+    'ip' => '0.0.0.0',
+    'set' => [
+        'open_http_protocol' => false,
+        'open_websocket_protocol' => true
+    ]
+]
+
+```
+
+## 添加一个TCP服务监听
+
+需要开启什么事件就 重写父类相应事件
+
+```php
+
+[
+    'port' => 8083,
+    'protocol' => \One\Protocol\Text::class, // 协议
+    'action' => \App\Test\MixPro\TcpPort::class, //类名 作为server自带继承 TcpServer ；作为监听添加继承 \One\Swoole\Listener\Tcp
+    'type' => SWOOLE_SOCK_TCP,
+    'ip' => '0.0.0.0',
+    'set' => [
+        'open_http_protocol' => false,
+        'open_websocket_protocol' => false
+    ]
+]
+
+```
+
+[详细文档地址](https://www.kancloud.cn/vic-one/php-one/826876)
+
+[使用列子-DEMO](https://github.com/lizhichao/one-demo)
+
+QQ交流群: 731475644
