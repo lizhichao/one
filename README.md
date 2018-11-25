@@ -64,7 +64,7 @@ User::find(1);
 User::whereIn('id',[1,2,3])->with('articles')->findAll();
 
 // 更新
-user::where('id',1)->update(['name','aaa']);
+user::where('id',1)->update(['name' => 'aaa']);
 
 ```
 
