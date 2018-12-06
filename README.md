@@ -10,6 +10,22 @@ cd app
 php App/swoole.php 
 ```
 
+## 主要功能
+
+- RESTful路由
+- 中间件
+- WS/TCP……任意协议路由
+- ORM模型
+- SQL日志模板
+- MYSQL连接池
+- REDIS连接池
+- HTTP/TCP/WEBOSCKET/UDP服务器
+- 缓存
+- 进程间内存共享
+- RPC
+- 日志
+
+
 [详细文档地址](https://www.kancloud.cn/vic-one/php-one/826876)
 
 [使用列子-DEMO](https://github.com/lizhichao/one-demo)
