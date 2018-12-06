@@ -12,7 +12,7 @@ function config($path)
     if (!$res) {
         $p = strpos($path, '.');
         if ($p !== false) {
-            $name = substr($path, 0, $p);
+            $name          = substr($path, 0, $p);
             $config[$name] = require(_APP_PATH_ . '/Config/' . $name . '.php');
         } else {
             $config[$path] = require(_APP_PATH_ . '/Config/' . $path . '.php');
@@ -92,12 +92,11 @@ function uuid($base62 = true)
         $str .= bin2hex(random_bytes(4));
     }
     $str = substr($str, 0, $len);
-    if($base62){
-        $str = str_replace(['+','/','='],'',base64_encode(hex2bin($str)));
+    if ($base62) {
+        $str = str_replace(['+', '/', '='], '', base64_encode(hex2bin($str)));
     }
     return $str;
 }
-
 
 
 /**
@@ -110,7 +109,7 @@ function filter_xss($str, $allow_tags = null)
     $str = strip_tags($str, $allow_tags);
     if ($allow_tags !== null) {
         while (true) {
-            $l = strlen($str);
+            $l   = strlen($str);
             $str = preg_replace('/(<[^>]+?)([\'\"\s]+on[a-z]+)([^<>]+>)/i', '$1$3', $str);
             $str = preg_replace('/(<[^>]+?)(javascript\:)([^<>]+>)/i', '$1$3', $str);
             if (strlen($str) == $l) {
@@ -131,13 +130,13 @@ function router($str, $data = [])
 {
     $url = array_get(\One\Http\Router::$as_info, $str);
     if ($data) {
-        $key = array_map(function ($v) {
+        $key  = array_map(function ($v) {
             return '{' . $v . '}';
         }, array_keys($data));
         $data = array_map(function ($v) {
             return urlencode($v);
         }, $data);
-        $url = str_replace($key, array_values($data), $url);
+        $url  = str_replace($key, array_values($data), $url);
     }
     return $url;
 }
@@ -190,6 +189,7 @@ function one_go($call)
         return \One\Facades\Log::bindTraceId(go(function () use ($call, $co_id) {
             \One\Facades\Log::bindTraceId($co_id, true);
             $call();
+            Log::flushTraceId();
         }));
     } else {
         return $call();

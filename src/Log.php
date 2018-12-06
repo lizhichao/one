@@ -120,19 +120,15 @@ class Log
     public function flushTraceId()
     {
         if (_CLI_) {
-            $cids = \Swoole\Coroutine::listCoroutines();
-            $t    = [];
-            foreach ($cids as $id) {
-                if (isset($this->_traceId[$id])) {
-                    $t[$id] = $this->_traceId[$id];
-                }
+            $id = get_co_id();
+            if (isset($this->_traceId[$id])) {
+                unset($this->_traceId[$id]);
             }
-            $this->_traceId = $t;
         }
     }
 
 
-    public function getTraceId()
+    private function getTraceId()
     {
         $trace_id = self::$conf['id'];
         $cid      = get_co_id();

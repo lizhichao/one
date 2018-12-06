@@ -6,11 +6,11 @@
  * Time: 17:52
  */
 
-namespace One\Swoole\Rpc;
+namespace One\Swoole;
 
 use One\Facades\Cache;
 
-class Server
+class RpcServer
 {
     const RPC_REMOTE_OBJ = '#RpcRemoteObj#';
 
@@ -48,7 +48,7 @@ class Server
     }
 
     /**
-     * @param array $arr [i => call_id ,c => class ,f => func ,a => args,t => construct_args ]
+     * @param array $arr [i => call_id ,c => class ,f => func ,a => args,t => construct_args,s => 0 ]
      * @return mixed
      */
     public static function call($arr)
@@ -62,19 +62,20 @@ class Server
         $id = $arr['i'];
         $a  = isset($arr['a']) ? $arr['a'] : [];
         $t  = isset($arr['t']) ? $arr['t'] : [];
+        $s  = isset($arr['s']) ? $arr['s'] : 0;
         try {
             $info = self::isAllow($c, $f);
             $obj  = null;
             if (isset(self::$ids[$id])) {
-                $obj = self::$ids[$arr['i']];
+                $obj = self::$ids[$id];
             }
-            return self::exec($c, $f, $a, $t, $info, $obj);
+            return self::ret(self::exec($c, $f, $a, $t, $info, $obj, $s), $id);
         } catch (\Exception $e) {
             return self::error($e->getCode(), $e->getMessage());
         }
     }
 
-    private static function exec($c, $f, $a, $t, $info, $obj)
+    private static function exec($c, $f, $a, $t, $info, $obj, $s)
     {
         if (isset($info['middle'])) {
             $mids = self::mids($info['middle']);
@@ -82,21 +83,26 @@ class Server
             $mids = [];
         }
 
-        $aciton = function () use ($c, $f, $a, $t, $info, $obj) {
-            if (isset($info['cache'])) {
-                $k   = self::getCacheKey($c, $f, $a, $t);
-                $res = Cache::get($k);
-                if ($res !== false) {
-                    return $res;
+        $aciton = function () use ($c, $f, $a, $t, $info, $obj, $s) {
+            if ($s === 1) {
+                $res = $c::$f(...$a);
+            } else {
+                if (isset($info['cache'])) {
+                    $k   = self::getCacheKey($c, $f, $a, $t);
+                    $res = Cache::get($k);
+                    if ($res !== false) {
+                        return $res;
+                    }
                 }
+
+                if ($obj === null) {
+                    $obj = new $c(...$t);
+                }
+                if (method_exists($obj, $f) === false) {
+                    throw new RpcException('method not exists', 404);
+                }
+                $res = $obj->$f(...$a);
             }
-            if ($obj === null) {
-                $obj = new $c(...$t);
-            }
-            if (method_exists($obj, $f) === false) {
-                throw new RpcException('method not exists', 404);
-            }
-            $res = $obj->$f(...$a);
             if (isset($info['cache'])) {
                 Cache::set($k, $res, $info['cache']);
             }
@@ -145,17 +151,27 @@ class Server
 
     private static function ret($r, $id = '')
     {
-        if (is_array($r) || is_string($r)) {
-            return msgpack_pack($r);
-        } else {
-            self::$ids[$id] = $obj;
+        if (is_object($r) || is_resource($r)) {
+            self::$ids[$id] = $r;
             return msgpack_pack(self::RPC_REMOTE_OBJ);
+        } else {
+            return msgpack_pack($r);
         }
     }
 
     public static function close($id)
     {
         unset(self::$ids[$id]);
+        return 1;
+    }
+
+    public static function ideHelper()
+    {
+        foreach (self::$class as $c => $fs) {
+            if (isset($fs['*'])) {
+
+            }
+        }
     }
 
 }

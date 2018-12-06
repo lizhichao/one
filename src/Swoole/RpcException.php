@@ -6,7 +6,7 @@
  * Time: 17:02
  */
 
-namespace One\Swoole\Rpc;
+namespace One\Swoole;
 
 class RpcException extends \Exception
 {
