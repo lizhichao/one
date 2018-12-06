@@ -50,9 +50,21 @@ class RpcHttpClient
         $context = stream_context_create($opts);
         $result  = file_get_contents($this->_rpc_server, false, $context);
         $data    = msgpack_unpack($result);
+        self::$_is_static = 0;
+
+        $opts    = ['http' => [
+            'method'  => 'POST',
+            'header'  => 'Content-type: application/rpc',
+            'content' => msgpack_pack($data)
+        ]];
+        $context = stream_context_create($opts);
+        $result  = file_get_contents($this->_rpc_server, false, $context);
+        $data    = msgpack_unpack($result);
         if ($data === self::RPC_REMOTE_OBJ) {
             $this->_need_close = 1;
             return $this;
+        } else if (is_array($data) && isset($data['err'], $data['msg'])) {
+            throw new Exception($data['msg'], $data['err']);
         } else {
             return $data;
         }

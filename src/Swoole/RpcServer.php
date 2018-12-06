@@ -31,7 +31,7 @@ class RpcServer
     private static function error($code, $msg)
     {
         return self::ret([
-            'code' => $code,
+            'err' => $code,
             'msg'  => $msg
         ]);
     }
