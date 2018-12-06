@@ -25,7 +25,7 @@ php App/swoole.php
 - RPC
 - 日志
 
-支持的运行环境
+## 运行环境
 
 - `apache/php-fpm`的常规环境 
 - 基于`swoole`的阻塞环境
