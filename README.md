@@ -25,6 +25,12 @@ php App/swoole.php
 - RPC
 - 日志
 
+支持的运行环境
+
+- `apache/php-fpm`的常规环境 
+- 基于`swoole`的阻塞环境
+- 基于`swoole`的全协程环境
+
 
 [详细文档地址](https://www.kancloud.cn/vic-one/php-one/826876)
 
