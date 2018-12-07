@@ -208,4 +208,32 @@ function get_co_id()
     }
 }
 
+/**
+ * 分布式redis加锁
+ * @param $tag
+ */
+function redis_lock($tag)
+{
+    $time = time();
+    $key = 'linelock:'.$tag;
+    while (!\One\Facades\Redis::setnx($key, $time + 3)) {
+        if ($time > \One\Facades\Redis::get($key) && $time > \One\Facades\Redis::getSet($key, $time + 3)) {
+            break;
+        } else {
+            usleep(10);
+        }
+    }
+}
+
+/**
+ * 分布式redis解锁
+ * @param $tag
+ */
+function redis_unlock($tag)
+{
+    $key = 'linelock:'.$tag;
+    \One\Facades\Redis::del($key);
+}
+
+
 

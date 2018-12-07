@@ -174,4 +174,67 @@ class RpcServer
         }
     }
 
+    private function run($class)
+    {
+        foreach ($class as $c) {
+            $this->getClassInfo($c);
+        }
+    }
+
+    private function getClassInfo($class)
+    {
+        $info = ['class' => $class];
+        $class = new \ReflectionClass($class);
+        $funcs = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
+        foreach ($funcs as $func) {
+            $params = $func->getParameters();
+            $info['dir'] = dirname($func->getFileName());
+            $arr = [];
+            $arr['return'] = $func->getReturnType() ? '\\' . $func->getReturnType() . ' ' : '';
+            foreach ($params as $param) {
+                if ($param->getType()) {
+                    $arr['params'][] = $param->getType() . ' $' . $param->getName();
+                } else {
+                    $arr['params'][] = '$' . $param->getName();
+                }
+            }
+            if (!isset($arr['params'])) {
+                $arr['params'] = [];
+            }
+            $info['funcs'][$func->name] = $arr;
+        }
+        $this->createFacade($info);
+    }
+
+
+    private function createFacade($info)
+    {
+        $p = strrpos($info['class'], '\\');
+        $class = substr($info['class'], $p + 1);
+        $space = substr($info['class'], 0, $p);
+        $str = '<?php 
+namespace ' . substr($space, 1) . '\RpcHttpClient;
+
+/**
+ * Class ' . $class . '
+ * @mixin ' . $info['class'] . PHP_EOL;
+        foreach ($info['funcs'] as $f => $f_info) {
+            $str .= ' * @method ' . $f_info['return'] . $f . '(' . implode(',', $f_info['params']) . ') static' . PHP_EOL;
+        }
+        $str .= '*/
+class ' . $class . ' extends RpcHttpClient
+{
+    protected static function getFacadeAccessor()
+    {
+        return ' . $info['class'] . '::class;
+    }
+}';
+        $file = $info['dir'] . '/Facades/' . $class . '.php';
+        $dir = dirname($file);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        file_put_contents($file, $str);
+    }
+
 }
