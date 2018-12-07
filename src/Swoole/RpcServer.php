@@ -32,7 +32,7 @@ class RpcServer
     {
         return self::ret([
             'err' => $code,
-            'msg'  => $msg
+            'msg' => $msg
         ]);
     }
 
@@ -165,76 +165,61 @@ class RpcServer
         return 1;
     }
 
-    public static function ideHelper()
+    public static function ideHelper($host, $px)
     {
+        $str = file_get_contents(__DIR__ . '/RpcHttpClient.php');
+        $i   = strpos($str, 'class');
+        $r   = "<?php\nnamespace {$px}{\n";
+        $r   .= self::tab(4) . substr($str, $i);
+        $r   .= "\n";
         foreach (self::$class as $c => $fs) {
             if (isset($fs['*'])) {
-
+                $r .= self::getClassInfo($c, $px, $host);
             }
         }
+        return $r;
     }
 
-    private function run($class)
+    private static function getClassInfo($class, $px, $host)
     {
-        foreach ($class as $c) {
-            $this->getClassInfo($c);
-        }
-    }
 
-    private function getClassInfo($class)
-    {
-        $info = ['class' => $class];
+        $px    = $px ? $px . '\\' : '';
         $class = new \ReflectionClass($class);
         $funcs = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
+
+        $r = 'namespace ' . $px . $class->getNamespaceName() . "{\n";
+        $r .= self::tab(3) . "/**\n";
         foreach ($funcs as $func) {
-            $params = $func->getParameters();
-            $info['dir'] = dirname($func->getFileName());
-            $arr = [];
-            $arr['return'] = $func->getReturnType() ? '\\' . $func->getReturnType() . ' ' : '';
-            foreach ($params as $param) {
+            $return = $func->getReturnType() ? $func->getReturnType() : 'mixed';
+            $r      .= self::tab(4) . "* @method {$return} {$func->name}(";
+            $params = [];
+            foreach ($func->getParameters() as $param) {
                 if ($param->getType()) {
-                    $arr['params'][] = $param->getType() . ' $' . $param->getName();
+                    $params[] = $param->getType() . ' $' . $param->getName();
                 } else {
-                    $arr['params'][] = '$' . $param->getName();
+                    $params[] = '$' . $param->getName();
                 }
             }
-            if (!isset($arr['params'])) {
-                $arr['params'] = [];
+            $r .= implode(',', $params) . ")";
+            if ($func->isStatic()) {
+                $r .= ' static';
             }
-            $info['funcs'][$func->name] = $arr;
+            $r .= "\n";
         }
-        $this->createFacade($info);
+        $name = str_replace($class->getNamespaceName() . '\\', '', $class->getName());
+        $r    .= self::tab(4) . "*/\n";
+        $r    .= self::tab(4) . "class {$name} extends \\{$px}RpcHttpClient { \n";
+        $r    .= self::tab(8) . "protected \$_rpc_server = '{$host}';\n";
+        $r    .= self::tab(8) . "protected \$_remote_class_name = '{$class->getName()}';\n";
+        $r    .= self::tab(4) . "} \n";
+        $r    .= "} \n";
+        return $r;
     }
 
-
-    private function createFacade($info)
+    private static function tab($n = 1)
     {
-        $p = strrpos($info['class'], '\\');
-        $class = substr($info['class'], $p + 1);
-        $space = substr($info['class'], 0, $p);
-        $str = '<?php 
-namespace ' . substr($space, 1) . '\RpcHttpClient;
+        return str_repeat(' ', $n);
+    }
 
-/**
- * Class ' . $class . '
- * @mixin ' . $info['class'] . PHP_EOL;
-        foreach ($info['funcs'] as $f => $f_info) {
-            $str .= ' * @method ' . $f_info['return'] . $f . '(' . implode(',', $f_info['params']) . ') static' . PHP_EOL;
-        }
-        $str .= '*/
-class ' . $class . ' extends RpcHttpClient
-{
-    protected static function getFacadeAccessor()
-    {
-        return ' . $info['class'] . '::class;
-    }
-}';
-        $file = $info['dir'] . '/Facades/' . $class . '.php';
-        $dir = dirname($file);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-        file_put_contents($file, $str);
-    }
 
 }
