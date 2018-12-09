@@ -8,11 +8,13 @@
 
 namespace One\Swoole {
 
-    class RpcHttpClient
+    class RpcClientTcp
     {
         const RPC_REMOTE_OBJ = '#RpcRemoteObj#';
 
         private $_need_close = 0;
+
+        private static $_connection = null;
 
         private static $_is_static = 0;
 
@@ -28,6 +30,9 @@ namespace One\Swoole {
             $this->id    = self::$_call_id ? self::$_call_id : $this->uuid();
             $this->calss = $this->_remote_class_name ? $this->_remote_class_name : get_called_class();
             $this->args  = $args;
+            if (self::$_connection === null) {
+                self::$_connection = $this->connect();
+            }
         }
 
         public function __call($name, $arguments)
@@ -60,14 +65,13 @@ namespace One\Swoole {
         {
             self::$_is_static = 0;
 
-            $opts    = ['http' => [
-                'method'  => 'POST',
-                'header'  => 'Content-type: application/rpc',
-                'content' => msgpack_pack($data)
-            ]];
-            $context = stream_context_create($opts);
-            $result  = file_get_contents($this->_rpc_server, false, $context);
-            $data    = msgpack_unpack($result);
+            $buffer = msgpack_pack($data);
+            $buffer = pack('N', 4 + strlen($buffer)) . $buffer;
+            $len    = fwrite(self::$_connection, $buffer);
+            if ($len !== strlen($buffer)) {
+                throw new \Exception('writeToRemote fail');
+            }
+            $data = msgpack_unpack($this->read());
             if ($data === self::RPC_REMOTE_OBJ) {
                 $this->_need_close = 1;
                 return $this;
@@ -76,6 +80,46 @@ namespace One\Swoole {
             } else {
                 return $data;
             }
+        }
+
+        private function read()
+        {
+            $all_buffer = '';
+            $total_len  = 4;
+            $head_read  = false;
+            while (1) {
+                $buffer = fread(self::$_connection, 8192);
+                if ($buffer === '' || $buffer === false) {
+                    throw new \Exception('read from remote fail');
+                }
+                $all_buffer .= $buffer;
+                $recv_len   = strlen($all_buffer);
+                if ($recv_len >= $total_len) {
+                    if ($head_read) {
+                        break;
+                    }
+                    $unpack_data = unpack('Ntotal_length', $all_buffer);
+                    $total_len   = $unpack_data['total_length'];
+                    if ($recv_len >= $total_len) {
+                        break;
+                    }
+                    $head_read = true;
+                }
+            }
+            return substr($all_buffer, 4);
+        }
+
+        private $_time_out = 1;
+
+        private function connect()
+        {
+            $connection = stream_socket_client($this->_rpc_server, $code, $msg, $this->_time_out);
+            if (!$connection) {
+                throw new \Exception($msg);
+            }
+            stream_set_timeout($connection, $this->_time_out);
+            return $connection;
+
         }
 
         public static function __callStatic($name, $arguments)
@@ -90,6 +134,5 @@ namespace One\Swoole {
                 $this->_callRpc(['i' => $this->id]);
             }
         }
-
     }
 }

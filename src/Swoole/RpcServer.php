@@ -165,24 +165,30 @@ class RpcServer
         return 1;
     }
 
+
     public static function ideHelper($host, $px)
     {
-        $str = file_get_contents(__DIR__ . '/RpcHttpClient.php');
-        $i   = strpos($str, 'class');
-        $r   = "<?php\nnamespace {$px}{\n";
-        $r   .= self::tab(4) . substr($str, $i);
-        $r   .= "\n";
+        $host    = trim($host);
+        $is_http = strpos($host, 'tcp') === 0 ? 0 : 1;
+        if ($is_http) {
+            $str = file_get_contents(__DIR__ . '/RpcClientHttp.php');
+        } else {
+            $str = file_get_contents(__DIR__ . '/RpcClientTcp.php');
+        }
+        $i = strpos($str, 'class');
+        $r = "<?php\nnamespace {$px}{\n";
+        $r .= self::tab(4) . substr($str, $i);
+        $r .= "\n";
         foreach (self::$class as $c => $fs) {
             if (isset($fs['*'])) {
-                $r .= self::getClassInfo($c, $px, $host);
+                $r .= self::getClassInfo($c, $px, $host, $is_http);
             }
         }
         return $r;
     }
-
-    private static function getClassInfo($class, $px, $host)
+    
+    private static function getClassInfo($class, $px, $host, $is_http)
     {
-
         $px    = $px ? $px . '\\' : '';
         $class = new \ReflectionClass($class);
         $funcs = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
@@ -190,6 +196,11 @@ class RpcServer
         $r = 'namespace ' . $px . $class->getNamespaceName() . "{\n";
         $r .= self::tab(3) . "/**\n";
         foreach ($funcs as $func) {
+
+            if (strpos($func->name, '__') === 0 && $func->name !== '__construct') {
+                continue;
+            }
+
             $return = $func->getReturnType() ? $func->getReturnType() : 'mixed';
             $r      .= self::tab(4) . "* @method {$return} {$func->name}(";
             $params = [];
@@ -208,11 +219,15 @@ class RpcServer
         }
         $name = str_replace($class->getNamespaceName() . '\\', '', $class->getName());
         $r    .= self::tab(4) . "*/\n";
-        $r    .= self::tab(4) . "class {$name} extends \\{$px}RpcHttpClient { \n";
-        $r    .= self::tab(8) . "protected \$_rpc_server = '{$host}';\n";
-        $r    .= self::tab(8) . "protected \$_remote_class_name = '{$class->getName()}';\n";
-        $r    .= self::tab(4) . "} \n";
-        $r    .= "} \n";
+        if ($is_http) {
+            $r .= self::tab(4) . "class {$name} extends \\{$px}RpcClientHttp { \n";
+        } else {
+            $r .= self::tab(4) . "class {$name} extends \\{$px}RpcClientTcp { \n";
+        }
+        $r .= self::tab(8) . "protected \$_rpc_server = '{$host}';\n";
+        $r .= self::tab(8) . "protected \$_remote_class_name = '{$class->getName()}';\n";
+        $r .= self::tab(4) . "} \n";
+        $r .= "} \n";
         return $r;
     }
 

@@ -22,8 +22,9 @@ php App/swoole.php
 - HTTP/TCP/WEBOSCKET/UDP服务器
 - 缓存
 - 进程间内存共享
-- RPC
+- RPC(http,tcp,udp)
 - 日志
+- RequestId跟踪
 
 ## 运行环境
 
