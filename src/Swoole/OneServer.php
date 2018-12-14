@@ -60,8 +60,39 @@ class OneServer
         echo $str . "\n";
     }
 
+    private static function getPid($k)
+    {
+        $name = 'one_master_' . md5(serialize(self::$conf));
+        $str  = exec("ps -ef | grep {$name} | grep -v grep");
+        $arr  = explode(' ', $str);
+        $arr  = array_filter($arr, 'trim');
+        $arr  = array_values($arr);
+        if (empty($arr) && ($k === 'reload' || $k === 'stop')) {
+            exit("程序未运行\n");
+        }
+        return $arr[1];
+    }
+
+    private static function shell()
+    {
+        global $argv;
+        $k    = trim(end($argv));
+        $name = 'one_master_' . md5(serialize(self::$conf));
+        if ($k === 'reload') {
+            $id = self::getPid('reload');
+            exec("kill -USR1 {$id}");
+            exit("reload succ\n");
+        } else if ($k === 'stop') {
+            $id = self::getPid('stop');
+            exec("kill {$id}");
+            exit("stop succ\n");
+        }
+
+    }
+
     public static function runAll()
     {
+        self::shell();
         if (self::$_server === null) {
             self::_check();
             list($swoole, $server) = self::startServer(self::$conf['server']);
