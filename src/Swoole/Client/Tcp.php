@@ -57,26 +57,29 @@ class Tcp
         }
     }
 
-    public function del()
+    public function call($data, $time_out = 3.0)
     {
-        self::$connect_count--;
-    }
-
-    public function recvRs($rs, $time_out = 3.0)
-    {
-        $ret = $rs->recv($time_out);
-        if ($this->protocol !== null) {
-            $ret = $this->protocol::decode($ret);
-        }
-        return $ret;
-    }
-
-    public function sendRs($rs, $data)
-    {
+        $cli = $this->pop();
         if ($this->protocol !== null) {
             $data = $this->protocol::encode($data);
         }
-        return $rs->send($data);
+        $r = $cli->send($data);
+        if ($r === false) {
+            $retry = 0;
+            do {
+                $cli->close();
+                self::$connect_count--;
+                $cli = $this->pop();
+                $r   = $cli->send($data);
+            } while ($retry < 5 || $r === false);
+        }
+        $ret = $this->recv($time_out);
+        if ($this->protocol !== null) {
+            $ret = $this->protocol::decode($ret);
+        }
+        $this->push($cli);
+        return $ret;
+
     }
 
 
