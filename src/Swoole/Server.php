@@ -19,8 +19,7 @@ use Swoole\Process;
  */
 class Server
 {
-    use bindName;
-
+    
     protected $conf = [];
 
     /**
@@ -42,8 +41,8 @@ class Server
     {
         $this->server = $server;
         $this->conf   = $conf;
-        if (isset($conf['protocol'])) {
-            $this->protocol = $conf['protocol'];
+        if (isset($conf['pack_protocol'])) {
+            $this->protocol = $conf['pack_protocol'];
         }
     }
 

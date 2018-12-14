@@ -14,12 +14,7 @@ use One\Swoole\Pools;
 class Redis extends Cache
 {
     use ConfigTrait, Pools;
-
-    /**
-     * @var \Redis
-     */
-    private $driver;
-
+    
     private $key = '';
 
     private $config = [];

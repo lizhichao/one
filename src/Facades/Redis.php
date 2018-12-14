@@ -2,9 +2,6 @@
 
 namespace One\Facades;
 
-
-use One\Cache\File;
-
 /**
  * Class Cache
  * @package Facades
