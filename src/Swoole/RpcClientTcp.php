@@ -22,6 +22,8 @@ namespace One\Swoole {
 
         protected $_remote_class_name = '';
 
+        protected $_token = '';
+
         public static $_call_id = '';
 
         public function __construct(...$args)
@@ -38,12 +40,13 @@ namespace One\Swoole {
         public function __call($name, $arguments)
         {
             return $this->_callRpc([
-                'i' => $this->id,
-                'c' => $this->calss,
-                'f' => $name,
-                'a' => $arguments,
-                't' => $this->args,
-                's' => self::$_is_static
+                'i' => $this->id, // 分布式唯一id
+                'c' => $this->calss, // 调用class
+                'f' => $name, // 调用方法名称
+                'a' => $arguments, // 调用方法参数
+                't' => $this->args, // 构造函数参数 __construct
+                's' => self::$_is_static, // 是否是静态方法
+                'o' => $this->_token, // token 在中间件可获取
             ]);
         }
 
@@ -109,11 +112,9 @@ namespace One\Swoole {
             return substr($all_buffer, 4);
         }
 
-        private $_time_out = 1;
-
         private function connect()
         {
-            $connection = stream_socket_client($this->_rpc_server, $code, $msg, $this->_time_out);
+            $connection = stream_socket_client($this->_rpc_server, $code, $msg, 3);
             if (!$connection) {
                 throw new \Exception($msg);
             }

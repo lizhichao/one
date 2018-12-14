@@ -48,7 +48,7 @@ class RpcServer
     }
 
     /**
-     * @param array $arr [i => call_id ,c => class ,f => func ,a => args,t => construct_args,s => 0 ]
+     * @param array $arr [i => call_id ,c => class ,f => func ,a => args,t => construct_args,s => 0,o=>token ]
      * @return mixed
      */
     public static function call($arr)
@@ -63,19 +63,20 @@ class RpcServer
         $a  = isset($arr['a']) ? $arr['a'] : [];
         $t  = isset($arr['t']) ? $arr['t'] : [];
         $s  = isset($arr['s']) ? $arr['s'] : 0;
+        $o  = isset($arr['o']) ? $arr['o'] : null;
         try {
             $info = self::isAllow($c, $f);
             $obj  = null;
             if (isset(self::$ids[$id])) {
                 $obj = self::$ids[$id];
             }
-            return self::ret(self::exec($c, $f, $a, $t, $info, $obj, $s), $id);
+            return self::ret(self::exec($c, $f, $a, $t, $info, $obj, $s, $o), $id);
         } catch (\Exception $e) {
             return self::error($e->getCode(), $e->getMessage());
         }
     }
 
-    private static function exec($c, $f, $a, $t, $info, $obj, $s)
+    private static function exec($c, $f, $a, $t, $info, $obj, $s, $o)
     {
         if (isset($info['middle'])) {
             $mids = self::mids($info['middle']);
@@ -109,7 +110,7 @@ class RpcServer
             return $res;
         };
 
-        $df = self::getAction($mids, $aciton, $c, $f, $a, $t);
+        $df = self::getAction($mids, $aciton, $o, $c, $f, $a, $t);
         return $df();
     }
 
@@ -186,7 +187,7 @@ class RpcServer
         }
         return $r;
     }
-    
+
     private static function getClassInfo($class, $px, $host, $is_http)
     {
         $px    = $px ? $px . '\\' : '';
