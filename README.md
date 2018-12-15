@@ -1,7 +1,7 @@
 # One - 一个极简的基于swoole常驻内存框架
 
 ## 背景
-在用过`laravel`框架，发现它的`路由`和`数据库ORM`确实非常好用，但是整体确实还有点慢，执行到控制器大于需要耗时60ms左右。于是打算做一个拥有非常好用的路由和orm又非常简单的框架。所以你会发现one框的`路由`和`ORM`有laravel的影子。但也有一些自己的特色，例如`ORM`支持自动化缓存(自动化读、写、刷新)保持与数据库同步，对外使用无感知。更多功能请看文档。one框架也支持在fpm下运行，框架自身整体耗时在`1ms`左右。
+在用过`laravel`框架，发现它的`路由`和`数据库ORM`确实非常好用，但是整体确实还有点慢，执行到控制器大于需要耗时60ms左右。于是打算做一个拥有非常好用的路由和orm又非常简单的框架。所以你会发现one框的`路由`和`ORM`有laravel的影子。但也有一些自己的特色，例如`ORM`支持自动化缓存(自动化读、写、刷新)保持与数据库同步，对外使用无感知。更多功能请看文档。one框架也支持在fpm下运行，框架自身整体耗时在1ms左右。
 
 
 ## hello world
@@ -37,12 +37,6 @@ curl http://127.0.0.1:8081/
 - 日志
 - RequestId跟踪
 
-
-[详细文档地址](https://www.kancloud.cn/vic-one/php-one/826876)
-
-[使用列子-DEMO](https://github.com/lizhichao/one-demo)
-
-QQ交流群: 731475644
 
 ## 路由
 
@@ -111,7 +105,7 @@ class User extends Model
 $user = User::find(1);
 
 // 关联查询
-$user_list = User::whereIn('id',[1,2,3])->with('articles')->findAll();
+$user_list = User::whereIn('id',[1,2,3])->with('articles')->findAll()->toArray();
 
 // 更新
 $r = $user->update(['name' => 'aaa']);
@@ -199,6 +193,37 @@ Cache::flush('tag1');
 ## RPC
 
 ### 服务端
+启动rpc服务器，框架已经内置了各个协议的rpc服务，添加到到上面配置文件的`action`即可。列如: 支持`http`调用，又支持`tpc`调用。
+
+```php
+// http 协议 rpc服务
+[
+    'port'   => 8082,
+    'action' => \App\Server\RpcHttpPort::class,
+    'type'   => SWOOLE_SOCK_TCP,
+    'ip'     => '0.0.0.0',
+    'set'    => [
+        'open_http_protocol'      => true,
+        'open_websocket_protocol' => false
+    ]
+],
+// tpc 协议 rpc服务
+[
+    'port'          => 8083,
+    'action'        => \App\Server\RpcTcpPort::class,
+    'type'          => SWOOLE_SOCK_TCP,
+    'pack_protocol' => \One\Protocol\Frame::class, // tcp 打包 解包协议
+    'ip'            => '0.0.0.0',
+    'set'           => [
+        'open_http_protocol'      => false,
+        'open_websocket_protocol' => false,
+        'open_length_check'       => 1,
+        'package_length_func'     => '\One\Protocol\Frame::length',
+        'package_body_offset'     => \One\Protocol\Frame::HEAD_LEN,
+    ]
+]
+```
+添加具体服务到rpc，
 例如有个类`Abc`
 
 ```php 
@@ -240,7 +265,8 @@ class Abc
 // 添加Abc到rpc服务
 RpcServer::add(Abc::class);
 
-// 如果你不希望把Abc下的所有方法都添加到rpc服务，也可以指定添加。未指定的方法客户端无法调用.
+// 如果你不希望把Abc下的所有方法都添加到rpc服务，也可以指定添加。
+// 未指定的方法客户端无法调用.
 //RpcServer::add(Abc::class,'add');
 
 // 分组添加
@@ -279,8 +305,14 @@ $abc = new ClientAbc(5);
 // $res === 10
 $res = $abc->add(2,3);
 
-// $res === 105
+// 链式调用 $res === 105
 $res = $abc->setA(100)->add(2,3);
+
+// 如果把上面的模型的User添加到rpc
+// RpcServer::add(User::class);
+// 下面运行结果和上面一样
+// $user_list = User::whereIn('id',[1,2,3])->with('articles')->findAll()->toArray();
+
 ```
 
 上面是通过http协议调用的。你也可以通过其他协议调用。例如Tpc协议
@@ -297,4 +329,12 @@ class ClientAbc extends RpcClientTcp {
 ```
 
 其中类 `RpcClientHttp`,`RpcClientTcp`在框架里。   
-你可以复制到任何其他地市使用。
+你也可以复制到任何其他地方使用。
+
+## 更多请看文档
+
+[详细文档地址](https://www.kancloud.cn/vic-one/php-one/826876)
+
+[使用列子-DEMO](https://github.com/lizhichao/one-demo)
+
+QQ交流群: 731475644
