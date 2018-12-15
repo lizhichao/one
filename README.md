@@ -275,7 +275,7 @@ RpcServer::add(Abc::class);
 //    'middle' => [
 //        TestMiddle::class . '@aa'
 //    ],
-//    // 缓存 如果设置了 当以同样的参数调用时 会返回缓存信息 不会真正调用 单位秒
+//    // 缓存 如果设置了 当以同样的参数调用时 会返回缓存信息 不会真正调用 单位:秒
 //    'cache'  => 10
 //], function () {
 //    RpcServer::add(Abc::class);
@@ -291,9 +291,9 @@ RpcServer::add(Abc::class);
 class ClientAbc extends RpcClientHttp {
 
     // rpc服务器地址
-    protected $_rpc_server = 'http://127.0.0.1:8081/';
+    protected $_rpc_server = 'http://127.0.0.1:8082/';
 
-    // 远程的类 不设置默认为当前类名
+    // 远程的类 不设置 默认为当前类名
     protected $_remote_class_name = 'Abc';
 }
 ```
@@ -321,9 +321,9 @@ $res = $abc->setA(100)->add(2,3);
 class ClientAbc extends RpcClientTcp {
 
     // rpc服务器地址
-    protected $_rpc_server = 'tcp://127.0.0.1:8081/';
+    protected $_rpc_server = 'tcp://127.0.0.1:8083/';
 
-    // 远程的类 不设置默认为当前类名
+    // 远程的类 不设置 默认为当前类名
     protected $_remote_class_name = 'Abc';
 }
 ```
