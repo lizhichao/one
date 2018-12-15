@@ -95,7 +95,7 @@ class User extends Model
 }
 ```
 
-### 使用
+### 使用模型
 
 在`fpm`下数据库连接为单列,
 在`swoole`模式下数据库连接自动切换为连接池
