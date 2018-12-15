@@ -192,7 +192,7 @@ Cache::flush('tag1');
 
 ## RPC
 
-像调用本项目的方法一样调用远程服务器的方法。
+像调用本项目的方法一样调用远程服务器的方法。跨语言，跨机器。
 
 ### 服务端
 启动rpc服务，框架已经内置了各个协议的rpc服务，添加到到上面配置文件的`action`即可。列如: 支持`http`调用，又支持`tpc`调用。
@@ -299,7 +299,7 @@ class ClientAbc extends RpcClientHttp {
     protected $_remote_class_name = 'Abc';
 }
 ```
-调用rpc服务器的方法， 和调用本项目的方法一样的。你可以想象这个方法就在你的项目里面。
+调用rpc服务的远程方法， 和调用本项目的方法一样的。你可以想象这个方法就在你的项目里面。
 
 ```php
 $abc = new ClientAbc(5);
