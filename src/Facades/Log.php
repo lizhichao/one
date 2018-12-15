@@ -6,10 +6,10 @@ namespace One\Facades;
  * Class Log
  * @package One\Facades
  * @mixin \One\Log
- * @method  debug($data, $prefix = 'debug', $k = 0) static
- * @method  notice($data, $prefix = 'notice', $k = 0) static
- * @method  warn($data, $prefix = 'warn', $k = 0) static
- * @method  error($data, $prefix = 'error', $k = 0) static
+ * @method  debug($data, $k = 0, $prefix = 'debug') static
+ * @method  notice($data, $k = 0, $prefix = 'notice') static
+ * @method  warn($data, $k = 0, $prefix = 'warn') static
+ * @method  error($data, $k = 0, $prefix = 'error') static
  * @method  setTraceId($id) static
  * @method  bindTraceId($id) static
  * @method  flushTraceId() static

@@ -75,18 +75,21 @@ trait WsEvent
             $this->push($frame->fd, '格式错误');
             return false;
         }
-        $frame->body = $info['d'];
+        $frame->data = $info['d'];
         $frame->uuid = uuid();
         Log::setTraceId($frame->uuid);
         try {
-            $router = new Router();
-            list($frame->class, $frame->method, $mids, $action, $frame->args) = $router->explain('ws', $info['u'], $frame, $this, $this->session[$frame->fd]);
-            $f    = $router->getExecAction($mids, $action, $frame, $this, $this->session[$frame->fd]);
+            $router  = new Router();
+            $server = $this instanceof Server ? $this : $this->server;
+            $session = isset($this->session[$frame->fd]) ? $this->session[$frame->fd] : null;
+            list($frame->class, $frame->method, $mids, $action, $frame->args) = $router->explain('ws', $info['u'], $frame, $server, $session);
+            $f    = $router->getExecAction($mids, $action, $frame, $server, $session);
             $data = $f();
         } catch (RouterException $e) {
             $data = $e->getMessage();
         } catch (\Throwable $e) {
             $data = $e->getMessage();
+            Handler::report($e);
         }
 
         if ($data) {

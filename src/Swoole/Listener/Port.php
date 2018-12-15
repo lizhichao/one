@@ -52,9 +52,7 @@ class Port
 
     public function onClose(\swoole_server $server, $fd, $reactor_id)
     {
-        if ($this->server->globalData && $this->server->globalData->connected === 1) {
-            $this->server->unBindFd($fd);
-        }
+
     }
 
     public function __call($name, $arguments)

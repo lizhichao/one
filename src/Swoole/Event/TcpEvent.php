@@ -62,13 +62,15 @@ trait TcpEvent
         Log::setTraceId($data->uuid);
         try {
             $router = new Router();
-            list($data->class, $data->method, $mids, $action, $data->args) = $router->explain('tcp', $data['url'], $data, $this);
-            $f = $router->getExecAction($mids, $action, $data, $this);
+            $server = $this instanceof Server ? $this : $this->server;
+            list($data->class, $data->method, $mids, $action, $data->args) = $router->explain('tcp', $data['url'], $data, $server);
+            $f = $router->getExecAction($mids, $action, $data, $server);
             $res = $f();
         } catch (RouterException $e) {
             $res = $e->getMessage();
         } catch (\Throwable $e) {
             $res = $e->getMessage();
+            Handler::report($e);
         }
 
         if ($res) {

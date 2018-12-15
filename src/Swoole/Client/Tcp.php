@@ -23,6 +23,8 @@ class Tcp
 
     private $retry_count = 3;
 
+    private $max_retry_count = 1;
+
     /**
      * @var ProtocolAbstract
      */
@@ -40,6 +42,7 @@ class Tcp
         if (isset($this->config['pack_protocol'])) {
             $this->protocol = $this->config['pack_protocol'];
         }
+        $this->max_retry_count = $this->config['max_connect_count'] + 3;
         return $this;
     }
 
@@ -49,7 +52,7 @@ class Tcp
         if (isset($this->config['set'])) {
             $client->set($this->config['set']);
         }
-        $r = $client->connect($this->config['ip'], $this->config['port'], $this->config['time']);
+        $r = $client->connect($this->config['ip'], $this->config['port'], $this->config['time_out']);
         if ($r) {
             return $client;
         } else {
@@ -63,17 +66,18 @@ class Tcp
         if ($this->protocol !== null) {
             $data = $this->protocol::encode($data);
         }
-        $r = $cli->send($data);
+        $r = @$cli->send($data);
         if ($r === false) {
             $retry = 0;
             do {
                 $cli->close();
                 self::$connect_count--;
                 $cli = $this->pop();
-                $r   = $cli->send($data);
-            } while ($retry < 5 || $r === false);
+                $r   = @$cli->send($data);
+                $retry++;
+            } while ($retry < $this->max_retry_count && $r === false);
         }
-        $ret = $this->recv($time_out);
+        $ret = $cli->recv($time_out);
         if ($this->protocol !== null) {
             $ret = $this->protocol::decode($ret);
         }

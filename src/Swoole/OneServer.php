@@ -115,7 +115,7 @@ class OneServer
             if (isset($conf['set'])) {
                 $port->set($conf['set']);
             }
-            self::onEvent($port, $conf['action'], $server, $conf, ['close' => 'onClose']);
+            self::onEvent($port, $conf['action'], $server, $conf);
         }
     }
 
@@ -149,7 +149,7 @@ class OneServer
             $server->set($conf['set']);
         }
 
-        $e = ['close' => 'onClose', 'workerstart' => 'onWorkerStart', 'managerstart' => 'onManagerStart'];
+        $e = ['workerstart' => 'onWorkerStart', 'managerstart' => 'onManagerStart'];
 
         $obj = self::onEvent($server, $conf['action'], $server, $conf, $e);
 

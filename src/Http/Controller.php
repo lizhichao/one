@@ -31,9 +31,9 @@ class Controller
      */
     public function __construct($request, $response, $server = null)
     {
-        $this->request = $request;
+        $this->request  = $request;
         $this->response = $response;
-        $this->server = $server;
+        $this->server   = $server;
 
     }
 
@@ -103,14 +103,19 @@ class Controller
      * @return string
      * @throws HttpException
      */
-    final protected function display($tpl, $data = [])
+    final protected function display($tpl, $data = [], $auto_set_tpl_dir = true)
     {
-        $dir = substr(get_called_class(), 4);
-        $dir = str_replace(['Controllers', 'Controller'], '', $dir);
-        $dir = str_replace('\\', '/', $dir);
-        $dir = str_replace('//', '/', $dir);
-        $dir = strtolower(trim($dir, '/'));
-        return $this->response->tpl($dir . '/' . $tpl, $data);
+        if ($auto_set_tpl_dir) {
+            $dir = substr(get_called_class(), 4);
+            $dir = str_replace(['Controllers', 'Controller'], '', $dir);
+            $dir = str_replace('\\', '/', $dir);
+            $dir = str_replace('//', '/', $dir);
+            $dir = strtolower(trim($dir, '/'));
+            return $this->response->tpl($dir . '/' . $tpl, $data);
+        } else {
+            return $this->response->tpl($dir . '/' . $tpl, $data);
+        }
+
     }
 
 }

@@ -71,12 +71,9 @@ class Server
         $this->is_task   = $server->taskworker ? true : false;
         $this->pid       = $server->worker_pid;
 
-        if (isset($this->conf['global_data'])) {
-            $this->globalData = $this->globalData($this->conf['global_data']);
-        }
         @swoole_set_process_name(($server->taskworker ? 'one_task' : 'one_worker') . '_' . $worker_id);
         Process::signal(SIGPIPE, function ($signo) {
-            echo "资源连接已关闭\n";
+            echo "socket close\n";
         });
     }
 
@@ -97,9 +94,7 @@ class Server
 
     public function onClose(\swoole_server $server, $fd, $reactor_id)
     {
-        if ($this->globalData && $this->globalData->connected === 1) {
-            $this->unBindFd($fd);
-        }
+        
     }
 
     public function onPipeMessage(\swoole_server $server, $src_worker_id, $message)
