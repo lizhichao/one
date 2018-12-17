@@ -143,7 +143,7 @@ class Log
     }
 
 
-    private function getTraceId()
+    public function getTraceId()
     {
         $trace_id = self::$conf['id'];
         $cid      = get_co_id();

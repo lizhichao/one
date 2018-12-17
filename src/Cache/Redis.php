@@ -15,7 +15,7 @@ class Redis extends Cache
 {
     use ConfigTrait, Pools;
     
-    private $key = '';
+    protected $key = '';
 
     private $config = [];
 

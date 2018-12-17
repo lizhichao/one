@@ -31,9 +31,9 @@ abstract class Cache
                 }
                 $prev = md5($p . $prev);
             }
-            return static::$conf['prefix'] . $key .  '#tag_' . $prev;
+            return static::$conf[$this->key]['prefix'] . $key .  '#tag_' . $prev;
         } else {
-            return static::$conf['prefix'] . $key;
+            return static::$conf[$this->key]['prefix'] . $key;
         }
     }
 

@@ -174,7 +174,7 @@ class OneServer
         if (isset($call['receive'])) {
             $call['receive'] = '__receive';
         }
-
+        
         foreach ($call as $e => $f) {
             $sev->on($e, [$obj, $f]);
         }
