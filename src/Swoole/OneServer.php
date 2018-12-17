@@ -99,6 +99,7 @@ class OneServer
             self::addServer($swoole, $server);
             self::$_server = $server;
             self::e('server start');
+            self::e('one version : ' . _ONE_V_);
             @swoole_set_process_name('one_master_' . md5(serialize(self::$conf)));
             $server->start();
         }
@@ -174,7 +175,7 @@ class OneServer
         if (isset($call['receive'])) {
             $call['receive'] = '__receive';
         }
-        
+
         foreach ($call as $e => $f) {
             $sev->on($e, [$obj, $f]);
         }

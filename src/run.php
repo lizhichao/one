@@ -9,4 +9,7 @@ define('_CLI_', defined('_SHELL_') === false && php_sapi_name() === 'cli' && cla
 if (!defined('_DEBUG_')) {
     define('_DEBUG_', false);
 }
+
+define('_ONE_V_', '1.3.1');
+
 require __DIR__ . '/helper.php';
