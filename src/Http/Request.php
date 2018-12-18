@@ -86,11 +86,7 @@ class Request
         if ($key === null) {
             return $arr;
         }
-        $r = array_get($arr, $key);
-        if (!$r) {
-            $r = $default;
-        }
-        return $r;
+        return array_get($arr, $key);
     }
 
     /**

@@ -43,7 +43,7 @@ function call($fn, $args)
  * @param $key
  * @return mixed|null
  */
-function array_get($arr, $key)
+function array_get($arr, $key, $default = null)
 {
     if (isset($arr[$key])) {
         return $arr[$key];
@@ -53,12 +53,12 @@ function array_get($arr, $key)
             if (isset($arr[$v])) {
                 $arr = $arr[$v];
             } else {
-                return null;
+                return $default;
             }
         }
         return $arr;
     } else {
-        return null;
+        return $default;
     }
 }
 
@@ -215,7 +215,7 @@ function get_co_id()
 function redis_lock($tag)
 {
     $time = time();
-    $key = 'linelock:'.$tag;
+    $key  = 'linelock:' . $tag;
     while (!\One\Facades\Redis::setnx($key, $time + 3)) {
         if ($time > \One\Facades\Redis::get($key) && $time > \One\Facades\Redis::getSet($key, $time + 3)) {
             break;
@@ -231,9 +231,18 @@ function redis_lock($tag)
  */
 function redis_unlock($tag)
 {
-    $key = 'linelock:'.$tag;
+    $key = 'linelock:' . $tag;
     \One\Facades\Redis::del($key);
 }
 
+function env($key, $default = null)
+{
+    static $arr = [];
+    if (empty($arr) && file_exists(_APP_PATH_ . '/app.ini')) {
+        $arr = parse_ini_file(_APP_PATH_ . '/app.ini', true);
+    }
+    print_r($arr);
+    return array_get($arr, $key, $default);
+}
 
 
