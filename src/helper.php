@@ -241,7 +241,6 @@ function env($key, $default = null)
     if (empty($arr) && file_exists(_APP_PATH_ . '/app.ini')) {
         $arr = parse_ini_file(_APP_PATH_ . '/app.ini', true);
     }
-    print_r($arr);
     return array_get($arr, $key, $default);
 }
 
