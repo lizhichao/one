@@ -104,6 +104,11 @@ class Connect
         return $this->config['dns'];
     }
 
+    public function getKey()
+    {
+        return $this->key;
+    }
+
 
     private function isBreak($error)
     {

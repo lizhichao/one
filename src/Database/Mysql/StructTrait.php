@@ -10,13 +10,14 @@ trait StructTrait
 
     protected function getStruct()
     {
-        if (!isset(self::$struct[$this->from])) {
-            $key = md5(__FILE__ . $this->connect->getDns() . $this->from);
+        $dns = $this->connect->getKey();
+        if (!isset(self::$struct[$dns][$this->from])) {
+            $key = md5(__FILE__ . $dns . $this->from);
             $str = Cache::get($key, function () {
-                $pdo = $this->getConnect();
-                $arr = $pdo->query('desc ' . $this->from)->fetchAll(\PDO::FETCH_ASSOC);
+                $pdo    = $this->getConnect();
+                $arr    = $pdo->query('desc ' . $this->from)->fetchAll(\PDO::FETCH_ASSOC);
                 $fields = [];
-                $pri = '';
+                $pri    = '';
                 foreach ($arr as $v) {
                     if ($v['Key'] == 'PRI') {
                         $pri = $v['Field'];
@@ -29,9 +30,9 @@ trait StructTrait
                 $this->push($pdo);
                 return ['field' => $fields, 'pri' => $pri];
             }, 60 * 60 * 24);
-            self::$struct[$this->from] = $str;
+            self::$struct[$dns][$this->from] = $str;
         }
-        return self::$struct[$this->from];
+        return self::$struct[$dns][$this->from];
     }
 
     /**
@@ -62,6 +63,6 @@ trait StructTrait
      */
     public function getFields()
     {
-        return array_merge([$this->getPriKey()],$this->getStruct()['field']);
+        return array_merge([$this->getPriKey()], $this->getStruct()['field']);
     }
 }
