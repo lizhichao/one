@@ -66,18 +66,24 @@ class Tcp
         if ($this->protocol !== null) {
             $data = $this->protocol::encode($data);
         }
-        $r = @$cli->send($data);
+        $r     = @$cli->send($data);
+        $retry = 0;
         if ($r === false) {
-            $retry = 0;
-            do {
-                $cli->close();
-                self::$connect_count--;
-                $cli = $this->pop();
-                $r   = @$cli->send($data);
-                $retry++;
-            } while ($retry < $this->max_retry_count && $r === false);
+            retry:{
+                do {
+                    $cli->close();
+                    self::$connect_count--;
+                    $cli = $this->pop();
+                    $r   = @$cli->send($data);
+                    $retry++;
+                    echo "retry\n";
+                } while ($retry < $this->max_retry_count && $r === false);
+            }
         }
         $ret = $cli->recv($time_out);
+        if ($ret === '' && $retry === 0) {
+            goto retry;
+        }
         if ($this->protocol !== null) {
             $ret = $this->protocol::decode($ret);
         }
