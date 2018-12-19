@@ -20,11 +20,11 @@ class Model extends ArrayModel
 
     protected $_cache_time = 600;
 
-    protected $_cache_column = [];
+    protected $_cache_key_column = [];
 
     protected $_ignore_flush_cache_column = [];
 
-    protected $_relation = null;
+    private $_relation = null;
 
     CONST TABLE = '';
 
@@ -48,8 +48,8 @@ class Model extends ArrayModel
         if ($this->_cache_time > 0) {
             $this->_build->cache($this->_cache_time);
         }
-        if ($this->_cache_column) {
-            $this->_build->cacheColumn($this->_cache_column);
+        if ($this->_cache_key_column) {
+            $this->_build->cacheColumn($this->_cache_key_column);
         }
         if ($this->_ignore_flush_cache_column) {
             $this->_build->ignoreColumn($this->_ignore_flush_cache_column);
