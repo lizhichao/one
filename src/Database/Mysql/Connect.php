@@ -49,6 +49,10 @@ class Connect
             $res->setFetchMode(\PDO::FETCH_CLASS, $this->model);
             $res->execute($data);
             $this->debugLog($sql, $time, $data, '');
+            if ($res->errorInfo()[0] !== '00000') {
+                $this->push($pdo);
+                throw new DbException(json_encode(['info' => $res->errorInfo(), 'sql' => $sql, 'data' => $data]), 8);
+            }
             if ($return_pdo) {
                 return [$res, $pdo];
             } else {
@@ -58,6 +62,8 @@ class Connect
         } catch (\PDOException $e) {
             $this->debugLog($sql, $time, $data, $e->getMessage());
             return $this->retry($sql, $time, $data, $e->getMessage(), $retry, $return_pdo);
+        } catch (DbException $e) {
+            throw $e;
         } catch (\Throwable $e) {
             self::$connect_count--;
             throw new DbException(json_encode(['info' => $e->getMessage(), 'sql' => $sql]), 7);
@@ -89,6 +95,7 @@ class Connect
             $id  = md5(str_replace('()', '', $sql));
 
             $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 13);
+            $k = 1;
             foreach ($trace as $i => $v) {
                 if (strpos($v['file'], DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'lizhichao' . DIRECTORY_SEPARATOR) === false) {
                     $k = $i + 1;

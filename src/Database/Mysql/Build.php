@@ -27,10 +27,10 @@ class Build
 
     public function __construct($connection, $model, $model_name, $table)
     {
-        $this->from = $table;
-        $this->model = $model;
+        $this->from       = $table;
+        $this->model      = $model;
         $this->model_name = $model_name;
-        $this->connect = new Connect($connection, $this->model_name);
+        $this->connect    = new Connect($connection, $this->model_name);
     }
 
     private $withs = [];
@@ -80,6 +80,16 @@ class Build
         }
     }
 
+    public function query($sql, array $build = [], $only_one = false)
+    {
+        $info = $this->getData($sql, $build, $only_one);
+        if (!$info) {
+            return null;
+        }
+        return $this->fillSelectWith($info, 'setRelationModel');
+    }
+
+
     protected function getData($all = false)
     {
         if ($all) {
@@ -96,11 +106,13 @@ class Build
             $this->where($this->getPriKey(), $id);
         }
         $info = $this->getData();
-        unset($this->model);
-        if (!$info) {
-            return null;
+        if(empty($info)){
+            $info = null;
+        }else{
+            $info = $this->fillSelectWith($info, 'setRelationModel');
         }
-        return $this->fillSelectWith($info, 'setRelationModel');
+        unset($this->model);
+        return $info;
     }
 
     /**
@@ -109,7 +121,7 @@ class Build
     public function findAll()
     {
         $info = $this->getData(true);
-        $ret = new ListModel($info);
+        $ret  = new ListModel($info);
         if ($info) {
             $ret = $this->fillSelectWith($ret, 'setRelationList');
         }
@@ -125,7 +137,7 @@ class Build
     public function count()
     {
         $this->is_count = 1;
-        $res = $this->getData();
+        $res            = $this->getData();
         $this->is_count = 0;
         unset($this->model);
         return $res->row_count;
@@ -140,9 +152,16 @@ class Build
     public function sum($column)
     {
         $this->sum_column = $column;
-        $res = $this->getData();
+        $res              = $this->getData();
         unset($this->model);
         return $res->sum_value;
+    }
+
+    public function exec($sql, array $build = [], $is_insert = false)
+    {
+        $r = $this->connect->exec($sql, $build, $is_insert);
+        unset($this->model);
+        return $r;
     }
 
     /**
@@ -344,7 +363,7 @@ class Build
             $key($this);
             $this->having[] = [null, ')'];
         } else if ($val === null) {
-            $val = $operator;
+            $val      = $operator;
             $operator = '=';
         }
         $this->having[] = [$key, $operator, $val, $link];
@@ -367,7 +386,7 @@ class Build
     {
         $prev = null;
         $data = [];
-        $sql = '';
+        $sql  = '';
         foreach ($this->having as $v) {
             if ($prev && isset($v[3])) {
                 $sql .= $v[3];
@@ -376,7 +395,7 @@ class Build
                 $sql .= $v[1];
             } else {
                 $data[] = $v[2];
-                $sql .= $v[0] . $v[1] . '?';
+                $sql    .= $v[0] . $v[1] . '?';
             }
             if (isset($v[3])) {
                 $prev = $v[0];
@@ -432,7 +451,7 @@ class Build
         }
         if ($this->build) {
             list($d, $s) = $this->getHaving();
-            $sql .= $s;
+            $sql         .= $s;
             $this->build = array_merge($this->build, $d);
         }
         if ($this->order_by) {
@@ -449,22 +468,22 @@ class Build
     {
         $sql = 'insert into ' . $this->from;
         if ($is_mulit) {
-            $build = [];
-            $keys = array_keys($data[0]);
-            $sql .= ' (' . implode(',', $keys) . ')';
+            $build  = [];
+            $keys   = array_keys($data[0]);
+            $sql    .= ' (' . implode(',', $keys) . ')';
             $values = [];
             foreach ($data as $v) {
-                $v = $this->filter($v);
-                $build = array_merge($build, array_values($v));
+                $v        = $this->filter($v);
+                $build    = array_merge($build, array_values($v));
                 $values[] = '(' . substr(str_repeat(',?', count($keys)), 1) . ')';
             }
             $sql .= ' values ' . implode(',', $values);
         } else {
-            $data = $this->filter($data);
-            $keys = array_keys($data);
-            $sql .= ' (' . implode(',', $keys) . ')';
+            $data  = $this->filter($data);
+            $keys  = array_keys($data);
+            $sql   .= ' (' . implode(',', $keys) . ')';
             $build = array_values($data);
-            $sql .= ' values (' . substr(str_repeat(',?', count($keys)), 1) . ')';
+            $sql   .= ' values (' . substr(str_repeat(',?', count($keys)), 1) . ')';
         }
         $this->build = $build;
         return $sql;
@@ -472,20 +491,20 @@ class Build
 
     private function getUpdateSql($data)
     {
-        $sql = 'update ' . $this->from . ' set ';
+        $sql   = 'update ' . $this->from . ' set ';
         $build = [];
-        $data = $this->filter($data);
+        $data  = $this->filter($data);
         foreach ($data as $k => $v) {
             if (is_array($v)) {
                 $sql .= "{$k}={$v[0]},";
             } else {
-                $sql .= "{$k}=?,";
+                $sql     .= "{$k}=?,";
                 $build[] = $v;
             }
         }
         $sql = substr($sql, 0, -1);
         $this->setPriWhere();
-        $sql .= $this->getWhere();
+        $sql         .= $this->getWhere();
         $this->build = array_merge($build, $this->build);
         return $sql;
     }
@@ -510,11 +529,15 @@ class Build
 
     public function toArray()
     {
-        $obj = get_object_vars($this->model);
-        foreach ($obj as &$v) {
-            if (is_object($v)) {
-                $v = $v->toArray();
+        if(isset($this->model) && is_object($this->model)){
+            $obj = get_object_vars($this->model);
+            foreach ($obj as &$v) {
+                if (is_object($v)) {
+                    $v = $v->toArray();
+                }
             }
+        }else{
+            $obj = null;
         }
         unset($this->model);
         return $obj;

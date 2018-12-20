@@ -9,7 +9,7 @@ class Relation
     protected $third_model;
     protected $third_column;
     protected $model;
-    protected $list_model;
+    protected $list_model = null;
 
     public function __construct($self_column, $third_model, $third_column, $model)
     {

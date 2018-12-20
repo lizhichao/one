@@ -30,10 +30,17 @@ class CacheBuild extends Build
         }, $this->cache_time, $this->cache_tag);
     }
 
+    public function exec($sql, array $build = [], $is_insert = false)
+    {
+        $ret = parent::exec($sql, $build, $is_insert);
+        $this->flushCache();
+        return $ret;
+    }
+
     public function update($data)
     {
         $ret = parent::update($data);
-        if($this->isIgnoreColumn($data) === false){
+        if ($this->isIgnoreColumn($data) === false) {
             $this->flushCache($data);
         }
         return $ret;
@@ -102,8 +109,8 @@ class CacheBuild extends Build
     private function getCacheKey()
     {
         $table = $this->from;
-        $key = $this->getCacheColumnValue();
-        $hash = sha1($this->getSelectSql() . json_encode($this->build));
+        $key   = $this->getCacheColumnValue();
+        $hash  = sha1($this->getSelectSql() . json_encode($this->build));
         return "DB#{$table}{$key}#{$hash}";
     }
 
@@ -111,7 +118,7 @@ class CacheBuild extends Build
     {
         if ($this->cache_time > 0) {
             $table = $this->from;
-            $key = $this->getCacheColumnValue($data);
+            $key   = $this->getCacheColumnValue($data);
             Cache::delRegex("*#{$table}{$key}#*");
             Cache::flush('join+' . $table);
         }
