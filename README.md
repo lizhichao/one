@@ -29,7 +29,7 @@ curl http://127.0.0.1:8081/
 - 统一的session处理
 - mysql连接池
 - redis连接池
-- tcp连接池
+- 协程 tcp-client 连接池
 - HTTP/TCP/WEBOSCKET/UDP服务器
 - 缓存
 - 进程间内存共享
