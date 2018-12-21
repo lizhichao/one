@@ -20,16 +20,16 @@ class Router
 
     public static function loadRouter()
     {
-        if(_CLI_){
+        if (_CLI_) {
             require self::$conf['path'];
-        }else{
+        } else {
             $key = md5(__FILE__ . filemtime(self::$conf['path']));
 
-            $info = Cache::get($key, function () {
+            $info          = Cache::get($key, function () {
                 require self::$conf['path'];
                 return [self::$info, self::$as_info];
             }, 60 * 60 * 24 * 30);
-            self::$info = $info[0];
+            self::$info    = $info[0];
             self::$as_info = $info[1];
         }
     }
@@ -54,11 +54,12 @@ class Router
         return $path;
     }
 
-    private function matchRouter($arr, $key)
+    private function matchRouter($key)
     {
+        $arr = self::$info;
         if (strpos($key, '.') !== false) {
             $keys = explode('.', $key);
-            foreach ($keys as $v) {
+            foreach ($keys as $j => $v) {
                 $arr = $this->rules($arr, $v);
                 if ($arr === null) {
                     return null;
@@ -67,6 +68,12 @@ class Router
                     break;
                 }
             }
+            $af = array_slice($keys, $j + 1);
+            $af = array_map(function ($r) {
+                return ltrim($r, '#');
+            }, $af);
+
+            $this->args = array_merge($this->args, $af);
             return $arr;
         } else {
             return $this->rules($arr, $key);
@@ -108,7 +115,7 @@ class Router
 
     private function getAction($method, $uri)
     {
-        $info = $this->matchRouter(self::$info, $this->getKey($method, $uri));
+        $info = $this->matchRouter($this->getKey($method, $uri));
         if (!$info) {
             throw new RouterException('Not Found', 404);
         }
@@ -158,8 +165,8 @@ class Router
             $cache = 0;
             if (is_array($info[0]) && isset($info[0]['cache'])) {
                 $cache = $info[0]['cache'];
-                $key = md5($class . '@' . $fun . ':' . implode(',', $this->args));
-                $res = Cache::get($key);
+                $key   = md5($class . '@' . $fun . ':' . implode(',', $this->args));
+                $res   = Cache::get($key);
                 if ($res) {
                     return $res;
                 }
@@ -199,7 +206,7 @@ class Router
      */
     public static function group($rule, $route)
     {
-        $len = self::$max_group_depth - count(self::$group_info);
+        $len                    = self::$max_group_depth - count(self::$group_info);
         self::$group_info[$len] = $rule;
         ksort(self::$group_info);
         $route();
@@ -244,7 +251,7 @@ class Router
         $path = '/' . trim($path, '/');
         if (isset($group_info['prefix'])) {
             $prefix = trim($group_info['prefix'], '/');
-            $path = '/' . trim($prefix, '/') . $path;
+            $path   = '/' . trim($prefix, '/') . $path;
         }
         return $path;
     }
@@ -254,7 +261,7 @@ class Router
     {
         foreach (self::$group_info as $value) {
             $action = self::withGroupAction($value, $action);
-            $path = self::withGroupPath($value, $path);
+            $path   = self::withGroupPath($value, $path);
         }
         if (is_array($action)) {
             self::createAsInfo($path, $action);
