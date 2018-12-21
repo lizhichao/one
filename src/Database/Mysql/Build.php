@@ -106,9 +106,9 @@ class Build
             $this->where($this->getPriKey(), $id);
         }
         $info = $this->getData();
-        if(empty($info)){
+        if (empty($info)) {
             $info = null;
-        }else{
+        } else {
             $info = $this->fillSelectWith($info, 'setRelationModel');
         }
         unset($this->model);
@@ -306,7 +306,9 @@ class Build
         $join = new Join($table, $first, $second, $type);
         list($data, $str) = $join->get();
         $this->joins[] = $str;
-        $this->whereRaw('', $data);
+        if ($data) {
+            $this->whereRaw('', $data, '');
+        }
         return $this;
     }
 
@@ -529,14 +531,14 @@ class Build
 
     public function toArray()
     {
-        if(isset($this->model) && is_object($this->model)){
+        if (isset($this->model) && is_object($this->model)) {
             $obj = get_object_vars($this->model);
             foreach ($obj as &$v) {
                 if (is_object($v)) {
                     $v = $v->toArray();
                 }
             }
-        }else{
+        } else {
             $obj = null;
         }
         unset($this->model);
