@@ -1,21 +1,31 @@
 {
-    "name": "lizhichao/one",
-    "type": "library",
-    "description": "一个极简的php框架，可运行在fpm或者swoole协程模式下",
-    "keywords" : ["swoole", "framework", "async","one"],
-    "license" : "Apache-2.0",
-    "authors": [
-        {
-            "name": "tanszhe",
-            "email": "1018595261@qq.com"
-        }
-    ],
-    "require": {
-        "php": ">=7.0.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "One\\" : "src/"
-        }
+  "name": "lizhichao/one",
+  "type": "library",
+  "description": "一个极简的php框架，可运行在fpm或者swoole协程模式下",
+  "keywords": [
+    "swoole",
+    "framework",
+    "async",
+    "one"
+  ],
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "tanszhe",
+      "email": "1018595261@qq.com"
     }
+  ],
+  "require": {
+    "php": ">=7.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "One\\": "src/"
+    }
+  },
+  "suggest": {
+    "ext-redis": "如果缓存驱动为Redis",
+    "ext-msgpack": "globalData和Rpc服务通讯的打包",
+    "ext-swoole": "常驻内存运行必须的扩展"
+  }
 }
