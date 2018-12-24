@@ -22,7 +22,11 @@ class RpcServer
 
     public static function add($class_name, $method = '*')
     {
-        if (!isset($class)) {
+        if (is_array($method)) {
+            foreach ($method as $m) {
+                self::$class[$class_name][$m] = self::$mids;
+            }
+        } else {
             self::$class[$class_name][$method] = self::$mids;
         }
     }
