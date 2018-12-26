@@ -133,7 +133,7 @@ Cache::flush('tag1');
 
 ```
         
-## HTTP/TCP/WEBOSCKET/UDP服务器
+## HTTP/TCP/WEBSOCKET/UDP服务器
 
 启动一个websocket服务器，
 添加http服务监听，
