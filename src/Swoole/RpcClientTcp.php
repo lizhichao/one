@@ -57,7 +57,7 @@ namespace One\Swoole {
             $str = $arr[0] . base_convert($arr[1], 10, 16);
             $len = 32;
             while (strlen($str) <= $len) {
-                $str .= bin2hex(base_convert(mt_rand(10000, 99999), 10, 16));
+                $str .= bin2hex(openssl_random_pseudo_bytes(4));
             }
             $str = substr($str, 0, $len);
             $str = str_replace(['+', '/', '='], '', base64_encode(hex2bin($str)));
