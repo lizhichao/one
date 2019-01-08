@@ -20,6 +20,24 @@ class File extends Cache
         }
     }
 
+    protected function getTagKey($key, $tags = [])
+    {
+        if ($tags) {
+            $prev = '';
+            foreach ($tags as $tag) {
+                $p = $this->get($tag);
+                if (!$p) {
+                    $p = $this->flush($tag);
+                }
+                $prev = md5($p . $prev);
+            }
+            return static::$conf['prefix'] . $key .  '#tag_' . $prev;
+        } else {
+            return static::$conf['prefix'] . $key;
+        }
+    }
+
+
     public function get($key, \Closure $closure = null, $ttl = 0, $tags = [])
     {
         $k = $this->getTagKey($key, $tags);
@@ -28,7 +46,7 @@ class File extends Cache
             $str = file_get_contents($f);
             if ($str) {
                 $time = substr($str, 0, 10);
-                $str = substr($str, 10);
+                $str  = substr($str, 10);
                 if ($time > time()) {
                     return unserialize($str);
                 }
@@ -58,7 +76,7 @@ class File extends Cache
 
     public function set($key, $val, $ttl = 0, $tags = [])
     {
-        $key = $this->getTagKey($key, $tags);
+        $key  = $this->getTagKey($key, $tags);
         $file = $this->getFileName($key);
         file_put_contents($file, (time() + $ttl) . serialize($val));
     }
