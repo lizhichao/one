@@ -7,7 +7,7 @@ namespace One\Database\Mysql;
  * Class Model
  * @mixin CacheBuild
  * @method static transaction(\Closure $call)
- * @method int insert(array $data,$is_mulit = false) static
+ * @method int insert(array $data, $is_mulit = false) static
  * @method Model find($val) static
  * @method Build where($key, $operator = null, $val = null, $link = ' and ') static
  * @method Build whereIn($key, array $val) static
@@ -59,7 +59,11 @@ class Model extends ArrayModel
 
     public function __call($name, $arguments)
     {
-        return $this->build()->$name(...$arguments);
+        if (method_exists($this, $name) === false) {
+            return $this->build()->$name(...$arguments);
+        } else {
+            throw new DbException('call method ' . $name . ' fail , is not public method');
+        }
     }
 
     public static function __callStatic($method, $parameters)
