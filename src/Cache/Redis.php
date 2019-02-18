@@ -14,7 +14,7 @@ use One\Swoole\Pools;
 class Redis extends Cache
 {
     use ConfigTrait, Pools;
-    
+
     protected $key = '';
 
     private $config = [];
@@ -32,11 +32,16 @@ class Redis extends Cache
         try {
             $ret = $rs->$name(...$arguments);
             $this->push($rs);
-            $this->retry_count = 3;
+            $this->setRetryCount();
             return $ret;
         } catch (\RedisException $e) {
             return $this->retry($name, $arguments, $e->getMessage(), $e->getCode());
         }
+    }
+
+    private function setRetryCount()
+    {
+        $this->retry_count = $this->config['max_connect_count'] + 1;
     }
 
     private function retry($name, $arguments, $msg, $code)
@@ -44,9 +49,10 @@ class Redis extends Cache
         Log::warn('retry ' . $name);
         self::$connect_count--;
         if ($this->retry_count > 0) {
+            $this->retry_count--;
             return $this->{$name}(...$arguments);
         } else {
-            $this->retry_count = 3;
+            $this->setRetryCount();
             throw new \Exception($msg, $code);
         }
     }
@@ -82,7 +88,7 @@ class Redis extends Cache
                 $val = unserialize($val);
             }
             $this->push($rs);
-            $this->retry_count = 3;
+            $this->setRetryCount();
             return $val;
         } catch (\RedisException $e) {
             return $this->retry('get', func_get_args(), $e->getMessage(), $e->getCode());
@@ -98,7 +104,7 @@ class Redis extends Cache
             $rs  = $this->pop();
             $ret = $rs->del($key);
             $this->push($rs);
-            $this->retry_count = 3;
+            $this->setRetryCount();
             return $ret;
         } catch (\RedisException $e) {
             return $this->retry('del', func_get_args(), $e->getMessage(), $e->getCode());
@@ -124,7 +130,7 @@ class Redis extends Cache
             $rs  = $this->pop();
             $ret = $rs->set($this->getTagKey($key, $tags), serialize($val), $ttl);
             $this->push($rs);
-            $this->retry_count = 3;
+            $this->setRetryCount();
             return $ret;
         } catch (\RedisException $e) {
             return $this->retry('set', func_get_args(), $e->getMessage(), $e->getCode());

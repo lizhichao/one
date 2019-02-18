@@ -74,7 +74,7 @@ class Connect
     {
         self::$connect_count--;
         $this->debugLog($sql, $time, $data, $err);
-        if ($this->isBreak($err) && $retry < 3) {
+        if ($this->isBreak($err) && $retry < $this->config['max_connect_count'] + 1) {
             return $this->execute($sql, $data, ++$retry, $return_pdo);
         }
         throw new DbException(json_encode(['info' => $err, 'sql' => $sql]), 7);
