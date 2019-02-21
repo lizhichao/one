@@ -1,6 +1,6 @@
 <?php
 
-namespace One\Database\Mysql;
+namespace One\Database\Pgsql;
 
 class HasMany extends Relation
 {
