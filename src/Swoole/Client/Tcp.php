@@ -21,8 +21,6 @@ class Tcp
 
     private $config = [];
 
-    private $retry_count = 3;
-
     private $max_retry_count = 1;
 
     /**
@@ -101,7 +99,6 @@ class Tcp
             $ret = $this->protocol::decode($ret);
         }
         $this->push($rs);
-        $this->retry_count = 3;
         return $ret;
     }
 
@@ -113,7 +110,6 @@ class Tcp
         }
         $ret = $rs->send($data);
         $this->push($rs);
-        $this->retry_count = 3;
         return $ret;
     }
 
