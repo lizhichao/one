@@ -28,10 +28,10 @@ class Validator
 
     /**
      * @param string $key
-     * @param \Closure $call
+     * @param array $call
      * @return $this
      */
-    public function addRule(string $key, \Closure $call)
+    public function addRule(string $key, array $call)
     {
         self::$rules[$key] = $call;
         return $this;
