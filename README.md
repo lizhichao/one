@@ -195,7 +195,7 @@ Cache::flush('tag1');
 像调用本项目的方法一样调用远程服务器的方法。跨语言，跨机器。
 
 ### 服务端
-启动rpc服务，框架已经内置了各个协议的rpc服务，添加到到上面配置文件的`action`即可。列如: 支持`http`调用，又支持`tpc`调用。
+启动rpc服务，框架已经内置了各个协议的rpc服务，添加到到上面配置文件的`action`即可。列如: 支持`http`调用，又支持`tcp`调用。
 
 ```php
 // http 协议 rpc服务
@@ -209,7 +209,7 @@ Cache::flush('tag1');
         'open_websocket_protocol' => false
     ]
 ],
-// tpc 协议 rpc服务
+// tcp 协议 rpc服务
 [
     'port'          => 8083,
     'action'        => \App\Server\RpcTcpPort::class,
@@ -317,7 +317,7 @@ $res = $abc->setA(100)->add(2,3);
 
 ```
 
-上面是通过http协议调用的。你也可以通过其他协议调用。例如Tpc协议
+上面是通过http协议调用的。你也可以通过其他协议调用。例如Tcp协议
 
 ```php
 class ClientAbc extends RpcClientTcp {
