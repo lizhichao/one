@@ -6,25 +6,48 @@ namespace One\Database\Mysql;
 trait RelationTrait
 {
     /**
-     * @param $self_column
-     * @param $third
-     * @param $third_column
+     * @param string $self_column
+     * @param string $remote
+     * @param string $remote_column
      * @return Model
      */
-    protected function hasOne($self_column, $third, $third_column)
+    protected function hasOne($self_column, $remote, $remote_column)
     {
-        return new HasOne($self_column, $third, $third_column, $this);
+        return new HasOne($self_column, $remote, $remote_column, $this);
     }
 
     /**
-     * @param $self_column
-     * @param $third
-     * @param $third_column
+     * @param string $self_column
+     * @param string $remote
+     * @param string $remote_column
      * @return Model
      */
-    protected function hasMany($self_column, $third, $third_column)
+    protected function hasMany($self_column, $remote, $remote_column)
     {
-        return new HasMany($self_column, $third, $third_column, $this);
+        return new HasMany($self_column, $remote, $remote_column, $this);
     }
+
+    /**
+     * @param array $remote_type [$self_type => $remote_model_class]
+     * @param array $remote_type_id [$self_type => $remote_table_rel_id]
+     * @param string $self_id
+     * @return MorphOne
+     */
+    protected function morphOne(array $remote_type, array $remote_type_id, $self_id)
+    {
+        return new MorphOne($remote_type, $remote_type_id, $self_id, $this);
+    }
+
+    /**
+     * @param array $remote_type [$self_type => $remote_model_class]
+     * @param array $remote_type_id [$self_type => $remote_table_rel_id]
+     * @param string $self_id
+     * @return Model
+     */
+    protected function morphMany(array $remote_type, array $remote_type_id, $self_id)
+    {
+        
+    }
+
 
 }
