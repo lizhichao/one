@@ -26,7 +26,7 @@ trait WhereTrait
             $this->where[] = [null, ')'];
         } else {
             if ($val === null) {
-                $val = $operator;
+                $val      = $operator;
                 $operator = '=';
             }
             $this->where[] = [$key, $operator, $val, $link];
@@ -52,7 +52,11 @@ trait WhereTrait
      */
     public function whereIn($key, array $val)
     {
-        return $this->where($key, ' in ', $val);
+        if (count($val) > 0) {
+            return $this->where($key, ' in ', $val);
+        } else {
+            return $this->whereRaw('1=2');
+        }
     }
 
     /**
@@ -62,7 +66,11 @@ trait WhereTrait
      */
     public function whereNotIn($key, array $val)
     {
-        return $this->where($key, ' not in ', $val);
+        if (count($val) > 0) {
+            return $this->where($key, ' not in ', $val);
+        } else {
+            return $this;
+        }
     }
 
     /**
@@ -101,8 +109,8 @@ trait WhereTrait
     public function toWhere()
     {
         $where = '';
-        $data = [];
-        $prev = null;
+        $data  = [];
+        $prev  = null;
         foreach ($this->where as $v) {
             if ($prev && isset($v[3])) {
                 $where .= $v[3];
@@ -116,13 +124,13 @@ trait WhereTrait
                         $data = array_merge($data, $v[2]);
                     }
                 } else if (is_array($v[2])) {
-                    $data = array_merge($data, $v[2]);
+                    $data  = array_merge($data, $v[2]);
                     $where .= $v[0] . $v[1] . '(' . substr(str_repeat(',?', count($v[2])), 1) . ')';
                 } else if (trim($v[1]) == 'is') {
                     $where .= $v[0] . $v[1] . $v[2];
                 } else {
                     $data[] = $v[2];
-                    $where .= $v[0] . $v[1] . '?';
+                    $where  .= $v[0] . $v[1] . '?';
                 }
             }
             if (isset($v[3])) {
