@@ -30,24 +30,25 @@ trait RelationTrait
     /**
      * @param array $remote_type [$self_type => $remote_model_class]
      * @param array $remote_type_id [$self_type => $remote_table_rel_id]
+     * @param string $self_type
      * @param string $self_id
      * @return MorphOne
      */
-    protected function morphOne(array $remote_type, array $remote_type_id, $self_id)
+    protected function morphOne(array $remote_type, array $remote_type_id, $self_type, $self_id)
     {
-        return new MorphOne($remote_type, $remote_type_id, $self_id, $this);
+        return new MorphOne($remote_type, $remote_type_id, $self_type, $self_id, $this);
     }
 
-    /**
-     * @param array $remote_type [$self_type => $remote_model_class]
-     * @param array $remote_type_id [$self_type => $remote_table_rel_id]
-     * @param string $self_id
-     * @return Model
-     */
-    protected function morphMany(array $remote_type, array $remote_type_id, $self_id)
-    {
-        
-    }
+//    /**
+//     * @param array $remote_type [$self_type => $remote_model_class]
+//     * @param array $remote_type_id [$self_type => $remote_table_rel_id]
+//     * @param string $self_id
+//     * @return Model
+//     */
+//    protected function morphMany(array $remote_type, array $remote_type_id, $self_id)
+//    {
+//
+//    }
 
 
 }

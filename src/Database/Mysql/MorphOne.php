@@ -89,7 +89,6 @@ class MorphOne
         return $this->setRelation();
     }
 
-
     public function get()
     {
         return end($this->remote_type)->find();
@@ -100,13 +99,17 @@ class MorphOne
         if ($this->list_model === null) {
             $this->model->$key = $this->get();
         } else {
-            $third_arr = $this->third_model->findAll()->pluck($this->third_column, true);
+            $list_data = [];
+            foreach ($this->remote_type as $type => $remote_model) {
+                $list_data[$type] = $remote_model->findAll()->pluck($this->remote_type_id[$type], true);
+            }
             foreach ($this->list_model as $val) {
-                $k         = $val[$this->self_column];
-                $val->$key = isset($third_arr[$k]) ? $third_arr[$k] : null;
+                $type      = $val[$this->self_type];
+                $id        = $val[$this->self_id];
+                $val->$key = isset($list_data[$type][$id]) ? $list_data[$type][$id] : null;
             }
         }
-        unset($this->model, $this->third_model);
+        unset($this->model, $this->remote_type);
     }
 
 

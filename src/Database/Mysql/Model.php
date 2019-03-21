@@ -84,6 +84,18 @@ class Model extends ArrayModel
         }
     }
 
+    public function toArray()
+    {
+        $obj = one_get_object_vars($this);
+        foreach ($obj as &$v) {
+            if (is_object($v)) {
+                $v = $v->toArray();
+            }
+        }
+        return $obj;
+    }
+
+
     public function events()
     {
         return [];

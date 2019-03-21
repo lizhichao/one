@@ -244,6 +244,11 @@ function redis_unlock($tag)
     \One\Facades\Redis::del($key);
 }
 
+/**
+ * @param $key
+ * @param null $default
+ * @return mixed|null
+ */
 function env($key, $default = null)
 {
     static $arr = [];
@@ -253,4 +258,9 @@ function env($key, $default = null)
     return array_get($arr, $key, $default);
 }
 
+
+function one_get_object_vars($obj)
+{
+    return get_object_vars($obj);
+}
 

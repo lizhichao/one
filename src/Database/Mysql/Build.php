@@ -529,22 +529,6 @@ class Build
         }
     }
 
-    public function toArray()
-    {
-        if (isset($this->model) && is_object($this->model)) {
-            $obj = get_object_vars($this->model);
-            foreach ($obj as &$v) {
-                if (is_object($v)) {
-                    $v = $v->toArray();
-                }
-            }
-        } else {
-            $obj = null;
-        }
-        unset($this->model);
-        return $obj;
-    }
-
 
     public function __call($name, $arguments)
     {

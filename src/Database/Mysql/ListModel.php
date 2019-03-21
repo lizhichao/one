@@ -2,7 +2,7 @@
 
 namespace One\Database\Mysql;
 
-class ListModel implements \Iterator, \JsonSerializable
+class ListModel implements \Iterator, \JsonSerializable, \ArrayAccess
 {
     private $index = 0;
     private $data = [];
@@ -29,6 +29,27 @@ class ListModel implements \Iterator, \JsonSerializable
             return $r;
         }
     }
+
+    public function offsetExists($offset)
+    {
+        return property_exists($this->data, $offset);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        $this->data[$offset] = $value;
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->data[$offset];
+    }
+
+    public function offsetUnset($offset)
+    {
+        unset($this->data[$offset]);
+    }
+
 
     public function jsonSerialize()
     {
@@ -70,10 +91,19 @@ class ListModel implements \Iterator, \JsonSerializable
         $r = [];
         foreach ($this->data as $val) {
             $r[] = $val->toArray();
-            unset($val);
         }
         $this->data = [];
         return $r;
     }
+
+    public function __get($name)
+    {
+        if (method_exists($this->data[0], $name)) {
+            $this->data[0]->$name()->setRelationList($this)->merge($name);
+        } else {
+            throw new DbException('not find property ' . $name);
+        }
+    }
+
 
 }
