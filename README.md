@@ -117,8 +117,11 @@ $r = user::where('id',1)->update(['name' => 'aaa']);
 
 ## 缓存
 ```php
-// 设置缓存
+// 设置缓存 无过期时间
 Cache::set('ccc',1);
+
+// 设置缓存 1分钟过期
+Cache::set('ccc',1,60);
 
 // 获取
 Cache::get('ccc');
