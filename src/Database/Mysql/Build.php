@@ -9,6 +9,8 @@ class Build
 
     protected $from = '';
 
+    protected $pri_key = '';
+
     private $columns = [];
 
     private $model_name = '';
@@ -246,6 +248,16 @@ class Build
     public function from($from)
     {
         $this->from = $from;
+        return $this;
+    }
+
+    /**
+     * @param $key
+     * @return $this
+     */
+    public function setPrikey($key)
+    {
+        $this->pri_key = $key;
         return $this;
     }
 

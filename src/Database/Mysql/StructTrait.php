@@ -12,8 +12,8 @@ trait StructTrait
     {
         $dns = $this->connect->getKey();
         if (!isset(self::$struct[$dns][$this->from])) {
-            $key = md5(__FILE__ . $dns . $this->from);
-            $str = Cache::get($key, function () {
+            $key                             = md5(__FILE__ . $dns . $this->from);
+            $str                             = Cache::get($key, function () {
                 $pdo    = $this->getConnect();
                 $arr    = $pdo->query('desc ' . $this->from)->fetchAll(\PDO::FETCH_ASSOC);
                 $fields = [];
@@ -40,6 +40,9 @@ trait StructTrait
      */
     protected function getPriKey()
     {
+        if ($this->pri_key !== '') {
+            return $this->pri_key;
+        }
         return $this->getStruct()['pri'];
     }
 

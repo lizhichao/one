@@ -28,6 +28,8 @@ class Model extends ArrayModel
 
     CONST TABLE = '';
 
+    protected $_pri_key = '';
+
     private $_build = null;
 
     public function __construct($relation = null)
@@ -53,6 +55,9 @@ class Model extends ArrayModel
         }
         if ($this->_ignore_flush_cache_column) {
             $this->_build->ignoreColumn($this->_ignore_flush_cache_column);
+        }
+        if ($this->_pri_key) {
+            $this->_build->setPrikey($this->_pri_key);
         }
         return $this->_build;
     }
