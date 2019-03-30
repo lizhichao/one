@@ -102,6 +102,10 @@ class Build
         }
     }
 
+    /**
+     * @param null $id
+     * @return Model|null
+     */
     public function find($id = null)
     {
         if ($id) {
