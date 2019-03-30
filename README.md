@@ -1,5 +1,7 @@
 # One - 一个极简的基于swoole常驻内存框架
 
+<a href="https://github.com/996icu/996.ICU/blob/master/LICENSE"><img src="https://img.shields.io/badge/support-996.icu-red.svg"></a>
+
 ## tips
 
 本软件的开源协议为:`Apache License 2.0`。
