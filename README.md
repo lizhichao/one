@@ -1,6 +1,14 @@
 # One - 一个极简的基于swoole常驻内存框架
 
 <a href="https://github.com/996icu/996.ICU/blob/master/LICENSE"><img src="https://camo.githubusercontent.com/41215df7ff78cefe41536bf897fe1c7e55b10bd2/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d416e74692532303939362d626c75652e737667" alt="LICENSE" data-canonical-src="https://img.shields.io/badge/license-Anti%20996-blue.svg" style="max-width:100%;"></a>
+
+## 适用场景
+
+1. 常规web/app后端服务器
+2. im即时通讯服务器
+3. tcp/udp物联网服务器 
+4. 综合性项目，各种混合协议通讯
+
     
 ## 背景
 在用过`laravel`框架，发现它的`路由`和`数据库ORM`确实非常好用，但是整体确实有点慢，执行到控制器大于需要耗时30ms左右。于是打算做一个拥有非常好用的路由和orm又非常简单的框架。所以你会发现one框的`路由`和`ORM`有laravel的影子。但也有一些自己的特色，例如`ORM`支持自动化缓存(自动化读、写、刷新)保持与数据库同步，对外使用无感知。one框架也支持在fpm下运行，在`fpm`下框架自身整体耗时在1ms左右。
