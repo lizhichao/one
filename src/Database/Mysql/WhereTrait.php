@@ -18,7 +18,7 @@ trait WhereTrait
         if (is_array($key)) {
             $key = $this->filter($key);
             foreach ($key as $k => $v) {
-                $this->where[] = [$k, '=', $v, $link];
+                $this->where[] = [$k, ' = ', $v, $link];
             }
         } else if ($key instanceof \Closure) {
             $this->where[] = [null, '(', null, $link];
@@ -29,6 +29,7 @@ trait WhereTrait
                 $val      = $operator;
                 $operator = '=';
             }
+            $operator      = ' ' . trim($operator) . ' ';
             $this->where[] = [$key, $operator, $val, $link];
         }
         return $this;
