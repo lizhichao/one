@@ -4,6 +4,7 @@ namespace One\Http;
 
 use One\Exceptions\HttpException;
 use One\Facades\Log;
+use SebastianBergmann\CodeCoverage\Report\PHP;
 
 class Controller
 {
@@ -23,6 +24,8 @@ class Controller
      */
     protected $server;
 
+    protected $go_id = -1;
+
 
     /**
      * Controller constructor.
@@ -31,15 +34,15 @@ class Controller
      */
     public function __construct($request, $response, $server = null)
     {
+        $this->go_id    = get_co_id();
         $this->request  = $request;
         $this->response = $response;
         $this->server   = $server;
-
     }
 
     public function __destruct()
     {
-        Log::flushTraceId();
+        Log::flushTraceId($this->go_id);
     }
 
     /**

@@ -28,10 +28,13 @@ class TcpController
      */
     protected $session = null;
 
+    protected $go_id = -1;
+
 
     public function __construct($data, $server)
     {
-        $this->data = $data;
+        $this->go_id  = get_co_id();
+        $this->data   = $data;
         $this->server = $server;
         if ($this->data->session_id) {
             $this->session = new Session(null, $this->data->session_id);
@@ -40,7 +43,7 @@ class TcpController
 
     public function __destruct()
     {
-        Log::flushTraceId();
+        Log::flushTraceId($this->go_id);
     }
 
 }

@@ -12,11 +12,10 @@ namespace One\Facades;
  * @method  error($data, $k = 0, $prefix = 'error') static
  * @method  setTraceId($id) static
  * @method  bindTraceId($id) static
- * @method  flushTraceId() static
+ * @method  flushTraceId($go_id) static
  * @method  getTraceId() static
  *
  */
-
 class Log extends Facade
 {
     protected static function getFacadeAccessor()

@@ -27,16 +27,19 @@ class WsController
      */
     protected $session;
 
+    protected $go_id;
+
     public function __construct($frame, $server, $session = null)
     {
-        $this->frame = $frame;
-        $this->server = $server;
+        $this->go_id   = get_co_id();
+        $this->frame   = $frame;
+        $this->server  = $server;
         $this->session = $session;
     }
 
     public function __destruct()
     {
-        Log::flushTraceId();
+        Log::flushTraceId($this->go_id);
     }
 
 }

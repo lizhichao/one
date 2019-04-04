@@ -101,7 +101,9 @@ class Log
 
     public function setTraceId($id)
     {
-        $this->_traceId[get_co_id()] = $id;
+        $cid                  = get_co_id();
+        $this->_traceId[$cid] = $id;
+        return $cid;
     }
 
     /**
@@ -132,10 +134,9 @@ class Log
     /**
      * 请求完成刷新 清除已经关闭的id
      */
-    public function flushTraceId()
+    public function flushTraceId($id)
     {
         if (_CLI_) {
-            $id = get_co_id();
             if (isset($this->_traceId[$id])) {
                 unset($this->_traceId[$id]);
             }
