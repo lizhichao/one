@@ -198,7 +198,7 @@ function one_go($call)
                     'trace' => $e->getTrace()
                 ]);
             }
-            Log::flushTraceId();
+            \One\Facades\Log::flushTraceId();
         }));
     } else {
         return $call();
