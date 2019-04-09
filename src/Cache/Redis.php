@@ -72,6 +72,8 @@ class Redis extends Cache
     {
         $r = new \Redis();
         $r->connect(self::$conf[$this->key]['host'], self::$conf[$this->key]['port'], 0);
+        if(!empty(self::$conf[$this->key]['auth']))
+            $r->auth(self::$conf[$this->key]['auth']);
         return $r;
     }
 
