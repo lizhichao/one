@@ -186,11 +186,12 @@ function one_go($call)
 {
     if (_CLI_) {
         $co_id = get_co_id();
-        return \One\Facades\Log::bindTraceId(go(function () use ($call, $co_id) {
-            \One\Facades\Log::bindTraceId($co_id, true);
+        return go(function () use ($call, $co_id) {
+            $go_id = \One\Facades\Log::bindTraceId($co_id, true);
             try {
                 $call();
             } catch (\Throwable $e) {
+                \One\Facades\Log::flushTraceId($go_id);
                 \One\Facades\Log::error([
                     'file'  => $e->getFile() . ':' . $e->getLine(),
                     'msg'   => $e->getMessage(),
@@ -198,8 +199,8 @@ function one_go($call)
                     'trace' => $e->getTrace()
                 ]);
             }
-            \One\Facades\Log::flushTraceId();
-        }));
+            \One\Facades\Log::flushTraceId($go_id);
+        });
     } else {
         return $call();
     }

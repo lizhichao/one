@@ -71,9 +71,10 @@ class Redis extends Cache
     private function createRes()
     {
         $r = new \Redis();
-        $r->connect(self::$conf[$this->key]['host'], self::$conf[$this->key]['port'], 0);
-        if(!empty(self::$conf[$this->key]['auth']))
-            $r->auth(self::$conf[$this->key]['auth']);
+        $r->connect($this->config['host'], $this->config['port'], 0);
+        if (!empty($this->config['auth'])) {
+            $r->auth($this->config['auth']);
+        }
         return $r;
     }
 
