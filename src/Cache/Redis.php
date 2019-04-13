@@ -84,13 +84,13 @@ class Redis extends Cache
         try {
             $rs  = $this->pop();
             $val = $rs->get($this->getTagKey($key, $tags));
+            $this->push($rs);
             if ((!$val) && $closure) {
                 $val = $closure();
                 $this->set($key, $val, $ttl, $tags);
             } else if ($val) {
                 $val = unserialize($val);
             }
-            $this->push($rs);
             $this->setRetryCount();
             return $val;
         } catch (\RedisException $e) {
