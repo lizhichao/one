@@ -57,13 +57,13 @@ trait TcpEvent
      */
     protected function tcpRouter(\swoole_server $server, $fd, $reactor_id, $data)
     {
-        $data->uuid = $data->uuid . '.' . uuid();
+        $data->uuid = uuid();
         $data->fd = $fd;
         Log::setTraceId($data->uuid);
         try {
             $router = new Router();
             $server = $this instanceof Server ? $this : $this->server;
-            list($data->class, $data->method, $mids, $action, $data->args) = $router->explain('tcp', $data['url'], $data, $server);
+            list($data->class, $data->method, $mids, $action, $data->args) = $router->explain('tcp', $data->url, $data, $server);
             $f = $router->getExecAction($mids, $action, $data, $server);
             $res = $f();
         } catch (RouterException $e) {

@@ -12,13 +12,10 @@
 namespace One\Protocol;
 
 
-class TcpRouterData extends ProtocolAbstract
+class TcpRouterData
 {
     public $url = '';
     public $body = '';
-    public $fd = 0;
-    public $uuid = '';
-    public $session_id = '';
 
     public $args = [];
     public $class = '';
