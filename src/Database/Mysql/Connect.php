@@ -83,19 +83,11 @@ class Connect
     private function debugLog($sql, $time = 0, $build = [], $err = [])
     {
         if (self::$conf['debug_log']) {
-            $time = $time ? (microtime(true) - $time) * 1000 : $time;
-            $info = explode('?', $sql);
-            foreach ($info as $i => &$v) {
-                if (isset($build[$i])) {
-                    $v = $v . "'{$build[$i]}'";
-                }
-            }
-            $s   = implode('', $info);
-            $sql = str_replace(['?', ','], '', $sql);
-            $id  = md5(str_replace('()', '', $sql));
-
+            $time  = $time ? (microtime(true) - $time) * 1000 : $time;
+            $s     = vsprintf(str_replace('?', "'%s'", $sql), $build);
+            $id    = md5(str_replace('()', '', str_replace(['?', ','], '', $sql)));
             $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 13);
-            $k = 1;
+            $k     = 1;
             foreach ($trace as $i => $v) {
                 if (strpos($v['file'], DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'lizhichao' . DIRECTORY_SEPARATOR) === false) {
                     $k = $i + 1;

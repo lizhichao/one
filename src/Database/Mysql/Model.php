@@ -9,8 +9,8 @@ namespace One\Database\Mysql;
  * @method static transaction(\Closure $call)
  * @method int insert(array $data, $is_mulit = false) static
  * @method Model find($val) static
- * @method Build where($key, $operator = null, $val = null, $link = ' and ') static
- * @method Build whereIn($key, array $val) static
+ * @method EventBuild where($key, $operator = null, $val = null, $link = ' and ') static
+ * @method EventBuild whereIn($key, array $val) static
  */
 class Model extends ArrayModel
 {
