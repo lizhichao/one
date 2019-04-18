@@ -87,7 +87,7 @@ class CacheBuild extends Build
         if ($this->columns) {
             $w = [];
             foreach ($this->where as $v) {
-                if ($v[1] == '=') {
+                if (trim($v[1]) == '=') {
                     $w[$v[0]] = $v[2];
                 }
             }
@@ -110,7 +110,7 @@ class CacheBuild extends Build
     {
         $table = $this->from;
         $key   = $this->getCacheColumnValue();
-        $hash  = sha1($this->getSelectSql() . json_encode($this->build));
+        $hash = sha1($this->getSelectSql() . json_encode($this->build));
         return "DB#{$table}{$key}#{$hash}";
     }
 
