@@ -1,4 +1,4 @@
-# One - 极简 . 高性能 . 松耦合 . 分布式 . 可运行于任意环境(cli,apache/php-fpm,swoole)
+# One - 极简 . 高性能 . 松耦合 . 分布式 . 可运行于多种环境(cli,apache/php-fpm,swoole)
 
 <a href="https://github.com/996icu/996.ICU/blob/master/LICENSE"><img src="https://camo.githubusercontent.com/41215df7ff78cefe41536bf897fe1c7e55b10bd2/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d416e74692532303939362d626c75652e737667" alt="LICENSE" data-canonical-src="https://img.shields.io/badge/license-Anti%20996-blue.svg" style="max-width:100%;"></a>
 
