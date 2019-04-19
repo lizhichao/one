@@ -46,6 +46,7 @@ curl http://127.0.0.1:8081/
 - RPC(http,tcp,udp)
 - 日志
 - RequestId跟踪
+- 分布式
 
 
 ## 路由
