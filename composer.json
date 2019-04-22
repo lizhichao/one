@@ -27,6 +27,6 @@
     "ext-redis": "如果缓存驱动为Redis",
     "ext-msgpack": "globalData和Rpc服务通讯的打包",
     "ext-swoole": "常驻内存运行必须的扩展",
-    "ext-pdo":"数据库驱动"
+    "ext-pdo": "数据库驱动"
   }
 }
