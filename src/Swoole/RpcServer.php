@@ -160,6 +160,7 @@ class RpcServer
             self::$ids[$id] = $r;
             return msgpack_pack(self::RPC_REMOTE_OBJ);
         } else {
+            unset(self::$ids[$id]);
             return msgpack_pack($r);
         }
     }
