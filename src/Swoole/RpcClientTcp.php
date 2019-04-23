@@ -24,6 +24,8 @@ namespace One\Swoole {
 
         protected $_token = '';
 
+        protected $_time_out = 1;
+
         public static $_call_id = '';
 
         public function __construct(...$args)
