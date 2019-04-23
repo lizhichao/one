@@ -129,11 +129,5 @@ namespace One\Swoole {
             return (new static)->{$name}(...$arguments);
         }
 
-        public function __destruct()
-        {
-            if ($this->_need_close) {
-                $this->_callRpc(['i' => $this->id]);
-            }
-        }
     }
 }
