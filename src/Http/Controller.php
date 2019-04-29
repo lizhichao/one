@@ -116,7 +116,7 @@ class Controller
             $dir = strtolower(trim($dir, '/'));
             return $this->response->tpl($dir . '/' . $tpl, $data);
         } else {
-            return $this->response->tpl(_APP_PATH_VIEW_ . '/' . $tpl, $data);
+            return $this->response->tpl($tpl, $data);
         }
 
     }
