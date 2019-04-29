@@ -48,7 +48,7 @@ class Controller
     /**
      * @return Session
      */
-    final protected function session()
+    protected function session()
     {
         return $this->response->session();
     }
@@ -59,7 +59,7 @@ class Controller
      * @param int $code
      * @throws HttpException
      */
-    final protected function error($msg, $code = 400)
+    protected function error($msg, $code = 400)
     {
         throw new HttpException($this->response, $msg, $code);
     }
@@ -68,7 +68,7 @@ class Controller
      * @param $data
      * @return string
      */
-    final protected function json($data)
+    protected function json($data)
     {
         return format_json($data, 0, $this->request->id());
     }
@@ -78,7 +78,7 @@ class Controller
      * @param string $callback
      * @return string
      */
-    final protected function jsonP($data, $callback = 'callback')
+    protected function jsonP($data, $callback = 'callback')
     {
         return $callback . '(' . format_json($data, 0, $this->request->id()) . ')';
     }
@@ -89,7 +89,7 @@ class Controller
      * @param array $data
      * @throws HttpException
      */
-    final protected function verify($fields, $data)
+    protected function verify($fields, $data)
     {
         foreach ($fields as $v) {
             $val = array_get($data, $v);
@@ -106,7 +106,7 @@ class Controller
      * @return string
      * @throws HttpException
      */
-    final protected function display($tpl, $data = [], $auto_set_tpl_dir = true)
+    protected function display($tpl, $data = [], $auto_set_tpl_dir = true)
     {
         if ($auto_set_tpl_dir) {
             $dir = substr(get_called_class(), 4);
