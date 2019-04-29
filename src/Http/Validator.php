@@ -96,7 +96,7 @@ class Validator
 
     private function checkOne(\Closure $call, array $args, $msg)
     {
-        if ($call(...$args) === false) {
+        if ($call->call($this, ...$args) === false) {
             $this->err[] = $msg;
             return false;
         } else {
