@@ -37,10 +37,10 @@ class Session
         $this->data[$key] = $val;
     }
 
-    public function get($key = null)
+    public function get($key = null, $default = null)
     {
         if ($key) {
-            return array_get($this->data, $key);
+            return array_get($this->data, $key, $default);
         } else {
             return $this->data;
         }
