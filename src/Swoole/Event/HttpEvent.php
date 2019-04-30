@@ -8,7 +8,7 @@
 
 namespace One\Swoole\Event;
 
-use App\Exceptions\Handler;
+use One\Exceptions\Handler;
 use One\Exceptions\HttpException;
 use One\Facades\Log;
 use One\Http\Router;
@@ -39,11 +39,9 @@ trait HttpEvent
             $data = $f();
         } catch (\One\Exceptions\HttpException $e) {
             $data = Handler::render($e);
-        } catch (RouterException $e) {
-            $data = Handler::render(new HttpException($res, $e->getMessage(), $e->getCode()));
         } catch (\Throwable $e) {
-            $data = $e->getMessage();
-            Handler::report($e);
+            error_report($e);
+            $data = Handler::render(new HttpException($res, $e->getMessage(), $e->getCode()));
         }
         $response->exist = $this->server->exist($request->fd);
         if ($data && $response->exist) {

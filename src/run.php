@@ -10,6 +10,6 @@ if (!defined('_DEBUG_')) {
     define('_DEBUG_', false);
 }
 
-define('_ONE_V_', '1.6.4');
+define('_ONE_V_', '1.6.5');
 
 require __DIR__ . '/helper.php';

@@ -265,3 +265,13 @@ function one_get_object_vars($obj)
     return get_object_vars($obj);
 }
 
+
+function error_report(\Throwable $e)
+{
+    \One\Facades\Log::error([
+        'file' => $e->getFile().':'.$e->getLine(),
+        'msg' => $e->getMessage(),
+        'code' => $e->getCode(),
+        'trace' => $e->getTrace()
+    ]);
+}

@@ -89,7 +89,7 @@ trait WsEvent
             $data = $e->getMessage();
         } catch (\Throwable $e) {
             $data = $e->getMessage();
-            Handler::report($e);
+            error_report($e);
         }
 
         if ($data) {

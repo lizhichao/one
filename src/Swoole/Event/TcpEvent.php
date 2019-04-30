@@ -70,7 +70,7 @@ trait TcpEvent
             $res = $e->getMessage();
         } catch (\Throwable $e) {
             $res = $e->getMessage();
-            Handler::report($e);
+            error_report($e);
         }
 
         if ($res) {
