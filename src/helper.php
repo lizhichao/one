@@ -192,12 +192,7 @@ function one_go($call)
                 $call();
             } catch (\Throwable $e) {
                 \One\Facades\Log::flushTraceId($go_id);
-                \One\Facades\Log::error([
-                    'file'  => $e->getFile() . ':' . $e->getLine(),
-                    'msg'   => $e->getMessage(),
-                    'code'  => $e->getCode(),
-                    'trace' => $e->getTrace()
-                ]);
+                error_report($e);
             }
             \One\Facades\Log::flushTraceId($go_id);
         });
@@ -269,9 +264,9 @@ function one_get_object_vars($obj)
 function error_report(\Throwable $e)
 {
     \One\Facades\Log::error([
-        'file' => $e->getFile().':'.$e->getLine(),
-        'msg' => $e->getMessage(),
-        'code' => $e->getCode(),
+        'file'  => $e->getFile() . ':' . $e->getLine(),
+        'msg'   => $e->getMessage(),
+        'code'  => $e->getCode(),
         'trace' => $e->getTrace()
     ]);
 }
