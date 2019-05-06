@@ -9,11 +9,12 @@
 namespace One\Swoole\Server;
 
 
+use One\Swoole\Event\TaskEvent;
 use One\Swoole\Event\UdpEvent;
 use One\Swoole\Server;
 
 class UdpServer extends Server
 {
-    use UdpEvent;
+    use UdpEvent,TaskEvent;
 
 }
