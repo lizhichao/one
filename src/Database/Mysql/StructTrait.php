@@ -35,6 +35,14 @@ trait StructTrait
         return self::$struct[$dns][$this->from];
     }
 
+
+    public function flushTableInfo()
+    {
+        $dns = $this->connect->getKey();
+        $key = md5(__FILE__ . $dns . $this->from);
+        Cache::del($key);
+    }
+
     /**
      * 获取主键
      */

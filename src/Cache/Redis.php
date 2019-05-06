@@ -100,9 +100,10 @@ class Redis extends Cache
 
     public function del($key)
     {
+
         try {
             if (is_string($key)) {
-                $key = self::$conf['prefix'] . $key;
+                $key = $this->getTagKey($key);
             }
             $rs  = $this->pop();
             $ret = $rs->del($key);
