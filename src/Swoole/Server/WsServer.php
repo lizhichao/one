@@ -9,14 +9,13 @@
 namespace One\Swoole\Server;
 
 use One\Swoole\Event\HttpEvent;
-use One\Swoole\Event\TaskEvent;
 use One\Swoole\Event\WsEvent;
 use One\Swoole\Server;
 use One\Swoole\Session;
 
 class WsServer extends Server
 {
-    use WsEvent,TaskEvent;
+    use WsEvent;
 
     /**
      * @var Session[]

@@ -10,10 +10,9 @@ namespace One\Swoole\Server;
 
 
 use One\Swoole\Event\HttpEvent;
-use One\Swoole\Event\TaskEvent;
 use One\Swoole\Server;
 
 class HttpServer extends Server
 {
-    use HttpEvent,TaskEvent;
+    use HttpEvent;
 }
