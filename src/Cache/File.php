@@ -38,7 +38,7 @@ class File extends Cache
     }
 
 
-    public function get($key, \Closure $closure = null, $ttl = 0, $tags = [])
+    public function get($key, \Closure $closure = null, $ttl = 315360000, $tags = [])
     {
         $k = $this->getTagKey($key, $tags);
         $f = $this->getFileName($k);
