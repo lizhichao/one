@@ -31,7 +31,7 @@ class File extends Cache
                 }
                 $prev = md5($p . $prev);
             }
-            return static::$conf['prefix'] . $key .  '#tag_' . $prev;
+            return static::$conf['prefix'] . $key . '#tag_' . $prev;
         } else {
             return static::$conf['prefix'] . $key;
         }
@@ -76,6 +76,7 @@ class File extends Cache
 
     public function set($key, $val, $ttl = 0, $tags = [])
     {
+        $ttl  = $ttl === 0 ? 315360000 : $ttl;
         $key  = $this->getTagKey($key, $tags);
         $file = $this->getFileName($key);
         file_put_contents($file, (time() + $ttl) . serialize($val));
