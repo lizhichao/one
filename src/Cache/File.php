@@ -74,9 +74,8 @@ class File extends Cache
         return $id;
     }
 
-    public function set($key, $val, $ttl = 0, $tags = [])
+    public function set($key, $val, $ttl = 315360000, $tags = [])
     {
-        $ttl  = $ttl === 0 ? 315360000 : $ttl;
         $key  = $this->getTagKey($key, $tags);
         $file = $this->getFileName($key);
         file_put_contents($file, (time() + $ttl) . serialize($val));
