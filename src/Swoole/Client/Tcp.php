@@ -32,11 +32,17 @@ class Tcp
 
     public function __construct($key = 'default')
     {
-        $this->setConnection($key);
+        if ($key) {
+            $this->setConnection($key);
+        }
     }
 
     public function setConnection($key)
     {
+        if (!isset(self::$conf[$key])) {
+            echo "warn:client {$key} no find\n";
+            return $this;
+        }
         $this->key    = $key;
         $this->config = self::$conf[$key];
         if (isset($this->config['pack_protocol'])) {
