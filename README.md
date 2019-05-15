@@ -347,6 +347,10 @@ class ClientAbc extends RpcClientTcp {
 其中类 `RpcClientHttp`,`RpcClientTcp`在框架里。   
 你也可以复制到任何其他地方使用。
 
+
+* [分布式长连接（tcp）列子](https://github.com/lizhichao/one-app/tree/cloud_demo)
+* [Actor列子](https://github.com/lizhichao/one-app/tree/actor_demo)
+    
 ## 更多请看文档
 
 [详细文档地址](https://www.kancloud.cn/vic-one/php-one/826876)
