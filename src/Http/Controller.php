@@ -70,6 +70,7 @@ class Controller
      */
     protected function json($data)
     {
+        $this->response->header('Content-type', 'application/json');
         return format_json($data, 0, $this->request->id());
     }
 
