@@ -347,7 +347,7 @@ class ClientAbc extends RpcClientTcp {
 其中类 `RpcClientHttp`,`RpcClientTcp`在框架里。   
 你也可以复制到任何其他地方使用。
 
-
+* [rpc使用列子](https://github.com/lizhichao/one-app/tree/test_rpc)
 * [分布式长连接（tcp）列子](https://github.com/lizhichao/one-app/tree/cloud_demo)
 * [Actor列子](https://github.com/lizhichao/one-app/tree/actor_demo)
     
