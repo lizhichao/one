@@ -178,9 +178,9 @@ function set_arr_key($arr, $key, $unique = true)
 }
 
 /**
- * 创建协成id
+ * 创建协程id
  * @param $call
- * @return string 返回协成id
+ * @return string 返回协程id
  */
 function one_go($call)
 {

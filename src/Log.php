@@ -107,7 +107,7 @@ class Log
     }
 
     /**
-     * 在协成环境统一TraceId
+     * 在协程环境统一TraceId
      * @param $id
      * @return string
      */
@@ -152,7 +152,7 @@ class Log
             if (isset($this->_traceId[$cid])) {
                 $trace_id = $this->_traceId[$cid];
             } else if (_DEBUG_) {
-                //如果直接调用go创建协成这里获取不到id 所有创建协成请调用oneGo
+                //如果直接调用go创建协程这里获取不到id 所有创建协程请调用oneGo
                 echo 'warn get trace_id fail : ' . $cid . "\n";
             }
         }
