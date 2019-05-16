@@ -70,12 +70,16 @@ class Redis extends Cache
      */
     private function createRes()
     {
-        $r = new \Redis();
-        $r->connect($this->config['host'], $this->config['port'], 0);
-        if (!empty($this->config['auth'])) {
-            $r->auth($this->config['auth']);
+        if (isset($this->config['is_cluster']) && $this->config['is_cluster'] === true) {
+            return new \RedisCluster(...$this->config['args']);
+        } else {
+            $r = new \Redis();
+            $r->connect($this->config['host'], $this->config['port'], 0);
+            if (!empty($this->config['auth'])) {
+                $r->auth($this->config['auth']);
+            }
+            return $r;
         }
-        return $r;
     }
 
 
