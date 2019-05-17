@@ -71,7 +71,7 @@ class Log
     private function _log($mixed, $k = 0, $code = 3, $prefix = 'vic')
     {
         if (!is_dir(self::$conf['path'])) {
-            mkdir(self::$conf['path'], 0755, true);
+            mkdir(self::$conf['path'], 0644, true);
         }
         $path = self::$conf['path'] . '/' . $prefix . '-' . date('Y-m-d') . '.log';
         if (is_string($mixed)) {

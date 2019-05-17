@@ -16,7 +16,7 @@ class File extends Cache
     private function mkdir()
     {
         if (!is_dir(self::$conf['path'])) {
-            mkdir(self::$conf['path'], 0755, true);
+            mkdir(self::$conf['path'], 0644, true);
         }
     }
 
