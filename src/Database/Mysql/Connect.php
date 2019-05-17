@@ -66,7 +66,7 @@ class Connect
             throw $e;
         } catch (\Throwable $e) {
             self::$connect_count--;
-            throw new DbException(json_encode(['info' => $e->getMessage(), 'sql' => $sql]), 7);
+            throw new DbException(json_encode(['info' => $e->getMessage(), 'sql' => $sql]), $e->getCode());
         }
     }
 
@@ -237,7 +237,7 @@ class Connect
         try {
             return new \PDO($this->config['dns'], $this->config['username'], $this->config['password'], $this->config['ops']);
         } catch (\PDOException $e) {
-            throw new DbException('connection failed ' . $e->getMessage(), 0);
+            throw new DbException('connection failed ' . $e->getMessage(), $e->getCode());
         }
     }
 
