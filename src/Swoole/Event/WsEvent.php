@@ -77,7 +77,7 @@ trait WsEvent
         }
         $frame->data = $info['d'];
         $frame->uuid = uuid();
-        Log::setTraceId($frame->uuid);
+        $go_id = Log::setTraceId($frame->uuid);
         try {
             $router  = new Router();
             $server = $this instanceof Server ? $this : $this->server;
@@ -91,7 +91,7 @@ trait WsEvent
             $data = $e->getMessage();
             error_report($e);
         }
-
+        Log::flushTraceId($go_id);
         if ($data) {
             $server->push($frame->fd, $data);
         }

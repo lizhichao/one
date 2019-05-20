@@ -59,7 +59,7 @@ trait TcpEvent
     {
         $data->uuid = uuid();
         $data->fd = $fd;
-        Log::setTraceId($data->uuid);
+        $go_id = Log::setTraceId($data->uuid);
         try {
             $router = new Router();
             $server = $this instanceof Server ? $this : $this->server;
@@ -72,7 +72,7 @@ trait TcpEvent
             $res = $e->getMessage();
             error_report($e);
         }
-
+        Log::flushTraceId($go_id);
         if ($res) {
             $server->send($fd, $res);
         }

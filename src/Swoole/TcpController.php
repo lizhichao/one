@@ -43,7 +43,7 @@ class TcpController
 
     public function __destruct()
     {
-        Log::flushTraceId($this->go_id);
+
     }
 
 }

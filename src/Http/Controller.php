@@ -42,7 +42,7 @@ class Controller
 
     public function __destruct()
     {
-        Log::flushTraceId($this->go_id);
+        
     }
 
     /**

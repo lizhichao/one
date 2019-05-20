@@ -29,7 +29,7 @@ trait HttpEvent
     protected function httpRouter(\swoole_http_request $request, \swoole_http_response $response)
     {
         $req = new \One\Swoole\Request($request);
-        Log::setTraceId($req->id());
+        $go_id = Log::setTraceId($req->id());
         $res = new \One\Swoole\Response($req, $response);
         try {
             $router = new Router();
@@ -43,6 +43,7 @@ trait HttpEvent
             error_report($e);
             $data = Handler::render(new HttpException($res, $e->getMessage(), $e->getCode()));
         }
+        Log::flushTraceId($go_id);
         $response->exist = $this->server->exist($request->fd);
         if ($data && $response->exist) {
             $response->write($data);
