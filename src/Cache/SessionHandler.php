@@ -2,11 +2,12 @@
 
 namespace One\Cache;
 
-use One\Facades\Cache;
+use One\Facades\Redis;
 
-class SessionHandler implements \SessionHandlerInterface{
+class SessionHandler implements \SessionHandlerInterface
+{
 
-    private $prefix = 'vic_sn_' ;
+    private $prefix = 'vic_sn_';
 
     private $expire_time = 1200;
 
@@ -26,7 +27,7 @@ class SessionHandler implements \SessionHandlerInterface{
 
     public function destroy($session_id)
     {
-        return Cache::del($this->prefix .$session_id);
+        return Redis::del($this->prefix . $session_id) ? true : false;
     }
 
     public function gc($maxlifetime)
@@ -41,12 +42,12 @@ class SessionHandler implements \SessionHandlerInterface{
 
     public function read($session_id)
     {
-        return Cache::get($this->prefix.$session_id);
+        return (string)@Redis::get($this->prefix . $session_id);
     }
 
     public function write($session_id, $session_data)
     {
-        return Cache::setex($this->prefix.$session_id,$this->expire_time,$session_data);
+        return Redis::setex($this->prefix . $session_id, $this->expire_time, $session_data);
 
     }
 
