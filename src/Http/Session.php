@@ -24,7 +24,7 @@ class Session
         }
         session_start();
         setcookie(session_name(), session_id(), time() + $time, '/');
-        $this->data = $_SESSION;
+        $this->data = &$_SESSION;
     }
 
     public function getId()
