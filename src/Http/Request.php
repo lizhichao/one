@@ -164,8 +164,8 @@ class Request
             $keys = array_keys($fs);
             if (is_array($fs[$keys[0]])) {
                 foreach ($keys as $k => $v) {
-                    foreach ($fs[$v] as $name => $val) {
-                        $files[$name][$v] = $val;
+                    foreach ($fs[$v] as $i => $val) {
+                        $files[$name][$i][$v] = $val;
                     }
                 }
             } else {
