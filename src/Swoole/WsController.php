@@ -39,7 +39,7 @@ class WsController
 
     public function __destruct()
     {
-        Log::flushTraceId($this->go_id);
+//        Log::flushTraceId($this->go_id);
     }
 
 }
