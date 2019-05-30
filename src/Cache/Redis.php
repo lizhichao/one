@@ -21,6 +21,8 @@ class Redis extends Cache
 
     private $retry_count = 3;
 
+    public $keep_default = false;
+
     public function __construct($key = 'default')
     {
         $this->setConnection($key);
@@ -87,12 +89,12 @@ class Redis extends Cache
     {
         try {
             $rs  = $this->pop();
-            $val = $rs->get($this->getTagKey($key, $tags));
+            $val = $rs->get($this->keep_default === false ? $this->getTagKey($key, $tags) : $key);
             $this->push($rs);
             if ((!$val) && $closure) {
                 $val = $closure();
                 $this->set($key, $val, $ttl, $tags);
-            } else if ($val) {
+            } else if ($val && $this->keep_default === false) {
                 $val = unserialize($val);
             }
             $this->setRetryCount();
@@ -106,7 +108,7 @@ class Redis extends Cache
     {
 
         try {
-            if (is_string($key)) {
+            if (is_string($key) && $this->keep_default === false) {
                 $key = $this->getTagKey($key);
             }
             $rs  = $this->pop();
@@ -135,8 +137,12 @@ class Redis extends Cache
     public function set($key, $val, $ttl = null, $tags = [])
     {
         try {
-            $rs  = $this->pop();
-            $ret = $rs->set($this->getTagKey($key, $tags), serialize($val), $ttl);
+            $rs = $this->pop();
+            if ($this->keep_default === false) {
+                $ret = $rs->set($this->getTagKey($key, $tags), serialize($val), $ttl);
+            } else {
+                $ret = $rs->set($key, $val, $ttl);
+            }
             $this->push($rs);
             $this->setRetryCount();
             return $ret;

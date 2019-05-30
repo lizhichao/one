@@ -15,11 +15,16 @@ abstract class Facade
 
     public static function __callStatic($method, $parameters)
     {
+        return self::getObject()->$method(...$parameters);
+    }
+
+    public static function getObject()
+    {
         $cl = static::getFacadeAccessor();
         if (!isset(self::$accessor[$cl])) {
             self::$accessor[$cl] = new $cl(...static::initArgs());
         }
-        return self::$accessor[$cl]->$method(...$parameters);
+        return self::$accessor[$cl];
     }
 
     public static function clear($class)
