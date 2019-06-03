@@ -13,7 +13,7 @@ trait StructTrait
         $dns = $this->connect->getKey();
         if (!isset(self::$struct[$dns][$this->from])) {
             $key                             = md5(__FILE__ . $dns . $this->from);
-            $str                             = Cache::get($key, function () {
+            $str                             = unserialize(Cache::get($key, function () {
                 $pdo    = $this->getConnect();
                 $arr    = $pdo->query('desc ' . $this->from)->fetchAll(\PDO::FETCH_ASSOC);
                 $fields = [];
@@ -28,8 +28,8 @@ trait StructTrait
                     }
                 }
                 $this->push($pdo);
-                return ['field' => $fields, 'pri' => $pri];
-            }, 60 * 60 * 24);
+                return serialize(['field' => $fields, 'pri' => $pri]);
+            }, 60 * 60 * 24));
             self::$struct[$dns][$this->from] = $str;
         }
         return self::$struct[$dns][$this->from];

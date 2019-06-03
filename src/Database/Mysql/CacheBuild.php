@@ -25,9 +25,9 @@ class CacheBuild extends Build
         if ($this->cache_time == 0) {
             return parent::getData($all);
         }
-        return Cache::get($this->getCacheKey(), function () use ($all) {
-            return parent::getData($all);
-        }, $this->cache_time, $this->cache_tag);
+        return unserialize(Cache::get($this->getCacheKey(), function () use ($all) {
+            return serialize(parent::getData($all));
+        }, $this->cache_time, $this->cache_tag));
     }
 
     public function exec($sql, array $build = [], $is_insert = false)

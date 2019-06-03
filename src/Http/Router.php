@@ -25,10 +25,10 @@ class Router
         } else {
             $key = md5(__FILE__ . filemtime(self::$conf['path']));
 
-            $info          = Cache::get($key, function () {
+            $info          = unserialize(Cache::get($key, function () {
                 require self::$conf['path'];
-                return [self::$info, self::$as_info];
-            }, 60 * 60 * 24 * 30);
+                return serialize([self::$info, self::$as_info]);
+            }, 60 * 60 * 24 * 30));
             self::$info    = $info[0];
             self::$as_info = $info[1];
         }
