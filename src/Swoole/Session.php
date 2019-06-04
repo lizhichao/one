@@ -54,7 +54,7 @@ class Session
             $response->cookie($this->name, $this->session_id, time() + $this->time, '/');
         }
 
-        $this->data = $this->drive->get($this->prefix . $this->session_id);
+        $this->data = unserialize($this->drive->get($this->prefix . $this->session_id));
     }
 
     public function getId()
@@ -85,7 +85,7 @@ class Session
     public function __destruct()
     {
         if ($this->session_id) {
-            $this->drive->set($this->prefix . $this->session_id, $this->data, $this->time);
+            $this->drive->set($this->prefix . $this->session_id, serialize($this->data), $this->time);
         }
     }
 

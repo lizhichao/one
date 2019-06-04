@@ -48,7 +48,10 @@ class File extends Cache
                 $time = substr($str, 0, 10);
                 $str  = substr($str, 10);
                 if ($time > time()) {
-                    return unserialize($str);
+                    $this->gc();
+                    return $str;
+                } else {
+                    $this->del($key);
                 }
             }
         }
@@ -59,6 +62,24 @@ class File extends Cache
         } else {
             $this->del($key);
             return false;
+        }
+    }
+
+    private function gc()
+    {
+        $i = rand(1, 300);
+        if ($i !== 8) {
+            return true;
+        }
+        $fs = glob(self::$conf['path'] . '/*');
+        foreach ($fs as $f) {
+            $str = file_get_contents($f);
+            if ($str) {
+                $time = substr($str, 0, 10);
+                if ($time < time()) {
+                    @unlink($f);
+                }
+            }
         }
     }
 
@@ -78,7 +99,7 @@ class File extends Cache
     {
         $key  = $this->getTagKey($key, $tags);
         $file = $this->getFileName($key);
-        file_put_contents($file, (time() + $ttl) . serialize($val));
+        file_put_contents($file, (time() + $ttl) . $val);
     }
 
     public function del($key)
