@@ -94,7 +94,7 @@ class Connect
                     break;
                 }
             }
-            Log::debug(['sql' => $s, 'id' => $id, 'time' => $time, 'err' => $err], $k, 'sql');
+            Log::debug(['sql' => $s, 'id' => $id, 'key' => $this->key, 'time' => $time, 'err' => $err], $k, 'sql');
         }
     }
 
