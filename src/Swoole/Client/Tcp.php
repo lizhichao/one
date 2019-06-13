@@ -62,7 +62,7 @@ class Tcp
         if ($r) {
             return $client;
         } else {
-            throw new \Exception('连接失败 tcp://' . $this->config['ip'] . ':' . $this->config['port']);
+            throw new \Exception('连接失败 tcp://' . $this->config['ip'] . ':' . $this->config['port'], 650);
         }
     }
 

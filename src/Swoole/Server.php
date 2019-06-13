@@ -19,7 +19,7 @@ use Swoole\Process;
  */
 class Server
 {
-    
+
     protected $conf = [];
 
     /**
@@ -94,7 +94,7 @@ class Server
 
     public function onClose(\swoole_server $server, $fd, $reactor_id)
     {
-        
+
     }
 
     public function onPipeMessage(\swoole_server $server, $src_worker_id, $message)
@@ -117,7 +117,7 @@ class Server
         if (method_exists($this->server, $name)) {
             return $this->server->$name(...$arguments);
         } else {
-            throw new \Exception('方法不存在:' . $name);
+            throw new \Exception('方法不存在:' . $name, 10);
         }
 
     }

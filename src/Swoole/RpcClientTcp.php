@@ -74,7 +74,7 @@ namespace One\Swoole {
             $buffer = pack('N', 4 + strlen($buffer)) . $buffer;
             $len    = fwrite(self::$_connection, $buffer);
             if ($len !== strlen($buffer)) {
-                throw new \Exception('writeToRemote fail');
+                throw new \Exception('writeToRemote fail', 11);
             }
             $data = msgpack_unpack($this->read());
             if ($data === self::RPC_REMOTE_OBJ) {
@@ -95,7 +95,7 @@ namespace One\Swoole {
             while (1) {
                 $buffer = fread(self::$_connection, 8192);
                 if ($buffer === '' || $buffer === false) {
-                    throw new \Exception('read from remote fail');
+                    throw new \Exception('read from remote fail', 2);
                 }
                 $all_buffer .= $buffer;
                 $recv_len   = strlen($all_buffer);
@@ -118,7 +118,7 @@ namespace One\Swoole {
         {
             $connection = stream_socket_client($this->_rpc_server, $code, $msg, 3);
             if (!$connection) {
-                throw new \Exception($msg);
+                throw new \Exception($msg,3);
             }
             stream_set_timeout($connection, $this->_time_out);
             return $connection;

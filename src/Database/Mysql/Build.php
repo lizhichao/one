@@ -553,7 +553,7 @@ class Build
         } else if (method_exists($this->model, $name)) {
             return $this->model->$name(...$arguments);
         } else {
-            throw new DbException('Undefined method ' . $name);
+            throw new DbException('Undefined method ' . $name, 556);
         }
     }
 
