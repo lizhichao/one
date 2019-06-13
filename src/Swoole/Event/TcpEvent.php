@@ -8,6 +8,7 @@
 
 namespace One\Swoole\Event;
 
+use One\Database\Mysql\DbException;
 use One\Facades\Log;
 use One\Http\Router;
 use One\Http\RouterException;
@@ -30,7 +31,7 @@ trait TcpEvent
         $this->onReceive($server, $fd, $reactor_id, $data);
     }
 
-    
+
     public function onReceive(\swoole_server $server, $fd, $reactor_id, $data)
     {
 
@@ -58,18 +59,21 @@ trait TcpEvent
     protected function tcpRouter(\swoole_server $server, $fd, $reactor_id, $data)
     {
         $data->uuid = uuid();
-        $data->fd = $fd;
-        $go_id = Log::setTraceId($data->uuid);
+        $data->fd   = $fd;
+        $go_id      = Log::setTraceId($data->uuid);
         try {
             $router = new Router();
             $server = $this instanceof Server ? $this : $this->server;
             list($data->class, $data->method, $mids, $action, $data->args) = $router->explain('tcp', $data->url, $data, $server);
-            $f = $router->getExecAction($mids, $action, $data, $server);
+            $f   = $router->getExecAction($mids, $action, $data, $server);
             $res = $f();
         } catch (RouterException $e) {
             $res = $e->getMessage();
         } catch (\Throwable $e) {
             $res = $e->getMessage();
+            if ($e instanceof DbException) {
+                $res = 'db error!';
+            }
             error_report($e);
         }
         Log::flushTraceId($go_id);

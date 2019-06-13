@@ -8,6 +8,7 @@
 
 namespace One\Swoole\Event;
 
+use One\Database\Mysql\DbException;
 use One\Facades\Log;
 use One\Http\Router;
 use One\Http\RouterException;
@@ -77,10 +78,10 @@ trait WsEvent
         }
         $frame->data = $info['d'];
         $frame->uuid = uuid();
-        $go_id = Log::setTraceId($frame->uuid);
+        $go_id       = Log::setTraceId($frame->uuid);
         try {
             $router  = new Router();
-            $server = $this instanceof Server ? $this : $this->server;
+            $server  = $this instanceof Server ? $this : $this->server;
             $session = isset($this->session[$frame->fd]) ? $this->session[$frame->fd] : null;
             list($frame->class, $frame->method, $mids, $action, $frame->args) = $router->explain('ws', $info['u'], $frame, $server, $session);
             $f    = $router->getExecAction($mids, $action, $frame, $server, $session);
@@ -89,6 +90,9 @@ trait WsEvent
             $data = $e->getMessage();
         } catch (\Throwable $e) {
             $data = $e->getMessage();
+            if ($e instanceof DbException) {
+                $data = 'db error!';
+            }
             error_report($e);
         }
         Log::flushTraceId($go_id);
