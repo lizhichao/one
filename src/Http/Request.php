@@ -27,11 +27,11 @@ class Request
 
     public function __construct()
     {
-        $this->server = &$_SERVER;
-        $this->cookie = &$_COOKIE;
-        $this->get = &$_GET;
-        $this->post = &$_POST;
-        $this->files = &$_FILES;
+        $this->server  = &$_SERVER;
+        $this->cookie  = &$_COOKIE;
+        $this->get     = &$_GET;
+        $this->post    = &$_POST;
+        $this->files   = &$_FILES;
         $this->request = &$_REQUEST;
     }
 
@@ -66,7 +66,7 @@ class Request
      */
     public function uri()
     {
-        $path = urldecode(array_get_not_null($this->server, ['REQUEST_URI', 'argv.1']));
+        $path  = urldecode(array_get_not_null($this->server, ['REQUEST_URI', 'argv.1']));
         $paths = explode('?', $path);
         return '/' . trim($paths[0], '/');
     }
@@ -86,7 +86,7 @@ class Request
         if ($key === null) {
             return $arr;
         }
-        return array_get($arr, $key);
+        return array_get($arr, $key, $default);
     }
 
     /**
@@ -188,7 +188,7 @@ class Request
      */
     public function isJson()
     {
-        if ($this->server('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest' || strpos($this->server('HTTP_ACCEPT'),'/json') !== false) {
+        if ($this->server('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest' || strpos($this->server('HTTP_ACCEPT'), '/json') !== false) {
             return true;
         } else {
             return false;
