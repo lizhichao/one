@@ -351,11 +351,7 @@ class ClientAbc extends RpcClientTcp {
 * [分布式长连接（tcp）例子](https://github.com/lizhichao/one-app/tree/cloud_demo)
 * [Actor例子](https://github.com/lizhichao/one-app/tree/actor_demo)
     
-## 更多请看文档
-
-[详细文档地址](https://www.kancloud.cn/vic-one/php-one/826876)
-
-[使用列子-DEMO](https://github.com/lizhichao/one-demo)
+## 更多
 
 QQ交流群: 731475644
 
