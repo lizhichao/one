@@ -122,7 +122,7 @@ class Build
     }
 
     /**
-     * @return ListModel|false
+     * @return ListModel|Model[]
      */
     public function findAll()
     {

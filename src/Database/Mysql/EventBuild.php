@@ -21,6 +21,10 @@ class EventBuild extends CacheBuild
         }
     }
 
+    /**
+     * @param null $id
+     * @return null|Model
+     */
     public function find($id = null)
     {
         if ($this->callBefre(__FUNCTION__, $id) !== false) {
@@ -30,6 +34,9 @@ class EventBuild extends CacheBuild
         }
     }
 
+    /**
+     * @return ListModel|Model[]
+     */
     public function findAll()
     {
         if ($this->callBefre(__FUNCTION__) !== false) {
@@ -39,6 +46,10 @@ class EventBuild extends CacheBuild
         }
     }
 
+    /**
+     * @param $data
+     * @return int
+     */
     public function update($data)
     {
         if ($this->callBefre(__FUNCTION__, $data) !== false) {
@@ -48,6 +59,9 @@ class EventBuild extends CacheBuild
         }
     }
 
+    /**
+     * @return int
+     */
     public function delete()
     {
         if ($this->callBefre(__FUNCTION__) !== false) {
@@ -57,6 +71,11 @@ class EventBuild extends CacheBuild
         }
     }
 
+    /**
+     * @param $data
+     * @param bool $is_mulit
+     * @return string
+     */
     public function insert($data, $is_mulit = false)
     {
         if ($this->callBefre(__FUNCTION__, $data) !== false) {
