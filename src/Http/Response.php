@@ -14,6 +14,8 @@ class Response
 
     protected $_session = null;
 
+    public $_auto_to_json = true;
+
 
     public function __construct(Request $request)
     {
@@ -32,9 +34,9 @@ class Response
     public function session()
     {
         if (!$this->_session) {
-            if(_CLI_){
+            if (_CLI_) {
                 $this->_session = new \One\Swoole\Session($this);
-            }else{
+            } else {
                 $this->_session = new \One\Http\Session($this);
             }
         }
@@ -174,7 +176,7 @@ class Response
      */
     public function tpl($file, array $data = [])
     {
-        if ($this->getHttpRequest()->isJson()) {
+        if ($this->_auto_to_json && $this->getHttpRequest()->isJson()) {
             $this->header('Content-type', 'application/json');
             return format_json($data, 0, $this->getHttpRequest()->id());
         } else {
