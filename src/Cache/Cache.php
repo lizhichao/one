@@ -20,21 +20,5 @@ abstract class Cache
 
     abstract public function del($key);
 
-    protected function getTagKey($key, $tags = [])
-    {
-        if ($tags) {
-            $prev = '';
-            foreach ($tags as $tag) {
-                $p = $this->get($tag);
-                if (!$p) {
-                    $p = $this->flush($tag);
-                }
-                $prev = md5($p . $prev);
-            }
-            return static::$conf[$this->key]['prefix'] . $key .  '#tag_' . $prev;
-        } else {
-            return static::$conf[$this->key]['prefix'] . $key;
-        }
-    }
 
 }

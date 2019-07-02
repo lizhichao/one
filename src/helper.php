@@ -222,6 +222,7 @@ function redis_lock($tag)
     $time = time();
     $key  = 'linelock:' . $tag;
     while (!\One\Facades\Redis::setnx($key, $time + 3)) {
+        $time = time();
         if ($time > \One\Facades\Redis::get($key) && $time > \One\Facades\Redis::getSet($key, $time + 3)) {
             break;
         } else {

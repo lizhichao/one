@@ -78,9 +78,30 @@ class Redis extends Cache
             if (!empty($this->config['auth'])) {
                 $r->auth($this->config['auth']);
             }
+            if ($this->config['prefix'] !== '') {
+                $r->setOption(\Redis::OPT_PREFIX, $this->config['prefix']);
+            }
             return $r;
         }
     }
+
+    protected function getTagKey($key, $tags = [])
+    {
+        if ($tags) {
+            $prev = '';
+            foreach ($tags as $tag) {
+                $p = $this->get($tag);
+                if (!$p) {
+                    $p = $this->flush($tag);
+                }
+                $prev = md5($p . $prev);
+            }
+            return $key .  '#tag_' . $prev;
+        } else {
+            return $key;
+        }
+    }
+
 
 
     public function get($key, \Closure $closure = null, $ttl = null, $tags = [])
@@ -122,7 +143,9 @@ class Redis extends Cache
 
     public function delRegex($key)
     {
-        return $this->del($this->keys($key));
+        return $this->del(array_map(function($v){
+            return ltrim($v,$this->config['prefix']);
+        },$this->keys($key)));
     }
 
     public function flush($tag)
