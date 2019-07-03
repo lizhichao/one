@@ -8,9 +8,9 @@ namespace One\Database\Mysql;
  * @mixin CacheBuild
  * @method static transaction(\Closure $call)
  * @method int insert(array $data, $is_mulit = false) static
- * @method Model find($val) static
- * @method EventBuild where($key, $operator = null, $val = null, $link = ' and ') static
- * @method EventBuild whereIn($key, array $val) static
+ * @method $this find($val) static
+ * @method $this where($key, $operator = null, $val = null, $link = ' and ') static
+ * @method $this whereIn($key, array $val) static
  */
 class Model extends ArrayModel
 {
