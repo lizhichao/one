@@ -6,6 +6,7 @@ namespace One\Database\Mysql;
 /**
  * Class Model
  * @mixin CacheBuild
+ * @mixin Relation
  * @method static transaction(\Closure $call)
  * @method int insert(array $data, $is_mulit = false) static
  * @method $this find($val) static

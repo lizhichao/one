@@ -11,8 +11,6 @@ class Relation
     protected $model;
     protected $list_model = null;
 
-    private $is_set = false;
-
     public function __construct($self_column, $third_model, $third_column, $model)
     {
         $this->self_column  = $self_column;
@@ -42,10 +40,6 @@ class Relation
 
     public function __call($name, $arguments)
     {
-        if ($this->is_set === false) {
-            $this->setRelation();
-            $this->is_set = true;
-        }
         return $this->third_model->$name(...$arguments);
     }
 
