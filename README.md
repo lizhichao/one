@@ -361,3 +361,6 @@ class ClientAbc extends RpcClientTcp {
 * orm支持[postgresql](https://www.postgresql.org/)
 * orm支持[clickhouse](https://clickhouse.yandex/)
 
+## 我的其他开源项目
+[纯php的分词](https://github.com/lizhichao/VicWord)
+
