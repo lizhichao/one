@@ -46,9 +46,14 @@ class Session
         }
     }
 
-    public function del($key)
+    public function del($key = null)
     {
-        unset($this->data[$key]);
+        if ($key) {
+            unset($this->data[$key]);
+        } else {
+            $this->data = [];
+        }
+
     }
 
     public function __destruct()

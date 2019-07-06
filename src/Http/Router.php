@@ -159,8 +159,6 @@ class Router
             }
         }
 
-        $funcs = array_reverse($funcs);
-
         $action = function () use ($info, $class, $fun, $other_args) {
             $cache = 0;
             if (is_array($info[0]) && isset($info[0]['cache'])) {
