@@ -1,6 +1,6 @@
 # One - 一个极简高性能php框架，支持[swoole | php-fpm ]环境
 
-这不是一个东拼西凑的框架，每一个功能都经过反复思考、设计和实现。每一个功能都足够的简单、灵活、高效。 让你在fpm下也能在`1ms`内响应请求。不需要改一行代码就可以在`swoole`和`php-fpm`之间来回切换，甚至可以共存
+这不是一个**东拼西凑**的框架，每一个功能都经过反复思考、设计和实现。每一个功能都足够的简单、灵活、高效。 让你在fpm下也能在`1ms`内响应请求。不需要改一行代码就可以在`swoole`和`php-fpm`之间来回切换，甚至可以共存
 
 <a href="https://github.com/996icu/996.ICU/blob/master/LICENSE"><img src="https://camo.githubusercontent.com/41215df7ff78cefe41536bf897fe1c7e55b10bd2/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d416e74692532303939362d626c75652e737667" alt="LICENSE" data-canonical-src="https://img.shields.io/badge/license-Anti%20996-blue.svg" style="max-width:100%;"></a>
 
