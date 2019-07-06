@@ -23,7 +23,7 @@ class EventBuild extends CacheBuild
 
     /**
      * @param null $id
-     * @return null|Model
+     * @return null|Model|static
      */
     public function find($id = null)
     {
@@ -35,7 +35,7 @@ class EventBuild extends CacheBuild
     }
 
     /**
-     * @return ListModel|Model[]
+     * @return ListModel|Model[]|static[]
      */
     public function findAll()
     {
