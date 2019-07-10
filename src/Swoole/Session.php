@@ -51,7 +51,7 @@ class Session
         }
 
         if ($response) {
-            $response->cookie($this->name, $this->session_id, time() + $this->time, '/');
+            $response->cookie($this->name, $this->session_id, time() + $this->time, '/', config('session.domain'));
         }
 
         $this->data = unserialize($this->drive->get($this->prefix . $this->session_id));
