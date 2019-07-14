@@ -73,8 +73,7 @@ Router::group([
     ]
 ], function () {
     Router::get('/mix/ws', HttpController::class . '@ws');
-    Router::get('/mix/http', HttpController::class . '@http');
-    Router::post('/mix/http/loop', HttpController::class . '@httpLoop');
+    Router::get('/user/{id}', \App\Controllers\IndexController::class . '@user');
     Router::post('/mix/http/send', HttpController::class . '@httpSend');
 });
 
