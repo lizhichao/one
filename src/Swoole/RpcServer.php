@@ -158,10 +158,10 @@ class RpcServer
     {
         if (is_object($r) || is_resource($r)) {
             self::$ids[$id] = $r;
-            return msgpack_pack(self::RPC_REMOTE_OBJ);
+            return self::RPC_REMOTE_OBJ;
         } else {
             unset(self::$ids[$id]);
-            return msgpack_pack($r);
+            return $r;
         }
     }
 
