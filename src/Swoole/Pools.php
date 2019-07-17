@@ -29,6 +29,15 @@ trait Pools
     private static $last_use_time = 0;
 
 
+    private function getTsId()
+    {
+        if ($this->transaction_id) {
+            return $this->transaction_id;
+        } else {
+            return get_co_id();
+        }
+    }
+
     /**
      * push对象进入连接池
      * @param $obj
@@ -37,7 +46,7 @@ trait Pools
     public function push($obj, $s = false)
     {
         if (_CLI_) {
-            $id = $this->key . '_' . get_co_id();
+            $id = $this->key . '_' . $this->getTsId();
             if (isset(self::$sw[$id])) {
                 if ($s || $obj !== self::$sw[$id]) {
                     unset(self::$sw[$id]);
@@ -57,7 +66,7 @@ trait Pools
     {
         $key = $this->key;
         if (_CLI_) {
-            $co_id = $key . '_' . get_co_id();
+            $co_id = $key . '_' . $this->getTsId();
             if (isset(self::$sw[$co_id])) {
                 return self::$sw[$co_id];
             }

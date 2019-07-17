@@ -25,6 +25,8 @@ class Tcp
 
     private $max_retry_count = 1;
 
+    private $transaction_id = null;
+
     /**
      * @var ProtocolAbstract
      */

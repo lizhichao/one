@@ -21,6 +21,8 @@ class Redis extends Cache
 
     private $retry_count = 3;
 
+    private $transaction_id = null;
+
     public function __construct($key = 'default')
     {
         $this->setConnection($key);

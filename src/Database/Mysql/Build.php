@@ -204,19 +204,26 @@ class Build
 
     }
 
+    public function transactionId($id)
+    {
+        $this->connect->transactionId($id);
+        return $this;
+    }
+
+
     public function beginTransaction()
     {
-        $this->connect->beginTransaction();
+        return $this->connect->beginTransaction();
     }
 
     public function rollBack()
     {
-        $this->connect->rollBack();
+        return $this->connect->rollBack();
     }
 
     public function commit()
     {
-        $this->connect->commit();
+        return $this->connect->commit();
     }
 
     /**

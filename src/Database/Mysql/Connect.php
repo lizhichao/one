@@ -20,6 +20,8 @@ class Connect
 
     private $model;
 
+    private $transaction_id = null;
+
     /**
      * Connect constructor.
      * @param string $key
@@ -30,6 +32,11 @@ class Connect
         $this->key    = $key;
         $this->model  = $model;
         $this->config = self::$conf[$key];
+    }
+
+    public function transactionId($id)
+    {
+        $this->transaction_id = $id;
     }
 
     /**
