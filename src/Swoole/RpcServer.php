@@ -158,17 +158,16 @@ class RpcServer
     {
         if (is_object($r) || is_resource($r)) {
             self::$ids[$id] = $r;
-            return self::RPC_REMOTE_OBJ;
+            if ($r instanceof RpcData) {
+                self::$ids[$id] = $r->obj;
+                return $r->data;
+            } else {
+                return self::RPC_REMOTE_OBJ;
+            }
         } else {
             unset(self::$ids[$id]);
             return $r;
         }
-    }
-
-    public static function close($id)
-    {
-        unset(self::$ids[$id]);
-        return 1;
     }
 
 
