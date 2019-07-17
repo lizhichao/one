@@ -204,6 +204,21 @@ class Build
 
     }
 
+    public function beginTransaction()
+    {
+        $this->connect->beginTransaction();
+    }
+
+    public function rollBack()
+    {
+        $this->connect->rollBack();
+    }
+
+    public function commit()
+    {
+        $this->connect->commit();
+    }
+
     /**
      * @param \Closure $call
      */
