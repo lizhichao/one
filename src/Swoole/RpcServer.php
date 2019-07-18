@@ -94,7 +94,7 @@ class RpcServer
             } else {
                 if (isset($info['cache'])) {
                     $k   = self::getCacheKey($c, $f, $a, $t);
-                    $res = Cache::get($k);
+                    $res = unserialize(Cache::get($k));
                     if ($res !== false) {
                         return $res;
                     }
@@ -109,7 +109,7 @@ class RpcServer
                 $res = $obj->$f(...$a);
             }
             if (isset($info['cache'])) {
-                Cache::set($k, $res, $info['cache']);
+                Cache::set($k, serialize($res), $info['cache']);
             }
             return $res;
         };
