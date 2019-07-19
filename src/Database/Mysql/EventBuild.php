@@ -12,15 +12,15 @@ class EventBuild extends CacheBuild
         $this->events = $this->model->events();
     }
 
-    protected function get($sql, array $build = [], $all = false)
+    protected function get($sql = '', $build = [], $all = false)
     {
-        if ($this->callBefre(__FUNCTION__, $sql, $build) !== false) {
+        if ($this->callBefre(__FUNCTION__, $sql) !== false) {
             $ret = parent::get($sql, $build, $all);
-            $this->callAfter(__FUNCTION__, $ret, $sql, $build);
+            $this->callAfter(__FUNCTION__, $ret);
             return $ret;
         }
     }
-    
+
     /**
      * @param $data
      * @return int

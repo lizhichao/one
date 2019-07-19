@@ -82,8 +82,13 @@ class Build
         }
     }
 
-    protected function get($sql, $build = [], $all = false)
+    protected function get($sql = '', $build = [], $all = false)
     {
+        if ($sql === '') {
+            $sql   = $this->getSelectSql();
+            $build = $this->build;
+        }
+
         if ($all) {
             return $this->connect->findAll($sql, $build);
         } else {
@@ -98,7 +103,8 @@ class Build
      */
     public function query($sql, array $build = [])
     {
-        $ret  = new ListModel($this->get($sql, $build, true));
+        $info = $this->get($sql, $build, true);
+        $ret  = new ListModel($info);
         if ($info) {
             $ret = $this->fillSelectWith($ret, 'setRelationList');
         }
@@ -112,7 +118,7 @@ class Build
         if ($all === false) {
             $this->limit(1);
         }
-        $this->get($this->getSelectSql(), $this->build, $all);
+        return $this->get('', [], $all);
     }
 
     /**
