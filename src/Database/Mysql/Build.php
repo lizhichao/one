@@ -82,13 +82,15 @@ class Build
         }
     }
 
-    public function query($sql, array $build = [], $only_one = false)
+    public function query($sql, array $build = [])
     {
-        $info = $this->getData($sql, $build, $only_one);
-        if (!$info) {
-            return null;
+        $info = $this->connect->findAll($sql, $build);
+        $ret  = new ListModel($info);
+        if ($info) {
+            $ret = $this->fillSelectWith($ret, 'setRelationList');
         }
-        return $this->fillSelectWith($info, 'setRelationModel');
+        unset($this->model);
+        return $ret;
     }
 
 
