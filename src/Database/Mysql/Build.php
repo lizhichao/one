@@ -82,6 +82,11 @@ class Build
         }
     }
 
+    /**
+     * @param $sql
+     * @param array $build
+     * @return ListModel||Model[]
+     */
     public function query($sql, array $build = [])
     {
         $info = $this->connect->findAll($sql, $build);
