@@ -12,50 +12,15 @@ class EventBuild extends CacheBuild
         $this->events = $this->model->events();
     }
 
-    public function query($sql, array $build = [])
+    protected function get($sql, array $build = [], $all = false)
     {
         if ($this->callBefre(__FUNCTION__, $sql, $build) !== false) {
-            $ret = parent::query($sql, $build);
+            $ret = parent::get($sql, $build, $all);
             $this->callAfter(__FUNCTION__, $ret, $sql, $build);
             return $ret;
         }
     }
-
-
-    protected function getData($all = false)
-    {
-        if ($this->callBefre(__FUNCTION__) !== false) {
-            $ret = parent::getData($all);
-            $this->callAfter(__FUNCTION__, $ret);
-            return $ret;
-        }
-    }
-
-    /**
-     * @param null $id
-     * @return null|Model|static
-     */
-    public function find($id = null)
-    {
-        if ($this->callBefre(__FUNCTION__, $id) !== false) {
-            $ret = parent::find($id);
-            $this->callAfter(__FUNCTION__, $ret, $id);
-            return $ret;
-        }
-    }
-
-    /**
-     * @return ListModel|Model[]|static[]
-     */
-    public function findAll()
-    {
-        if ($this->callBefre(__FUNCTION__) !== false) {
-            $ret = parent::findAll();
-            $this->callAfter(__FUNCTION__, $ret);
-            return $ret;
-        }
-    }
-
+    
     /**
      * @param $data
      * @return int

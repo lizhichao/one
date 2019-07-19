@@ -20,27 +20,16 @@ class CacheBuild extends Build
 
     private $cache_tag = [];
 
-    public function query($sql, array $build = [])
+    protected function get($sql, array $build = [], $all = false)
     {
         if ($this->cache_time == 0) {
-            return parent::query($sql, $build);
+            return parent::get($sql, $build);
         }
-        return unserialize(Cache::get($this->getCacheKey(), function () use ($sql, $build) {
-            return serialize(parent::query($sql, $build));
+        return unserialize(Cache::get($this->getCacheKey(), function () use ($sql, $build, $all) {
+            return serialize(parent::get($sql, $build, $all));
         }, $this->cache_time, $this->cache_tag));
     }
-
-
-    protected function getData($all = false)
-    {
-        if ($this->cache_time == 0) {
-            return parent::getData($all);
-        }
-        return unserialize(Cache::get($this->getCacheKey(), function () use ($all) {
-            return serialize(parent::getData($all));
-        }, $this->cache_time, $this->cache_tag));
-    }
-
+    
     public function exec($sql, array $build = [], $is_insert = false)
     {
         $ret = parent::exec($sql, $build, $is_insert);
