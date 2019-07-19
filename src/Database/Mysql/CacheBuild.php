@@ -20,6 +20,17 @@ class CacheBuild extends Build
 
     private $cache_tag = [];
 
+    public function query($sql, array $build = [])
+    {
+        if ($this->cache_time == 0) {
+            return parent::query($sql, $build);
+        }
+        return unserialize(Cache::get($this->getCacheKey(), function () use ($sql, $build) {
+            return serialize(parent::query($sql, $build));
+        }, $this->cache_time, $this->cache_tag));
+    }
+
+
     protected function getData($all = false)
     {
         if ($this->cache_time == 0) {
@@ -110,7 +121,7 @@ class CacheBuild extends Build
     {
         $table = $this->from;
         $key   = $this->getCacheColumnValue();
-        $hash = sha1($this->getSelectSql() . json_encode($this->build));
+        $hash  = sha1($this->getSelectSql() . json_encode($this->build));
         return "DB#{$table}{$key}#{$hash}";
     }
 
