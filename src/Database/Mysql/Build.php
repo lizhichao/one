@@ -83,7 +83,7 @@ class Build
     }
 
     /**
-     * @param $sql
+     * @param string $sql
      * @param array $build
      * @return ListModel||Model[]
      */
