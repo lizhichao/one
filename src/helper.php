@@ -5,11 +5,11 @@
  * @param $path
  * @return mixed|null
  */
-function config($path)
+function config($path, $flush = false)
 {
     static $config = null;
     $res = array_get($config, $path);
-    if (!$res) {
+    if (!$res || $flush) {
         $p = strpos($path, '.');
         if ($p !== false) {
             $name          = substr($path, 0, $p);
