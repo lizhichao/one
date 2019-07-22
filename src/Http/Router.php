@@ -17,6 +17,11 @@ class Router
 
     private $args = [];
 
+    public static function clearCache()
+    {
+        self::$info = [];
+        self::$as_info = [];
+    }
 
     public static function loadRouter()
     {
