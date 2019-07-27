@@ -22,8 +22,8 @@ class Session
         if ($id) {
             session_id($id);
         }
+        session_set_cookie_params($time, '/', config('session.domain'));
         session_start();
-        setcookie(session_name(), session_id(), time() + $time, '/', config('session.domain'));
         $this->data = &$_SESSION;
     }
 
