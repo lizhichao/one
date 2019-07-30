@@ -42,7 +42,7 @@ class Controller
 
     public function __destruct()
     {
-        
+
     }
 
     /**
@@ -70,8 +70,7 @@ class Controller
      */
     protected function json($data)
     {
-        $this->response->header('Content-type', 'application/json');
-        return format_json($data, 0, $this->request->id());
+        return $this->response->json($data);
     }
 
     /**
@@ -81,7 +80,7 @@ class Controller
      */
     protected function jsonP($data, $callback = 'callback')
     {
-        return $callback . '(' . format_json($data, 0, $this->request->id()) . ')';
+        return $this->response->json($data, 0, $callback);
     }
 
     /**

@@ -153,6 +153,7 @@ if (function_exists('format_json') === false) {
         $arr = ['err' => $code, 'rid' => $id];
         if ($code) {
             $arr['msg'] = $data;
+            $arr['res'] = '';
         } else {
             $arr['msg'] = '';
             $arr['res'] = $data;

@@ -58,17 +58,18 @@ class Response
 
 
     /**
-     * @param string $data
+     * @param mixed $data
+     * @param int $code
      * @param null|string $callback
      * @return string
      */
-    public function json($data, $callback = null)
+    public function json($data, $code = 0, $callback = null)
     {
         $this->header('Content-type', 'application/json');
         if ($callback) {
-            return $callback . '(' . $data . ')';
+            return $callback . '(' . format_json($data, $code, $this->httpRequest->id()) . ')';
         } else {
-            return $data;
+            return format_json($data, $code, $this->httpRequest->id());
         }
     }
 
