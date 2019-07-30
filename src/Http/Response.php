@@ -66,10 +66,10 @@ class Response
     public function json($data, $code = 0, $callback = null)
     {
         $this->header('Content-type', 'application/json');
-        if ($callback) {
-            return $callback . '(' . format_json($data, $code, $this->httpRequest->id()) . ')';
-        } else {
+        if ($callback === null) {
             return format_json($data, $code, $this->httpRequest->id());
+        } else {
+            return $callback . '(' . format_json($data, $code, $this->httpRequest->id()) . ')';
         }
     }
 
