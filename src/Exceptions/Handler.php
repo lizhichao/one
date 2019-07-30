@@ -2,10 +2,18 @@
 
 namespace One\Exceptions;
 
+use One\ConfigTrait;
+
 class Handler
 {
+    use ConfigTrait;
+
     public static function render(HttpException $e)
     {
+        if (isset(self::$conf['render'])) {
+            return self::$conf['render']($e);
+        }
+
         $code = $e->getCode();
         if ($code === 0) {
             $code = 1;
