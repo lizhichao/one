@@ -1,25 +1,27 @@
 <?php
 
 
-/**
- * @param $path
- * @return mixed|null
- */
-function config($path, $flush = false)
-{
-    static $config = null;
-    $res = array_get($config, $path);
-    if (!$res || $flush) {
-        $p = strpos($path, '.');
-        if ($p !== false) {
-            $name          = substr($path, 0, $p);
-            $config[$name] = require(_APP_PATH_ . '/Config/' . $name . '.php');
-        } else {
-            $config[$path] = require(_APP_PATH_ . '/Config/' . $path . '.php');
-        }
+if (function_exists('config') === false) {
+    /**
+     * @param $path
+     * @return mixed|null
+     */
+    function config($path, $flush = false)
+    {
+        static $config = null;
         $res = array_get($config, $path);
+        if (!$res || $flush) {
+            $p = strpos($path, '.');
+            if ($p !== false) {
+                $name          = substr($path, 0, $p);
+                $config[$name] = require(_APP_PATH_ . '/Config/' . $name . '.php');
+            } else {
+                $config[$path] = require(_APP_PATH_ . '/Config/' . $path . '.php');
+            }
+            $res = array_get($config, $path);
+        }
+        return $res;
     }
-    return $res;
 }
 
 /**
@@ -78,26 +80,27 @@ function array_get_not_null($arr, $keys)
     return null;
 }
 
-/**
- * @param bool $base62
- * @return string
- */
-function uuid($base62 = true)
-{
-    $str = uniqid('', true);
-    $arr = explode('.', $str);
-    $str = $arr[0] . base_convert($arr[1], 10, 16);
-    $len = 32;
-    while (strlen($str) <= $len) {
-        $str .= bin2hex(random_bytes(4));
+if (function_exists('uuid') === false) {
+    /**
+     * @param bool $base62
+     * @return string
+     */
+    function uuid($base62 = true)
+    {
+        $str = uniqid('', true);
+        $arr = explode('.', $str);
+        $str = $arr[0] . base_convert($arr[1], 10, 16);
+        $len = 32;
+        while (strlen($str) <= $len) {
+            $str .= bin2hex(random_bytes(4));
+        }
+        $str = substr($str, 0, $len);
+        if ($base62) {
+            $str = str_replace(['+', '/', '='], '', base64_encode(hex2bin($str)));
+        }
+        return $str;
     }
-    $str = substr($str, 0, $len);
-    if ($base62) {
-        $str = str_replace(['+', '/', '='], '', base64_encode(hex2bin($str)));
-    }
-    return $str;
 }
-
 
 /**
  * @param $str
@@ -141,21 +144,22 @@ function router($str, $data = [])
     return $url;
 }
 
-/**
- * 统一格式json输出
- */
-function format_json($data, $code, $id)
-{
-    $arr = ['err' => $code, 'rid' => $id];
-    if ($code) {
-        $arr['msg'] = $data;
-    } else {
-        $arr['msg'] = '';
-        $arr['res'] = $data;
+if (function_exists('format_json') === false) {
+    /**
+     * 统一格式json输出
+     */
+    function format_json($data, $code, $id)
+    {
+        $arr = ['err' => $code, 'rid' => $id];
+        if ($code) {
+            $arr['msg'] = $data;
+        } else {
+            $arr['msg'] = '';
+            $arr['res'] = $data;
+        }
+        return json_encode($arr);
     }
-    return json_encode($arr);
 }
-
 
 /**
  * 设置数组的key
@@ -262,12 +266,16 @@ function one_get_object_vars($obj)
 }
 
 
-function error_report(\Throwable $e)
-{
-    \One\Facades\Log::error([
-        'file'  => $e->getFile() . ':' . $e->getLine(),
-        'msg'   => $e->getMessage(),
-        'code'  => $e->getCode(),
-        'trace' => $e->getTrace()
-    ]);
+if (function_exists('error_report') === false) {
+    function error_report(\Throwable $e)
+    {
+        \One\Facades\Log::error([
+            'file'  => $e->getFile() . ':' . $e->getLine(),
+            'msg'   => $e->getMessage(),
+            'code'  => $e->getCode(),
+            'trace' => $e->getTrace()
+        ]);
+    }
 }
+
+
