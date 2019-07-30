@@ -52,6 +52,9 @@ class Redis extends Cache
         self::$connect_count--;
         if ($this->retry_count > 0) {
             $this->retry_count--;
+            if (_CLI_ === false) {
+                unset(static::$pools[$this->key]);
+            }
             return $this->{$name}(...$arguments);
         } else {
             $this->setRetryCount();
