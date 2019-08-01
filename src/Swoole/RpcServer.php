@@ -75,7 +75,8 @@ class RpcServer
                 $obj = self::$ids[$id];
             }
             return self::ret(self::exec($c, $f, $a, $t, $info, $obj, $s, $o), $id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            error_report($e);
             return self::error($e->getCode(), $e->getMessage());
         }
     }
@@ -137,7 +138,7 @@ class RpcServer
                 };
             };
         }
-        return array_reverse($funcs);
+        return $funcs;
     }
 
     private static function getCacheKey($c, $f, $a, $t)
