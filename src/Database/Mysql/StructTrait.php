@@ -58,9 +58,15 @@ trait StructTrait
      * 过滤
      * @param $data
      */
-    public function filter($data)
+    public function filter($data, $include_pri = false)
     {
         $field = $this->getStruct()['field'];
+        if ($include_pri) {
+            $p = $this->getPriKey();
+            if ($p) {
+                $field[$p] = 1;
+            }
+        }
         foreach ($data as $k => $v) {
             if (!isset($field[$k])) {
                 unset($data[$k]);

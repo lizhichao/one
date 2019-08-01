@@ -532,13 +532,13 @@ class Build
             $sql    .= ' (' . implode(',', $keys) . ')';
             $values = [];
             foreach ($data as $v) {
-                $v        = $this->filter($v);
+                $v        = $this->filter($v, true);
                 $build    = array_merge($build, array_values($v));
                 $values[] = '(' . substr(str_repeat(',?', count($keys)), 1) . ')';
             }
             $sql .= ' values ' . implode(',', $values);
         } else {
-            $data  = $this->filter($data);
+            $data  = $this->filter($data, true);
             $keys  = array_keys($data);
             $sql   .= ' (' . implode(',', $keys) . ')';
             $build = array_values($data);
