@@ -81,11 +81,16 @@ class Connect
     {
         self::$connect_count--;
         $this->debugLog($sql, $time, $data, $err);
-        if ($this->isBreak($err) && $retry < $this->config['max_connect_count'] + 1) {
+        if ($this->isBreak($err) && $retry < ($this->config['max_connect_count'] + 1)) {
             if (_CLI_ === false) {
                 unset(static::$pools[$this->key]);
             }
-            return $this->execute($sql, $data, ++$retry, $return_pdo);
+            $co_id = $this->key . '_' . $this->getTsId();
+            if(isset(self::$sw[$co_id]) === false){
+                return $this->execute($sql, $data, ++$retry, $return_pdo);
+            }else{
+                unset(self::$sw[$co_id]);
+            }
         }
         throw new DbException(json_encode(['info' => $err, 'sql' => $sql]), 7);
     }
