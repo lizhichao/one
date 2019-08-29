@@ -9,7 +9,6 @@ namespace One\Database\Mysql;
  * @mixin Relation
  * @method static transaction(\Closure $call)
  * @method int insert(array $data, $is_mulit = false) static
- * @method $this find($val) static
  * @method $this where($key, $operator = null, $val = null, $link = ' and ') static
  * @method $this whereIn($key, array $val) static
  */

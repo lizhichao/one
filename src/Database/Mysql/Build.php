@@ -528,7 +528,7 @@ class Build
         $sql = 'insert into ' . $this->from;
         if ($is_mulit) {
             $build  = [];
-            $keys   = array_keys($data[0]);
+            $keys   = array_keys($this->filter($data[0], true));
             $sql    .= ' (' . implode(',', $keys) . ')';
             $values = [];
             foreach ($data as $v) {
