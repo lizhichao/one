@@ -49,10 +49,7 @@ trait HttpEvent
             $data = Handler::render(new HttpException($res, $msg, $e->getCode()));
         }
         Log::flushTraceId($go_id);
-        $response->exist = $this->server->exist($request->fd);
-        if ($data && $response->exist) {
-            $response->write($data);
-        }
+        $response->end($data);
 
     }
 }

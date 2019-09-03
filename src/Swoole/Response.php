@@ -57,12 +57,5 @@ class Response extends \One\Http\Response
             return $this->httpResponse->$name(...$arguments);
         }
     }
-
-    public function __destruct()
-    {
-        if ($this->httpResponse->exist) {
-            $this->httpResponse->end();
-        }
-    }
-
+    
 }
