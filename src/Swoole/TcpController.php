@@ -41,9 +41,5 @@ class TcpController
         }
     }
 
-    public function __destruct()
-    {
-
-    }
 
 }

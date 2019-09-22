@@ -37,9 +37,4 @@ class WsController
         $this->session = $session;
     }
 
-    public function __destruct()
-    {
-//        Log::flushTraceId($this->go_id);
-    }
-
 }

@@ -40,10 +40,6 @@ class Controller
         $this->server   = $server;
     }
 
-    public function __destruct()
-    {
-
-    }
 
     /**
      * @return Session
