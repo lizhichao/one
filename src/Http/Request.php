@@ -40,7 +40,7 @@ class Request
      */
     public function ip()
     {
-        return array_get_not_null($this->server, ['REMOTE_ADDR', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR']);
+        return array_get_not_null($this->server, ['remote_addr', 'x_real_ip', 'x_forwarded_for', 'REMOTE_ADDR', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR']);
     }
 
 
@@ -50,7 +50,21 @@ class Request
      */
     public function server($name = null, $default = null)
     {
-        return $this->getFromArr($this->server, $name, $default);
+        if ($name === null) {
+            return $this->server;
+        }
+        if (isset($this->server[$name])) {
+            return $this->server[$name];
+        }
+        $name = strtolower($name);
+        if (isset($this->server[$name])) {
+            return $this->server[$name];
+        }
+        $name = str_replace('_', '-', $name);
+        if (isset($this->server[$name])) {
+            return $this->server[$name];
+        }
+        return $default;
     }
 
     /**
@@ -66,7 +80,7 @@ class Request
      */
     public function uri()
     {
-        $path  = urldecode(array_get_not_null($this->server, ['REQUEST_URI', 'argv.1']));
+        $path  = urldecode(array_get_not_null($this->server, ['request_uri', 'REQUEST_URI', 'argv.1']));
         $paths = explode('?', $path);
         return '/' . trim($paths[0], '/');
     }
