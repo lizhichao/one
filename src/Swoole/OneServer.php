@@ -23,8 +23,8 @@ class OneServer
 {
     use ConfigTrait;
 
-    const SWOOLE_SERVER = 0;
-    const SWOOLE_HTTP_SERVER = 1;
+    const SWOOLE_SERVER           = 0;
+    const SWOOLE_HTTP_SERVER      = 1;
     const SWOOLE_WEBSOCKET_SERVER = 2;
 
     /**
@@ -60,39 +60,32 @@ class OneServer
         echo $str . "\n";
     }
 
-    private static function getPid($k)
-    {
-        $name = 'one_master_' . md5(serialize(self::$conf));
-        $str  = exec("ps -ef | grep {$name} | grep -v grep");
-        $arr  = explode(' ', $str);
-        $arr  = array_filter($arr, 'trim');
-        $arr  = array_values($arr);
-        if (empty($arr) && ($k === 'reload' || $k === 'stop')) {
-            exit("程序未运行\n");
-        }
-        return $arr[1];
-    }
-
-    private static function shell()
+    public static function parseArgv()
     {
         global $argv;
-        $k    = trim(end($argv));
-        $name = 'one_master_' . md5(serialize(self::$conf));
+        $k = trim(end($argv));
+        if ($k !== 'reload' && $k !== 'stop') {
+            return;
+        }
+        if (!isset(self::$conf['server']['set']['pid_file'])) {
+            exit("未配置 server.set.pid_file 路径！\n");
+        }
+        $file = self::$conf['server']['set']['pid_file'];
+        $id   = intval(trim(file_get_contents($file)));
+        if (!$id) {
+            exit("pid不正确\n");
+        }
         if ($k === 'reload') {
-            $id = self::getPid('reload');
             exec("kill -USR1 {$id}");
             exit("reload succ\n");
         } else if ($k === 'stop') {
-            $id = self::getPid('stop');
             exec("kill {$id}");
             exit("stop succ\n");
         }
-
     }
 
     public static function runAll()
     {
-        self::shell();
         if (self::$_server === null) {
             self::_check();
             list($swoole, $server) = self::startServer(self::$conf['server']);
