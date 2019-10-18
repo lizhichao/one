@@ -65,6 +65,15 @@ class OneServer
         global $argv;
         $k = trim(end($argv));
         if ($k !== 'reload' && $k !== 'stop') {
+            if (!isset(self::$conf['server']['set']['pid_file'])) {
+                return;
+            }
+            $dir = dirname(self::$conf['server']['set']['pid_file']);
+            if (!is_dir($dir)) {
+                if (!mkdir($dir)) {
+                    exit("创建文件夹: {$dir} 失败 ， 请检查权限 \n");
+                }
+            }
             return;
         }
         if (!isset(self::$conf['server']['set']['pid_file'])) {
