@@ -101,19 +101,19 @@ class Redis extends Cache
                 }
                 $prev = md5($p . $prev);
             }
-            return $key .  '#tag_' . $prev;
+            return $key . '#tag_' . $prev;
         } else {
             return $key;
         }
     }
 
 
-
     public function get($key, \Closure $closure = null, $ttl = null, $tags = [])
     {
         try {
+            $tk  = $this->getTagKey($key, $tags);
             $rs  = $this->pop();
-            $val = $rs->get($this->getTagKey($key, $tags));
+            $val = $rs->get($tk);
             $this->push($rs);
             if ((!$val) && $closure) {
                 $val = $closure();
@@ -148,9 +148,9 @@ class Redis extends Cache
 
     public function delRegex($key)
     {
-        return $this->del(array_map(function($v){
-            return ltrim($v,$this->config['prefix']);
-        },$this->keys($key)));
+        return $this->del(array_map(function ($v) {
+            return ltrim($v, $this->config['prefix']);
+        }, $this->keys($key)));
     }
 
     public function flush($tag)
@@ -163,8 +163,9 @@ class Redis extends Cache
     public function set($key, $val, $ttl = null, $tags = [])
     {
         try {
+            $tk  = $this->getTagKey($key, $tags);
             $rs  = $this->pop();
-            $ret = $rs->set($this->getTagKey($key, $tags), $val, $ttl);
+            $ret = $rs->set($tk, $val, $ttl);
             $this->push($rs);
             $this->setRetryCount();
             return $ret;
