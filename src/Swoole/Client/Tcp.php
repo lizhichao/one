@@ -62,8 +62,17 @@ class Tcp
         }
         $r = $client->connect($this->config['ip'], $this->config['port'], $this->config['time_out']);
         if ($r) {
+            if (isset($this->config['create_call'])) {
+                $this->config['create_call']->call($this, 1);
+            }
             return $client;
         } else {
+            if (isset($this->config['create_call'])) {
+                $is_retry = $this->config['create_call']->call($this, 0);
+                if($is_retry === true){
+                    return $this->createRes();
+                }
+            }
             throw new \Exception('连接失败 tcp://' . $this->config['ip'] . ':' . $this->config['port'], 650);
         }
     }
@@ -81,10 +90,12 @@ class Tcp
                 do {
                     $cli->close();
                     self::$connect_count--;
+                    if (isset($this->config['close_call'])) {
+                        $this->config['close_call']->call($this);
+                    }
                     $cli = $this->pop();
                     $r   = @$cli->send($data);
                     $retry++;
-                    echo "retry\n";
                 } while ($retry < $this->max_retry_count && $r === false);
             }
         }

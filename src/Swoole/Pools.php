@@ -91,11 +91,16 @@ trait Pools
         if ($sp->isEmpty()) {
             if (self::$connect_count < $this->config['max_connect_count']) {
                 self::$connect_count++;
-                $sp->push($this->createRes());
+                $rs = $this->createRes();
+                $rs->create_time = time();
+                $sp->push($rs);
             }
         } else if (self::$last_use_time > 0 && (self::$last_use_time + $this->free_time) < $time && $sp->length() > 1) {
             $sp->pop();
             self::$connect_count--;
+            if(isset($this->config['free_call'])){
+                $this->config['free_call']->call($this);
+            }
         }
         self::$last_use_time = $time;
         return $sp->pop();
