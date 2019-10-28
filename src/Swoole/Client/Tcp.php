@@ -69,7 +69,7 @@ class Tcp
         } else {
             if (isset($this->config['create_call'])) {
                 $is_retry = $this->config['create_call']->call($this, 0);
-                if($is_retry === true){
+                if ($is_retry === true) {
                     return $this->createRes();
                 }
             }
@@ -91,7 +91,7 @@ class Tcp
                     $cli->close();
                     self::$connect_count--;
                     if (isset($this->config['close_call'])) {
-                        $this->config['close_call']->call($this);
+                        $this->config['close_call']->call($this, $cli);
                     }
                     $cli = $this->pop();
                     $r   = @$cli->send($data);
