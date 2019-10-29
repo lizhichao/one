@@ -100,8 +100,15 @@ class Tcp
             }
         }
         $ret = $cli->recv($time_out);
-        if ($ret === '' && $retry === 0) {
-            goto retry;
+        if ($ret === '') {
+            if($retry < $this->max_retry_count){
+                goto retry;
+            }else{
+                if (isset($this->config['fail_call'])) {
+                    $this->config['fail_call']->call($this, $cli);
+                }
+                throw new \Exception('call fail',780);
+            }
         }
         if ($this->protocol !== null) {
             $ret = $this->protocol::decode($ret);
