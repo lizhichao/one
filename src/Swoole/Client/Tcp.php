@@ -77,6 +77,21 @@ class Tcp
         }
     }
 
+    private $sw_obj = null;
+
+    public function beginReuse()
+    {
+        $this->sw_obj = $this->pop(true);
+    }
+
+    public function endReuse()
+    {
+        if ($this->sw_obj !== null) {
+            $this->push($this->sw_obj, true);
+            $this->sw_obj = null;
+        }
+    }
+
     public function call($data, $time_out = 3.0)
     {
         $cli = $this->pop();
@@ -101,13 +116,13 @@ class Tcp
         }
         $ret = $cli->recv($time_out);
         if ($ret === '') {
-            if($retry < $this->max_retry_count){
+            if ($retry < $this->max_retry_count) {
                 goto retry;
-            }else{
+            } else {
                 if (isset($this->config['fail_call'])) {
                     $this->config['fail_call']->call($this, $cli);
                 }
-                throw new \Exception('call fail',780);
+                throw new \Exception('call fail', 780);
             }
         }
         if ($this->protocol !== null) {
