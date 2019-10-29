@@ -7,10 +7,6 @@ namespace One\Database\Mysql;
  * Class Model
  * @mixin CacheBuild
  * @mixin Relation
- * @method static transaction(\Closure $call)
- * @method int insert(array $data, $is_mulit = false) static
- * @method $this where($key, $operator = null, $val = null, $link = ' and ') static
- * @method $this whereIn($key, array $val) static
  */
 class Model extends ArrayModel
 {
