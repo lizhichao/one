@@ -50,10 +50,10 @@ trait Pools
             if (isset(self::$sw[$id])) {
                 if ($s || $obj !== self::$sw[$id]) {
                     unset(self::$sw[$id]);
-                    static::$pools[$this->key]->push($obj);
+                    self::$pools[$this->key]->push($obj);
                 }
             } else {
-                static::$pools[$this->key]->push($obj);
+                self::$pools[$this->key]->push($obj);
             }
         }
     }
@@ -83,10 +83,10 @@ trait Pools
     private function getCliRes($key)
     {
         $time = time();
-        if (!isset(static::$pools[$key])) {
-            static::$pools[$key] = new Channel($this->config['max_connect_count']);
+        if (!isset(self::$pools[$key])) {
+            self::$pools[$key] = new Channel($this->config['max_connect_count']);
         }
-        $sp = static::$pools[$key];
+        $sp = self::$pools[$key];
 
         if ($sp->isEmpty()) {
             if (self::$connect_count < $this->config['max_connect_count']) {
@@ -109,10 +109,10 @@ trait Pools
 
     private function getFpmRes($key)
     {
-        if (!isset(static::$pools[$key])) {
-            static::$pools[$key] = $this->createRes();
+        if (!isset(self::$pools[$key])) {
+            self::$pools[$key] = $this->createRes();
         }
-        return static::$pools[$key];
+        return self::$pools[$key];
     }
 
 }
