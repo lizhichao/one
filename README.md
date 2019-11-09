@@ -32,6 +32,15 @@ php App/swoole.php
 curl http://127.0.0.1:8081/
 ```
 
+## 性能
+
+自己测试吧。可能不是性能最好的php框架，但是没有发现比one性能更好的php框架。
+
+**参考：**
+
+* [hello wrold性能测试](https://github.com/the-benchmarker/web-frameworks)
+
+
 ## 主要功能
 
 - RESTful路由
@@ -355,7 +364,6 @@ class ClientAbc extends RpcClientTcp {
 * [rpc使用例子](https://github.com/lizhichao/one-app/tree/test_rpc)
 * [分布式长连接（tcp）例子](https://github.com/lizhichao/one-app/tree/cloud_demo)
 * [Actor例子](https://github.com/lizhichao/one-app/tree/actor_demo)
-* [性能测试](https://github.com/the-benchmarker/web-frameworks)
 
 ## 文档
 
