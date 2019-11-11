@@ -25,12 +25,12 @@ class Response extends \One\Http\Response
     public function __construct(Request $request, \swoole_http_response $response)
     {
         $this->httpResponse = $response;
-        $this->httpRequest = $request;
+        $this->httpRequest  = $request;
     }
 
-    public function header($key, $val, $replace = true, $code = null)
+    public function header($key, $val, $replace = false, $code = null)
     {
-        $this->httpResponse->header($key, $val);
+        $this->httpResponse->header($key, $val, $replace);
         if ($code) {
             $this->code($code);
         }
@@ -57,5 +57,5 @@ class Response extends \One\Http\Response
             return $this->httpResponse->$name(...$arguments);
         }
     }
-    
+
 }
