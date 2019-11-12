@@ -500,7 +500,7 @@ class Build
         } else {
             $column = implode(',', $this->defaultColumn());
         }
-        $sql .= ' ' . $column . ' from ' . $this->from;
+        $sql .= ' ' . $column . ' from `' . $this->from . '`';
         foreach ($this->joins as $v) {
             $sql .= ' ' . $v;
         }
@@ -525,7 +525,7 @@ class Build
 
     private function getInsertSql($data, $is_mulit = false)
     {
-        $sql = 'insert into ' . $this->from;
+        $sql = 'insert into `' . $this->from . '`';
         if ($is_mulit) {
             $build  = [];
             $keys   = array_keys($this->filter($data[0], true));
@@ -550,7 +550,7 @@ class Build
 
     private function getUpdateSql($data)
     {
-        $sql   = 'update ' . $this->from . ' set ';
+        $sql   = 'update `' . $this->from . '` set ';
         $build = [];
         $data  = $this->filter($data);
         foreach ($data as $k => $v) {
@@ -570,7 +570,7 @@ class Build
 
     private function getDeleteSql()
     {
-        $sql = 'delete from ' . $this->from;
+        $sql = 'delete from `' . $this->from . '`';
         $this->setPriWhere();
         $sql .= $this->getWhere();
         return $sql;

@@ -15,7 +15,7 @@ trait StructTrait
             $key                             = md5(__FILE__ . $dns . $this->from);
             $str                             = unserialize(Cache::get($key, function () {
                 $pdo    = $this->getConnect();
-                $arr    = $pdo->query('desc ' . $this->from)->fetchAll(\PDO::FETCH_ASSOC);
+                $arr    = $pdo->query('desc `' . $this->from . '`')->fetchAll(\PDO::FETCH_ASSOC);
                 $fields = [];
                 $pri    = '';
                 foreach ($arr as $v) {
