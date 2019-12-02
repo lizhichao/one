@@ -155,11 +155,11 @@ class Build
     }
 
     /**
-     * @return array
+     * @return PageInfo
      */
     public function findAllPageInfo()
     {
-        $page = [];
+        $page = new PageInfo();
         $info = $this->getData(true);
         $ret  = new ListModel($info);
         if ($info) {
@@ -168,9 +168,9 @@ class Build
         $this->is_count = 1;
         $res            = $this->getData();
         $this->is_count = 0;
-        $page['total']  = $res->row_count;
+        $page->total  = $res->row_count;
         unset($this->model);
-        $page['list'] = $ret;
+        $page->list = $ret;
         return $page;
     }
 
