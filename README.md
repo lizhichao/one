@@ -34,11 +34,11 @@ curl http://127.0.0.1:8081/
 
 ## 性能
 
-自己测试吧。可能不是性能最好的php框架，但是没有发现比one性能更好的php框架。
+自己测试
 
 **参考：**
 
-* [hello wrold性能测试](https://github.com/the-benchmarker/web-frameworks)
+* [性能测试](https://github.com/the-benchmarker/web-frameworks)
 
 
 ## 主要功能
