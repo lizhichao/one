@@ -154,6 +154,26 @@ class Build
         return $ret;
     }
 
+    /**
+     * @return array
+     */
+    public function findAllPageInfo()
+    {
+        $page = [];
+        $info = $this->getData(true);
+        $ret  = new ListModel($info);
+        if ($info) {
+            $ret = $this->fillSelectWith($ret, 'setRelationList');
+        }
+        $this->is_count = 1;
+        $res            = $this->getData();
+        $this->is_count = 0;
+        $page['total']  = $res->row_count;
+        unset($this->model);
+        $page['list'] = $ret;
+        return $page;
+    }
+
     protected $is_count = 0;
 
     /**
