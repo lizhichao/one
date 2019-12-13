@@ -155,6 +155,20 @@ class Build
     }
 
     /**
+     * @param null $id
+     * @return array
+     */
+    public function findToArray($id = null)
+    {
+        $res = $this->find($id);
+        if($res === null){
+            return [];
+        }else{
+            return $res->toArray();
+        }
+    }
+
+    /**
      * @return PageInfo
      */
     public function findAllPageInfo()
@@ -168,7 +182,7 @@ class Build
         $this->is_count = 1;
         $res            = $this->getData();
         $this->is_count = 0;
-        $page->total  = $res->row_count;
+        $page->total    = $res->row_count;
         unset($this->model);
         $page->list = $ret;
         return $page;
