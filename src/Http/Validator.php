@@ -150,7 +150,7 @@ class Validator
                 }
             ],
             'int'      => [
-                'msg' => ':attribute必须是数字',
+                'msg' => ':attribute必须是整数',
                 'fn'  => function ($value) {
                     return filter_var($value, FILTER_VALIDATE_INT) !== false;
                 }
