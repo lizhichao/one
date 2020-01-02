@@ -149,6 +149,12 @@ class Validator
                     return is_numeric($value);
                 }
             ],
+            'int'      => [
+                'msg' => ':attribute必须是数字',
+                'fn'  => function ($value) {
+                    return filter_var($value, FILTER_VALIDATE_INT) !== false;
+                }
+            ],
             'min'          => [
                 'msg' => ':attribute不能小于:arg1',
                 'fn'  => function ($value, $arg1) {
@@ -173,10 +179,11 @@ class Validator
                     return strlen($value) <= $arg1;
                 }
             ],
-            'unsigned_int' => [
+            'uint' => [
                 'msg' => ':attribute必须为大于0的正整数',
                 'fn'  => function ($value) {
-                    return is_numeric($value) && strpos("{$value}", '.') === false && floatval($value) > 0.1;
+                    $v = filter_var($value, FILTER_VALIDATE_INT);
+                    return $v && $v > 0;
                 }
             ],
             'email'        => [
@@ -189,18 +196,6 @@ class Validator
                 'msg' => ':attribute格式不正确',
                 'fn'  => function ($value) {
                     return filter_var($value, FILTER_VALIDATE_IP) !== false;
-                }
-            ],
-            'ip4'          => [
-                'msg' => ':attribute格式不正确',
-                'fn'  => function ($value) {
-                    return filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false;
-                }
-            ],
-            'ip6'          => [
-                'msg' => ':attribute格式不正确',
-                'fn'  => function ($value) {
-                    return filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false;
                 }
             ]
         ];
