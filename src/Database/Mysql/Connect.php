@@ -86,9 +86,9 @@ class Connect
                 unset(static::$pools[$this->key]);
             }
             $co_id = $this->key . '_' . $this->getTsId();
-            if(isset(self::$sw[$co_id]) === false){
+            if (isset(self::$sw[$co_id]) === false) {
                 return $this->execute($sql, $data, ++$retry, $return_pdo);
-            }else{
+            } else {
                 unset(self::$sw[$co_id]);
             }
         }
@@ -99,7 +99,9 @@ class Connect
     {
         if (self::$conf['debug_log']) {
             $time  = $time ? (microtime(true) - $time) * 1000 : $time;
-            $s     = vsprintf(str_replace('?', "'%s'", $sql), $build);
+            $sql1  = str_replace('%', "```", $sql);
+            $s     = vsprintf(str_replace('?', "'%s'", $sql1), $build);
+            $s     = str_replace('```', "%", $s);
             $id    = md5(str_replace('()', '', str_replace(['?', ','], '', $sql)));
             $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 13);
             $k     = 1;
