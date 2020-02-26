@@ -34,8 +34,6 @@ curl http://127.0.0.1:8081/
 
 ## 性能
 
-自己测试
-
 **参考：**
 
 * [性能测试](https://github.com/the-benchmarker/web-frameworks)
