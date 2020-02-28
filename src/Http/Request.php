@@ -23,7 +23,9 @@ class Request
 
     public $class = '';
 
-    public $method = '';
+    public $func = '';
+    
+    public $as_name = '';
 
     public function __construct()
     {

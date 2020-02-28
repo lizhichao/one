@@ -148,7 +148,8 @@ class Router
     public function explain($method, $uri, ...$other_args)
     {
         $info = $this->getAction($method, $uri);
-
+        $as_name = isset($info[0]['as']) ? $info[0]['as'] : '';
+        
         $str = is_array($info[0]) ? $info[0]['use'] : $info[0];
         list($class, $fun) = explode('@', $str);
 
@@ -186,7 +187,7 @@ class Router
             return $res;
         };
 
-        return [$class, $fun, $funcs, $action, $this->args];
+        return [$class, $fun, $funcs, $action, $this->args, $as_name];
 
     }
 

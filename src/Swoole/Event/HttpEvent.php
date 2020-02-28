@@ -35,7 +35,7 @@ trait HttpEvent
         try {
             $router = new Router();
             $server = $this instanceof Server ? $this : $this->server;
-            list($req->class, $req->method, $mids, $action, $req->args) = $router->explain($req->method(), $req->uri(), $req, $res, $server);
+            list($req->class, $req->func, $mids, $action, $req->args, $req->as_name) = $router->explain($req->method(), $req->uri(), $req, $res, $server);
             $f    = $router->getExecAction($mids, $action, $res, $server);
             $data = $f();
         } catch (\One\Exceptions\HttpException $e) {
