@@ -83,7 +83,7 @@ trait WsEvent
             $router  = new Router();
             $server  = $this instanceof Server ? $this : $this->server;
             $session = isset($this->session[$frame->fd]) ? $this->session[$frame->fd] : null;
-            list($frame->class, $frame->method, $mids, $action, $frame->args) = $router->explain('ws', $info['u'], $frame, $server, $session);
+            list($frame->class, $frame->func, $mids, $action, $frame->args, $frame->as_name) = $router->explain('ws', $info['u'], $frame, $server, $session);
             $f    = $router->getExecAction($mids, $action, $frame, $server, $session);
             $data = $f();
         } catch (RouterException $e) {
