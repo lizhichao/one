@@ -2,6 +2,8 @@
 
 namespace One\Database\Mysql;
 
+use SebastianBergmann\CodeCoverage\Report\PHP;
+
 class Build
 {
     use WhereTrait;
@@ -161,11 +163,44 @@ class Build
     public function findToArray($id = null)
     {
         $res = $this->find($id);
-        if($res === null){
+        if ($res === null) {
             return [];
-        }else{
+        } else {
             return $res->toArray();
         }
+    }
+
+    /**
+     * 迭代所有数据
+     * @param int $count 每次从数据库读取的数量
+     * @param string $column 排序字段
+     * @param string $order 排序方式
+     * @return \Generator|Model[]
+     */
+    public function chunk($count = 100)
+    {
+        $val    = null;
+        $arr    = isset($this->order_by[0]) ? explode(' ', $this->order_by[0]) : [$this->getPriKey()];
+        $arr[1] = isset($arr[1]) ? strtolower(trim($arr[1])) : 'asc';
+        $op     = $arr[1] === 'asc' ? '>' : '<';
+        $this->limit($count)->orderBy($arr[0] . ' ' . $arr[1]);
+        $where = $this->where;
+        $model = $this->model;
+        do {
+            $this->where = $where;
+            $this->model = $model;
+            if ($val) {
+                $this->where($arr[0], $op, $val);
+            }
+            $i   = 0;
+            $ret = $this->findAll();
+            foreach ($ret as $v) {
+                $val = $v[$arr[0]];
+                $i++;
+                yield $v;
+            }
+        } while ($i === $count);
+        unset($this->model);
     }
 
     /**
