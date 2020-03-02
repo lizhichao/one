@@ -173,8 +173,6 @@ class Build
     /**
      * 迭代所有数据
      * @param int $count 每次从数据库读取的数量
-     * @param string $column 排序字段
-     * @param string $order 排序方式
      * @return \Generator|Model[]
      */
     public function chunk($count = 100)
