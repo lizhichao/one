@@ -47,10 +47,17 @@ class Validator
         return $this;
     }
 
+    private $_rule_keys = [
+        'stop' => 1
+    ];
+
     private function runRule($value, $rules, $name)
     {
         $arr = explode('|', $rules);
         foreach ($arr as $val) {
+            if (isset($this->_rule_keys[$val])) {
+                continue;
+            }
             $ar = explode(':', $val);
             if (count($ar) > 1) {
                 $args = explode(',', $ar[1]);
@@ -67,10 +74,14 @@ class Validator
                 $msg = str_replace(':arg' . ($i + 1), $g, $msg);
             }
             array_unshift($args, $value);
+            if (!isset(self::$rules[$ar[0]])) {
+                throw new \Exception('未定义的验证规则:' . $ar[0], 5001);
+            }
             if ($this->checkOne(self::$rules[$ar[0]]['fn'], $args, $msg) === false) {
-                break;
+                return false;
             }
         }
+        return true;
     }
 
     /**
@@ -84,11 +95,14 @@ class Validator
         $this->msgs = $msgs + $this->msgs;
         foreach ($rules as $k => $r) {
             if (isset($arr[$k])) {
-                $this->runRule($arr[$k], $r, isset($this->alias[$k]) ? $this->alias[$k] : $k);
+                $ret = $this->runRule($arr[$k], $r, isset($this->alias[$k]) ? $this->alias[$k] : $k);
             } else if (strpos($r, 'required') === false) {
-
+                $ret = true;
             } else {
-                $this->runRule(null, $r, isset($this->alias[$k]) ? $this->alias[$k] : $k);
+                $ret = $this->runRule(null, $r, isset($this->alias[$k]) ? $this->alias[$k] : $k);
+            }
+            if ($ret === false && strpos($r, 'stop') !== false) {
+                break;
             }
         }
         return $this;
@@ -133,7 +147,7 @@ class Validator
     private function setDefaultRules()
     {
         self::$rules = [
-            'required'     => [
+            'required' => [
                 'msg' => ':attribute不能为空',
                 'fn'  => function ($value) {
                     if ($value === '' || $value === null) {
@@ -143,7 +157,7 @@ class Validator
                     }
                 }
             ],
-            'numeric'      => [
+            'numeric'  => [
                 'msg' => ':attribute必须是数字',
                 'fn'  => function ($value) {
                     return is_numeric($value);
@@ -155,44 +169,44 @@ class Validator
                     return filter_var($value, FILTER_VALIDATE_INT) !== false;
                 }
             ],
-            'min'          => [
+            'min'      => [
                 'msg' => ':attribute不能小于:arg1',
                 'fn'  => function ($value, $arg1) {
                     return $value >= $arg1;
                 }
             ],
-            'max'          => [
+            'max'      => [
                 'msg' => ':attribute不能大于:arg1',
                 'fn'  => function ($value, $arg1) {
                     return $value <= $arg1;
                 }
             ],
-            'min_len'      => [
+            'min_len'  => [
                 'msg' => ':attribute不能短于:arg1',
                 'fn'  => function ($value, $arg1) {
                     return strlen($value) >= $arg1;
                 }
             ],
-            'max_len'      => [
+            'max_len'  => [
                 'msg' => ':attribute不能长于:arg1',
                 'fn'  => function ($value, $arg1) {
                     return strlen($value) <= $arg1;
                 }
             ],
-            'uint' => [
+            'uint'     => [
                 'msg' => ':attribute必须为大于0的正整数',
                 'fn'  => function ($value) {
                     $v = filter_var($value, FILTER_VALIDATE_INT);
                     return $v && $v > 0;
                 }
             ],
-            'email'        => [
+            'email'    => [
                 'msg' => ':attribute格式不正确',
                 'fn'  => function ($value) {
                     return filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
                 }
             ],
-            'ip'           => [
+            'ip'       => [
                 'msg' => ':attribute格式不正确',
                 'fn'  => function ($value) {
                     return filter_var($value, FILTER_VALIDATE_IP) !== false;
