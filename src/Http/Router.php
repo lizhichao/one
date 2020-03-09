@@ -165,26 +165,12 @@ class Router
             }
         }
 
-        $action = function () use ($info, $class, $fun, $other_args) {
-            $cache = 0;
-            if (is_array($info[0]) && isset($info[0]['cache'])) {
-                $cache = $info[0]['cache'];
-                $key   = md5($class . '@' . $fun . ':' . implode(',', $this->args));
-                $res   = Cache::get($key);
-                if ($res) {
-                    return $res;
-                }
-            }
-
+        $action = function () use ($class, $fun, $other_args) {
             $obj = new $class(...$other_args);
             if (!method_exists($obj, $fun)) {
                 throw new RouterException('method not exists', 404);
             }
-            $res = $obj->$fun(...$this->args);
-            if ($cache) {
-                Cache::set($key, $res, $cache);
-            }
-            return $res;
+            return $obj->$fun(...$this->args);
         };
 
         return [$class, $fun, $funcs, $action, $this->args, $as_name];
