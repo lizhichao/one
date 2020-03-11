@@ -14,6 +14,9 @@ class Session
      */
     public function __construct($response = null, $id = null)
     {
+        if(config('session.fn_sid')){
+            $id = config('session.fn_sid')($response);
+        }
         session_name(config('session.name'));
         $time = intval(ini_get('session.gc_maxlifetime'));
         if (config('session.drive') == 'redis') {

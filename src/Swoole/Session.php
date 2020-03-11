@@ -27,6 +27,10 @@ class Session
      */
     public function __construct($response = null, $id = null)
     {
+        if(config('session.fn_sid')){
+            $id = config('session.fn_sid')($response);
+        }
+
         $this->name = config('session.name');
 
         if ($id) {

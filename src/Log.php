@@ -92,8 +92,8 @@ class Log
 
         $trace_id = $this->getTraceId();
 
-        if (isset(self::$conf['save_drive'])) {
-            self::$conf['save_drive']($code, $trace_id, $name, $line, $data);
+        if (isset(self::$conf['fn_save'])) {
+            self::$conf['fn_save']($code, $trace_id, $name, $line, $data);
         } else {
             $str = $code . '|' . date('Y-m-d H:i:s') . '|' . $trace_id . '|' . $name . ':' . $line . '|' . $data . "\n";
             error_log($str, 3, $path);
