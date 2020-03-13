@@ -16,7 +16,7 @@ class Handler
 
         $code = $e->getCode();
         if ($code === 0) {
-            $code = 1;
+            $code = 500;
         }
         $e->response->code($code);
 
