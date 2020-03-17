@@ -89,7 +89,7 @@ class Controller
     {
         foreach ($fields as $v) {
             $val = array_get($data, $v);
-            if ($val === null || $val == '') {
+            if ($val === null || $val === '') {
                 $this->error("{$v}不能为空");
             }
         }
