@@ -143,11 +143,16 @@ class Response
         511 => 'Network Authentication Required',                             // RFC6585
     );
 
+    /**
+     * @param $code
+     * @return $this
+     */
     public function code($code)
     {
         if (isset($this->status_texts[$code])) {
             header('HTTP/1.1 ' . $code . ' ' . $this->status_texts[$code]);
         }
+        return $this;
     }
 
 

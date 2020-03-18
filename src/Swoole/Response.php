@@ -36,9 +36,14 @@ class Response extends \One\Http\Response
         }
     }
 
+    /**
+     * @param $code
+     * @return $this|\One\Http\Response
+     */
     public function code($code)
     {
         $this->httpResponse->status($code);
+        return $this;
     }
 
     public function cookie(...$args)
