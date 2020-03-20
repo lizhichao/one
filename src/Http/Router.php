@@ -28,7 +28,7 @@ class Router
         if (_CLI_) {
             require self::$conf['path'];
         } else {
-            $key = md5(__FILE__ . filemtime(self::$conf['path']));
+            $key = md5(__FILE__ . _APP_PATH_ . filemtime(self::$conf['path']));
 
             $info          = unserialize(Cache::get($key, function () {
                 require self::$conf['path'];
