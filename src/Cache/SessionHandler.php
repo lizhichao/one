@@ -7,7 +7,7 @@ use One\Facades\Redis as FacadesRedis;
 class SessionHandler implements \SessionHandlerInterface
 {
 
-    private $prefix = 'vic_sn_';
+    private $prefix = 'session_';
 
     private $expire_time = 1200;
 
