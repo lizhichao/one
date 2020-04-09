@@ -56,7 +56,7 @@ class Build
             list($relation, $closure) = $v;
             list($drel, $nrel) = $this->getRel($relation);
             $q = $this->model->$drel();
-            if ($closure[0]) {
+            if ($closure !== null && $closure[0]) {
                 $closure[0]($q);
                 unset($closure[0]);
             }
