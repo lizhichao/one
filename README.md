@@ -8,14 +8,6 @@ QQ交流群: 731475644
 <a href="https://github.com/996icu/996.ICU/blob/master/LICENSE"><img src="https://camo.githubusercontent.com/41215df7ff78cefe41536bf897fe1c7e55b10bd2/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d416e74692532303939362d626c75652e737667" alt="LICENSE" data-canonical-src="https://img.shields.io/badge/license-Anti%20996-blue.svg" style="max-width:100%;"></a>
 
 
-## 适用场景
-
-1. 常规web/app后端服务器
-2. 游戏/im即时通讯服务器
-3. tcp/udp物联网服务器 
-4. 综合性项目，各种混合协议通讯
-
-
 ## hello world
 
 安装
@@ -39,24 +31,24 @@ curl http://127.0.0.1:8081/
 * [性能测试](https://github.com/the-benchmarker/web-frameworks)
 
 
-## 主要功能
+## 主要特点
 
-- RESTful路由
-- 中间件
-- websocket/tcp/http……任意协议路由
-- ORM模型
-- 统一的session处理
-- mysql连接池
-- redis连接池
-- 协程 tcp-client 连接池
+- 高性能路由，即使你添加几万条路由性能也不会降低，并且支持websocket/tcp/http……任意协议
+- 可以无限嵌套的路由分组
+- 灵活的中间件
+- ORM模型，高效的关系处理一对一，一对多，多态……
+- 自动化sql模板日志
+- 统一的session处理，可在fpm和swoole之间互通
+- 自动化mysql连接池
+- 自动化redis连接池
+- 自动化协程 tcp-client 连接池
 - HTTP/TCP/WEBOSCKET/UDP服务器
 - 缓存
 - 进程间数据共享
-- RPC(http,tcp,udp)
-- 日志
-- RequestId跟踪
-- 分布式（长连接,事务……）
-- Actor (Actor之间 可跨进程，跨机器通讯）
+- 高性能RPC(http,tcp,udp)
+- 自动化traceId跟踪
+- 原生支持分布式长连接,分布式事务……
+- 极简的Actor并发模型 ，Actor之间 可跨进程，跨机器通讯
 
 ## 路由
 
