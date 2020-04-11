@@ -91,6 +91,12 @@ class Build
             $build = $this->build;
         }
 
+        if ($this->is_count === 1 && count($this->group_by) > 0) {
+            $sql = str_replace($this->count_str, implode(',', $this->group_by), $sql);
+            $sql = substr($sql,0,-10);
+            $sql = "select {$this->count_str} from ({$sql}) as a";
+        }
+
         if ($all) {
             return $this->connect->findAll($sql, $build);
         } else {
@@ -553,11 +559,13 @@ class Build
         }
     }
 
+    private $count_str = 'count(*) as row_count';
+
     protected function getSelectSql()
     {
         $sql = 'select';
         if ($this->is_count) {
-            $column = ' count(*) as row_count ';
+            $column = ' ' . $this->count_str . ' ';
         } else if ($this->sum_column) {
             $column = ' sum(' . $this->sum_column . ') as sum_value ';
         } else if ($this->distinct) {
@@ -575,7 +583,7 @@ class Build
         if ($this->group_by) {
             $sql .= ' group by ' . implode(',', $this->group_by);
         }
-        if ($this->build) {
+        if ($this->having) {
             list($d, $s) = $this->getHaving();
             $sql         .= $s;
             $this->build = array_merge($this->build, $d);
