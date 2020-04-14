@@ -82,23 +82,18 @@ function array_get_not_null($arr, $keys)
 
 if (function_exists('uuid') === false) {
     /**
-     * @param bool $base62
      * @return string
      */
-    function uuid($base62 = true)
+    function uuid()
     {
         $str = uniqid('', true);
         $arr = explode('.', $str);
         $str = $arr[0] . base_convert($arr[1], 10, 16);
-        $len = 32;
+        $len = 30;
         while (strlen($str) <= $len) {
             $str .= bin2hex(random_bytes(4));
         }
-        $str = substr($str, 0, $len);
-        if ($base62) {
-            $str = str_replace(['+', '/', '='], '', base64_encode(hex2bin($str)));
-        }
-        return $str;
+        return base_convert(substr($str, 0, $len),16,36);
     }
 }
 
