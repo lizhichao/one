@@ -84,6 +84,12 @@ class Build
         }
     }
 
+    public function toSql(){
+        return [
+            $this->getSelectSql(),$this->build
+        ];
+    }
+
     protected function get($sql = '', $build = [], $all = false)
     {
         if ($sql === '') {
