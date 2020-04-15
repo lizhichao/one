@@ -98,6 +98,33 @@ if (function_exists('uuid') === false) {
 }
 
 /**
+ * 高精度任意转换 最多支持62进制
+ * @param string $num
+ * @param string $in
+ * @param string $out
+ * @return string
+ */
+function bc_base_convert($num, $in, $out)
+{
+    $str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $num = "$num";
+    $len = strlen($num);
+    $n = 0;
+    for ($i = 0; $i < $len; $i++) {
+        $sc = bcmul(strpos($str, $num[$i]), bcpow($in, $len - $i - 1));
+        $n = bcadd($n, $sc, 0);
+    }
+    $e = '';
+    while ($n > 0) {
+        $i = bcmod($n, $out);
+        $e = $str{$i} . $e;
+        $n = bcdiv($n, $out, 0);
+    }
+    return $e;
+}
+
+
+/**
  * @param $str
  * @param null $allow_tags
  * @return string
