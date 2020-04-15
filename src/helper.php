@@ -89,11 +89,11 @@ if (function_exists('uuid') === false) {
         $str = uniqid('', true);
         $arr = explode('.', $str);
         $str = $arr[0] . base_convert($arr[1], 10, 16);
-        $len = 30;
+        $len = 32;
         while (strlen($str) <= $len) {
             $str .= bin2hex(random_bytes(4));
         }
-        return base_convert(substr($str, 0, $len),16,36);
+        return substr($str, 0, $len);
     }
 }
 
