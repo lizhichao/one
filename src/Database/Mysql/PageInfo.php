@@ -19,4 +19,12 @@ class PageInfo
             'list'  => $this->list->toArray()
         ];
     }
+
+    /**
+     * @return bool
+     */
+    public function valid()
+    {
+        return $this->list->valid();
+    }
 }
