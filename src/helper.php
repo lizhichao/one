@@ -117,7 +117,7 @@ function bc_base_convert($num, $in, $out)
     $e = '';
     while ($n > 0) {
         $i = bcmod($n, $out);
-        $e = $str{$i} . $e;
+        $e = $str[$i] . $e;
         $n = bcdiv($n, $out, 0);
     }
     return $e;
