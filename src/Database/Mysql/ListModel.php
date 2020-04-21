@@ -68,7 +68,7 @@ class ListModel implements \Iterator, \JsonSerializable, \ArrayAccess
 
     public function valid()
     {
-        return $this->index < count($this->data);
+        return $this->index < count($this->data) && count($this->data) > 0;
     }
 
     public function current()
