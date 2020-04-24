@@ -1,4 +1,5 @@
 ## One - 一个极简高性能php框架，支持[swoole | php-fpm ]环境
+## One - is a minimalist, high-performance PHP framework that supports the [swoole | php-fpm] environment
 
 简单、灵活、高效，让你在fpm下也能在`1ms`内响应请求。不需要改一行代码就可以在`swoole`和`php-fpm`之间来回切换，甚至可以共存。
 
