@@ -80,15 +80,15 @@ class Redis extends Cache
         } else {
             $r = new \Redis();
             $r->connect($this->config['host'], $this->config['port'], 0);
-            if (!empty($this->config['auth'])) {
+            if (empty($this->config['auth']) === false) {
                 $r->auth($this->config['auth']);
             }
-            
-            if (isset($this->config['db'])) {
+
+            if (empty($this->config['db']) === false) {
                 $r->select($this->config['db']);
             }
             
-            if ($this->config['prefix'] !== '') {
+            if (empty($this->config['prefix']) === false) {
                 $r->setOption(\Redis::OPT_PREFIX, $this->config['prefix']);
             }
             return $r;
