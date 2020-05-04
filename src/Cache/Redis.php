@@ -83,7 +83,11 @@ class Redis extends Cache
             if (!empty($this->config['auth'])) {
                 $r->auth($this->config['auth']);
             }
-            $r->select($this->config['db']);
+            
+            if (isset($this->config['db'])) {
+                $r->select($this->config['db']);
+            }
+            
             if ($this->config['prefix'] !== '') {
                 $r->setOption(\Redis::OPT_PREFIX, $this->config['prefix']);
             }
