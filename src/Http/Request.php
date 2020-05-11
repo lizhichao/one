@@ -40,9 +40,15 @@ class Request
     /**
      * @return string|null
      */
-    public function ip()
+    public function ip($ks = ['REMOTE_ADDR'])
     {
-        return array_get_not_null($this->server, ['remote_addr', 'x_real_ip', 'x_forwarded_for', 'REMOTE_ADDR', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR']);
+        foreach ($ks as $k){
+            $ip = $this->server($k);
+            if($ip !== null){
+                return $ip;
+            }
+        }
+        return null;
     }
 
 
