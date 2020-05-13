@@ -84,9 +84,10 @@ class Build
         }
     }
 
-    public function toSql(){
+    public function toSql()
+    {
         return [
-            $this->getSelectSql(),$this->build
+            $this->getSelectSql(), $this->build
         ];
     }
 
@@ -99,7 +100,7 @@ class Build
 
         if ($this->is_count === 1 && count($this->group_by) > 0) {
             $sql = str_replace($this->count_str, implode(',', $this->group_by), $sql);
-            $sql = substr($sql,0,-10);
+            $sql = substr($sql, 0, -10);
             $sql = "select {$this->count_str} from ({$sql}) as a";
         }
 
@@ -181,6 +182,21 @@ class Build
             return $res->toArray();
         }
     }
+
+    /**
+     * @param null $id
+     * @return Model
+     */
+    public function findOrErr($id = null, $msg = 'not find %s')
+    {
+        $res = $this->find($id);
+        if ($res === null) {
+            throw new DbException(sprintf($msg, $id), 4004);
+        } else {
+            return $res;
+        }
+    }
+
 
     /**
      * 迭代所有数据
