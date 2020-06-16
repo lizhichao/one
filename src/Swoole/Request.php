@@ -3,6 +3,8 @@
 namespace One\Swoole;
 
 
+use One\Facades\Log;
+
 class Request extends \One\Http\Request
 {
 
@@ -40,16 +42,6 @@ class Request extends \One\Http\Request
             $this->files = &$request->files;
         }
         $this->request = $this->post + $this->get;
-        $this->id      = uuid();
-    }
-
-    /**
-     * request unique id
-     * @return string
-     */
-    public function id()
-    {
-        return $this->id;
     }
 
     private $_is_init = 0;

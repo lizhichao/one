@@ -2,6 +2,8 @@
 
 namespace One\Http;
 
+use One\Facades\Log;
+
 class Request
 {
 
@@ -99,7 +101,7 @@ class Request
      */
     public function id()
     {
-        return config('log.id');
+        return Log::getTraceId();
     }
 
 

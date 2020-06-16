@@ -30,7 +30,6 @@ trait HttpEvent
     protected function httpRouter(\swoole_http_request $request, \swoole_http_response $response)
     {
         $req   = new \One\Swoole\Request($request);
-        $go_id = Log::setTraceId($req->id());
         $res   = new \One\Swoole\Response($req, $response);
         try {
             $router = new Router();
@@ -48,7 +47,6 @@ trait HttpEvent
             }
             $data = Handler::render(new HttpException($res, $msg, $e->getCode()));
         }
-        Log::flushTraceId($go_id);
         $response->end($data);
 
     }

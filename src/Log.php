@@ -10,10 +10,8 @@ class Log
         'ERROR', 'WARN', 'NOTICE', 'DEBUG'
     ];
 
-    public function __construct()
-    {
+    const LogId = 'log_id';
 
-    }
 
     /**
      * @param $data
@@ -101,65 +99,27 @@ class Log
 
     }
 
-    private $_traceId = [];
 
     public function setTraceId($id)
     {
-        $cid                  = get_co_id();
-        $this->_traceId[$cid] = $id;
-        return $cid;
-    }
-
-    /**
-     * 在协程环境统一TraceId
-     * @param $id
-     * @return string
-     */
-    public function bindTraceId($id, $is_pid = false)
-    {
         if (_CLI_) {
-            if ($is_pid) {
-                $pid = $id;
-                $id  = get_co_id();
-            } else {
-                $pid = get_co_id();
-            }
-            if ($pid == -1 && _DEBUG_) {
-                echo 'warn bindTraceId false : ' . $id . "\n";
-            }
-            if (!isset($this->_traceId[$pid]) && _DEBUG_) {
-                echo 'warn bindTraceId get pid false : ' . $pid . "\n";
-            }
-            $this->_traceId[$id] = $this->_traceId[$pid];
-        }
-        return $id;
-    }
-
-    /**
-     * 请求完成刷新 清除已经关闭的id
-     */
-    public function flushTraceId($id)
-    {
-        if (_CLI_) {
-            if (isset($this->_traceId[$id])) {
-                unset($this->_traceId[$id]);
-            }
+            \One\Swoole\Context::set(self::LogId, $id);
+        } else {
+            Context::set(self::LogId, $id);
         }
     }
-
 
     public function getTraceId()
     {
-        $trace_id = self::$conf['id'];
-        $cid      = get_co_id();
-        if ($cid > -1) {
-            if (isset($this->_traceId[$cid])) {
-                $trace_id = $this->_traceId[$cid];
-            } else if (_DEBUG_) {
-                //如果直接调用go创建协程这里获取不到id 所有创建协程请调用oneGo
-                echo 'warn get trace_id fail : ' . $cid . "\n";
-            }
+        if (_CLI_) {
+            $id = \One\Swoole\Context::get(self::LogId);
+        } else {
+            $id = Context::get(self::LogId);
         }
-        return $trace_id;
+        if ($id === null) {
+            $id = uuid();
+            $this->setTraceId($id);
+        }
+        return $id;
     }
 }

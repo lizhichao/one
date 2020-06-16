@@ -11,8 +11,6 @@ namespace One\Facades;
  * @method  warn($data, $k = 0, $prefix = 'warn') static
  * @method  error($data, $k = 0, $prefix = 'error') static
  * @method  setTraceId($id) static
- * @method  bindTraceId($id) static
- * @method  flushTraceId($go_id) static
  * @method  getTraceId() static
  *
  */

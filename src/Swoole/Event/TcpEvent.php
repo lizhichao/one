@@ -58,9 +58,7 @@ trait TcpEvent
      */
     protected function tcpRouter(\swoole_server $server, $fd, $reactor_id, $data)
     {
-        $data->uuid = uuid();
         $data->fd   = $fd;
-        $go_id      = Log::setTraceId($data->uuid);
         try {
             $router = new Router();
             $server = $this instanceof Server ? $this : $this->server;
@@ -76,7 +74,6 @@ trait TcpEvent
             }
             error_report($e);
         }
-        Log::flushTraceId($go_id);
         if ($res) {
             $server->send($fd, $res);
         }

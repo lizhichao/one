@@ -109,10 +109,10 @@ function bc_base_convert($num, $in, $out)
     $str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $num = "$num";
     $len = strlen($num);
-    $n = 0;
+    $n   = 0;
     for ($i = 0; $i < $len; $i++) {
         $sc = bcmul(strpos($str, $num[$i]), bcpow($in, $len - $i - 1));
-        $n = bcadd($n, $sc, 0);
+        $n  = bcadd($n, $sc, 0);
     }
     $e = '';
     while ($n > 0) {
@@ -212,16 +212,14 @@ function set_arr_key($arr, $key, $unique = true)
 function one_go($call)
 {
     if (_CLI_) {
-        $co_id = get_co_id();
-        return go(function () use ($call, $co_id) {
-            $go_id = \One\Facades\Log::bindTraceId($co_id, true);
+        $log_id = \One\Facades\Log::getTraceId();
+        return \Swoole\Coroutine::create(function () use ($call, $log_id) {
+            $go_id = \One\Facades\Log::setTraceId($log_id);
             try {
                 $call();
             } catch (\Throwable $e) {
-                \One\Facades\Log::flushTraceId($go_id);
                 error_report($e);
             }
-            \One\Facades\Log::flushTraceId($go_id);
         });
     } else {
         return $call();
