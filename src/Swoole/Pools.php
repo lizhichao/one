@@ -14,11 +14,16 @@ use Swoole\Coroutine\Channel;
 trait Pools
 {
 
+    /**
+     * @var array｜Channel[]
+     */
     private static $pools = [];
 
     private static $connect_count = 0;
 
     private static $sw = [];
+
+    private $time_limit = 10;
 
     /**
      * 60秒内无请求 将逐渐释放连接
@@ -50,10 +55,10 @@ trait Pools
             if (isset(self::$sw[$id])) {
                 if ($s || $obj !== self::$sw[$id]) {
                     unset(self::$sw[$id]);
-                    self::$pools[$this->key]->push($obj);
+                    self::$pools[$this->key]->push($obj,$this->time_limit);
                 }
             } else {
-                self::$pools[$this->key]->push($obj);
+                self::$pools[$this->key]->push($obj,$this->time_limit);
             }
         }
     }
@@ -93,17 +98,17 @@ trait Pools
                 self::$connect_count++;
                 $rs = $this->createRes();
                 $rs->create_time = time();
-                $sp->push($rs);
+                $sp->push($rs,$this->time_limit);
             }
         } else if (self::$last_use_time > 0 && (self::$last_use_time + $this->free_time) < $time && $sp->length() > 1) {
-            $sp->pop();
+            $sp->pop($this->time_limit);
             self::$connect_count--;
             if(isset($this->config['free_call'])){
                 $this->config['free_call']->call($this);
             }
         }
         self::$last_use_time = $time;
-        return $sp->pop();
+        return $sp->pop($this->time_limit);
     }
 
 
