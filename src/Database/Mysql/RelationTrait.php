@@ -28,6 +28,17 @@ trait RelationTrait
     }
 
     /**
+     * @param string $self_column
+     * @param string $remote
+     * @param string $remote_column
+     * @return Model
+     */
+    protected function hasIn($self_column, $remote, $remote_column)
+    {
+        return new HasIn($self_column, $remote, $remote_column, $this);
+    }
+
+    /**
      * @param array $remote_type [$self_type => $remote_model_class]
      * @param array $remote_type_id [$self_type => $remote_table_rel_id]
      * @param string $self_type
