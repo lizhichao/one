@@ -2,8 +2,6 @@
 
 namespace One\Database\Mysql;
 
-use SebastianBergmann\CodeCoverage\Report\PHP;
-
 class Build
 {
     use WhereTrait;
@@ -114,7 +112,7 @@ class Build
     /**
      * @param string $sql
      * @param array $build
-     * @return ListModel||Model[]
+     * @return ListModel|static[]|Model[]
      */
     public function query($sql, array $build = [])
     {
@@ -138,7 +136,7 @@ class Build
 
     /**
      * @param null $id
-     * @return Model|null
+     * @return Model|null|static
      */
     public function find($id = null)
     {
@@ -156,7 +154,7 @@ class Build
     }
 
     /**
-     * @return ListModel|Model[]
+     * @return ListModel|Model[]|static[]
      */
     public function findAll()
     {
@@ -191,7 +189,7 @@ class Build
     {
         $res = $this->find($id);
         if ($res === null) {
-            throw new DbException(sprintf($msg, $id), 4004);
+            throw new \InvalidArgumentException(sprintf($msg, $id), 4004);
         } else {
             return $res;
         }
