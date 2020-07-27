@@ -195,11 +195,31 @@ class Connect
      */
     public function beginTransaction()
     {
-        if ($this->inTransaction()) {
-            return true;
+        $rc = 0;
+        retry:
+        {
+            if ($this->inTransaction()) {
+                return true;
+            }
+            $r = $this->pop(true)->beginTransaction();
+        }
+        if ($r === false) {
+            self::$connect_count--;
+            $co_id = $this->key . '_' . $this->getTsId();
+            if (isset(self::$sw[$co_id])) {
+                unset(self::$sw[$co_id]);
+            }
+            if ($rc < $this->config['max_connect_count'] + 1) {
+                $rc++;
+                echo "beginTransaction retry {$rc}\n";
+                goto retry;
+            }
         }
         $this->debugLog('begin');
-        return $this->pop(true)->beginTransaction();
+        if ($r === false) {
+            throw new DbException('begin transaction fail', 9);
+        }
+        return $r;
     }
 
     /**
