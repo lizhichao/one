@@ -348,6 +348,7 @@ class Build
             $call();
         } catch (DbException $e) {
             $this->connect->rollBack();
+            throw $e;
         }
         $this->connect->commit();
         unset($this->model);
