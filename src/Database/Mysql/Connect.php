@@ -201,7 +201,15 @@ class Connect
             if ($this->inTransaction()) {
                 return true;
             }
-            $r = $this->pop(true)->beginTransaction();
+            try {
+                $r = $this->pop(true)->beginTransaction();
+            }catch (\Throwable $e){
+                if($this->isBreak($e->getMessage())){
+                    $r = false;
+                }else{
+                    throw $e;
+                }
+            }
         }
         if ($r === false) {
             self::$connect_count--;
