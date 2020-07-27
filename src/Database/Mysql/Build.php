@@ -346,7 +346,7 @@ class Build
         $this->connect->beginTransaction();
         try {
             $call();
-        } catch (DbException $e) {
+        } catch (\Exception $e) {
             $this->connect->rollBack();
             throw $e;
         }
