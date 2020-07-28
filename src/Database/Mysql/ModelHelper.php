@@ -6,8 +6,8 @@ namespace One\Database\Mysql;
 
 class ModelHelper
 {
-    protected $namespace   = 'App-Model';
-    protected $extend      = 'One-Database-Mysql-Model';
+    protected $namespace   = 'App\\Model';
+    protected $extend      = Model::class;
     protected $extend_name = 'Model';
     protected $dir         = 'App/Model/';
 
@@ -17,19 +17,16 @@ class ModelHelper
             $this->namespace = $namespace;
         }
         if ($extend) {
-            $this->extend = $extend;
-            $i            = strrpos($this->extend, '-');
+            $this->extend = trim($extend, '\\');
+            $i            = strrpos($this->extend, '\\');
             if ($i !== false) {
-                $this->extend_name = substr($this->extend_name, $i + 1);
+                $this->extend_name = substr($this->extend, $i + 1);
             } else {
                 $this->extend_name = $this->extend;
                 $this->extend      = '';
             }
         }
-
-        $this->extend    = str_replace('-', '\\', $this->extend);
-        $this->dir       = str_replace('-', '/', $this->namespace) . '/';
-        $this->namespace = str_replace('-', '\\', $this->namespace);
+        $this->dir = str_replace('\\', '/', $this->namespace) . '/';
     }
 
     protected $fields = [];
