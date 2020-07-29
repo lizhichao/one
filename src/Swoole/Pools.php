@@ -15,7 +15,7 @@ trait Pools
 {
 
     /**
-     * @var array｜Channel[]
+     * @var Channel[]|array
      */
     private static $pools = [];
 

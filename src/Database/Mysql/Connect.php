@@ -5,14 +5,11 @@ namespace One\Database\Mysql;
 use One\ConfigTrait;
 use One\Facades\Log;
 use One\Swoole\Pools;
-use Swoole\Mysql\Exception;
 
 class Connect
 {
 
     use ConfigTrait, Pools;
-
-    private static $pdo = [];
 
     private $key;
 
