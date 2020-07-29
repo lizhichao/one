@@ -24,6 +24,23 @@ if (function_exists('config') === false) {
     }
 }
 
+if (function_exists('array_to_object') === false) {
+    /**
+     * @param array $arr
+     * @param string $class_name
+     * @return Object $class_name
+     */
+    function array_to_object($arr, $class_name)
+    {
+        $class = new $class_name;
+        foreach ($arr as $key => $val) {
+            $class->{$key} = $val;
+        }
+        return $class;
+    }
+}
+
+
 /**
  * @param string $fn
  * @param array $args

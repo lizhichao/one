@@ -146,10 +146,6 @@ class Connect
         return false;
     }
 
-
-    private $log_k = 0;
-
-
     /**
      * @param string $sql
      * @param array $data
