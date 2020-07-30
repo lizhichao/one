@@ -544,7 +544,7 @@ class Build
             $sql         .= $s;
             $this->build = array_merge($this->build, $d);
         }
-        if ($this->order_by) {
+        if ($this->order_by && $this->is_count == 0) {
             $sql .= ' order by ' . implode(',', $this->order_by);
         }
         if ($this->limit) {
