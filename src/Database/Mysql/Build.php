@@ -199,7 +199,7 @@ class Build
     /**
      * 迭代所有数据
      * @param int $count 每次从数据库读取的数量
-     * @return \Generator|Model[]
+     * @return \Generator|static[]
      */
     public function chunk($count = 100)
     {
@@ -609,7 +609,7 @@ class Build
             $sql         .= $s;
             $this->build = array_merge($this->build, $d);
         }
-        if ($this->order_by) {
+        if ($this->order_by && $this->is_count == 0) {
             $sql .= ' order by ' . implode(',', $this->order_by);
         }
         if ($this->limit) {
