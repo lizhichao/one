@@ -30,16 +30,15 @@ class CacheBuild extends Build
         }, $this->cache_time, $this->cache_tag));
     }
 
-    public function exec($sql, array $build = [], $is_insert = false)
+    public function exec($sql, array $build = [])
     {
-        $ret = parent::exec($sql, $build, $is_insert);
+        parent::exec($sql, $build);
         $this->flushCache();
-        return $ret;
     }
 
-    public function insert($data, $is_mulit = false)
+    public function insert($data)
     {
-        $ret = parent::insert($data, $is_mulit);
+        $ret = parent::insert($data);
         $this->flushCache([$this->getPriKey() => $ret] + $data);
         return $ret;
     }
@@ -106,15 +105,5 @@ class CacheBuild extends Build
             Cache::delRegex("*#{$table}{$key}#*");
             Cache::flush('join+' . $table);
         }
-    }
-
-    private function isIgnoreColumn($data)
-    {
-        foreach ($data as $k => $v) {
-            if (!in_array($k, $this->ignore_column)) {
-                return false;
-            }
-        }
-        return true;
     }
 }
