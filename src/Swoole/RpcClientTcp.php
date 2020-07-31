@@ -52,7 +52,7 @@ namespace One\Swoole {
             ]);
         }
 
-        private function uuid()
+        protected function uuid()
         {
             $str = uniqid('', true);
             $arr = explode('.', $str);
