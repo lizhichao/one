@@ -200,8 +200,11 @@ class Build
      */
     public function chunk($count = 100)
     {
-        $val    = null;
-        $arr    = isset($this->order_by[0]) ? explode(' ', $this->order_by[0]) : [$this->getPriKey()];
+        $val = null;
+        if (!isset($this->order_by[0])) {
+            throw new ClickHouseException("请设置一个排序");
+        }
+        $arr    = explode(' ', $this->order_by[0]);
         $arr[1] = isset($arr[1]) ? strtolower(trim($arr[1])) : 'asc';
         $op     = $arr[1] === 'asc' ? '>' : '<';
         $this->limit($count)->orderBy($arr[0] . ' ' . $arr[1]);
@@ -559,7 +562,7 @@ class Build
         $build = [];
         $keys  = array_keys($this->filter($data[0]));
         foreach ($data as $v) {
-            $build[] = $this->filter($v);
+            $build[] = array_values($this->filter($v));
         }
         $this->build = $build;
         return [$keys, $build];

@@ -37,11 +37,16 @@ class Connect
     private function debugLog($sql, $time = 0, $build = [], $err = [])
     {
         if (self::$conf['debug_log']) {
-            $time  = $time ? (microtime(true) - $time) * 1000 : $time;
-            $sql1  = str_replace('%', "```", $sql);
-            $s     = vsprintf(str_replace('?', "'%s'", $sql1), $build);
-            $s     = str_replace('```', "%", $s);
-            $id    = md5(str_replace('()', '', str_replace(['?', ','], '', $sql)));
+            $time = $time ? (microtime(true) - $time) * 1000 : $time;
+            if (is_string($sql)) {
+                $sql1 = str_replace('%', "```", $sql);
+                $s    = vsprintf(str_replace('?', "'%s'", $sql1), $build);
+                $s    = str_replace('```', "%", $s);
+                $id   = md5(str_replace('()', '', str_replace(['?', ','], '', $sql)));
+            } else {
+                $s  = $sql;
+                $id = $sql[0];
+            }
             $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 13);
             $k     = 1;
             foreach ($trace as $i => $v) {
@@ -89,6 +94,7 @@ class Connect
      */
     public function insert($table, $fields, $data)
     {
+        $this->debugLog([$table, $fields, $data]);
         $ck = $this->pop();
         $ck->insert($table, $fields, $data);
         $this->push($ck);
@@ -100,6 +106,7 @@ class Connect
      */
     public function exec($sql, $data = [])
     {
+        $this->debugLog($sql, 0, $data);
         $ck = $this->pop();
         $ck->execute($sql, $data);
         $this->push($ck);

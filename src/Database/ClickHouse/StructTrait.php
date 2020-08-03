@@ -15,21 +15,24 @@ trait StructTrait
             $key                             = md5(__FILE__ . $dns . $this->from);
             $str                             = unserialize(Cache::get($key, function () {
                 $pdo    = $this->getConnect();
-                $arr    = $pdo->query('desc `' . $this->from . '`')->fetchAll(\PDO::FETCH_ASSOC);
+                $arr    = $pdo->select('desc `' . $this->from . '`');
                 $fields = [];
-                $pri    = '';
                 foreach ($arr as $v) {
-                    if ($v['Key'] == 'PRI') {
-                        $pri = $v['Field'];
-                    }
-                    if ($v['Null'] == 'YES') {
-                        $fields[$v['Field']] = 0;
+                    if (stripos($v['type'], 'Nullable') !== false) {
+                        $fields[$v['name']] = [
+                            'is_null' => 0,
+                            'type'    => $v['type']
+
+                        ];
                     } else {
-                        $fields[$v['Field']] = 1;
+                        $fields[$v['name']] = [
+                            'is_null' => 1,
+                            'type'    => $v['type']
+                        ];
                     }
                 }
                 $this->push($pdo);
-                return serialize(['field' => $fields, 'pri' => $pri]);
+                return serialize(['field' => $fields]);
             }, 60 * 60 * 24));
             self::$struct[$dns][$this->from] = $str;
         }
@@ -45,17 +48,6 @@ trait StructTrait
     }
 
     /**
-     * 获取主键
-     */
-    protected function getPriKey()
-    {
-        if ($this->pri_key !== '') {
-            return $this->pri_key;
-        }
-        return $this->getStruct()['pri'];
-    }
-
-    /**
      * 过滤
      * @param $data
      */
@@ -65,16 +57,48 @@ trait StructTrait
         foreach ($data as $k => $v) {
             if (!isset($field[$k])) {
                 unset($data[$k]);
+                continue;
             }
+//            $data[$k] = $this->toSafeVal($v, $field[$k]['type']);
         }
         return $data;
     }
 
-    /**
-     * @return array
-     */
-    public function getFields()
-    {
-        return array_merge([$this->getPriKey()], $this->getStruct()['field']);
-    }
+//    /**
+//     * @param string|array $v
+//     * @param string $type
+//     * @return array|float|int|string
+//     */
+//    public function toSafeVal($v, $type)
+//    {
+//        $type = strtolower($type);
+//        $ints = [
+//            'uint8'  => 1,
+//            'uint16' => 1,
+//            'uint32' => 1,
+//            'uint64' => 1,
+//            'int8'   => 1,
+//            'int16'  => 1,
+//            'int32'  => 1,
+//            'int64'  => 1,
+//        ];
+//        if (isset($ints[$type])) {
+//            return intval($v);
+//        }
+//
+//        if ($type === 'float32' || $type === 'float64' || stripos($type, 'decimal') === 0) {
+//            return floatval($v);
+//        }
+//
+//        if (is_array($v)) {
+//            if (stripos($type, 'array') === 0 || stripos($type, 'tuple') === 0) {
+//                $p = substr($type, 6, -1);
+//                foreach ($v as $i => $n_v) {
+//                    $v[$i] = $this->toSafeVal($n_v, $p);
+//                }
+//                return $v;
+//            }
+//        }
+//        return addslashes($v);
+//    }
 }

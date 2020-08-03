@@ -39,7 +39,7 @@ class CacheBuild extends Build
     public function insert($data)
     {
         $ret = parent::insert($data);
-        $this->flushCache([$this->getPriKey() => $ret] + $data);
+        $this->flushCache($data);
         return $ret;
     }
 
