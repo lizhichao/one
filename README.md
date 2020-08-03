@@ -40,9 +40,10 @@ curl http://127.0.0.1:8081/
 - ORM模型，高效的关系处理一对一，一对多，多态……
 - 自动化sql模板日志
 - 统一的session处理，可在fpm和swoole之间互通
-- 自动化mysql连接池
-- 自动化redis连接池
-- 自动化协程 tcp-client 连接池
+- mysql连接池
+- clickHouse连接池
+- redis连接池
+- 协程 tcp-client 连接池
 - HTTP/TCP/WEBOSCKET/UDP服务器
 - 缓存
 - 进程间数据共享
@@ -365,7 +366,6 @@ class ClientAbc extends RpcClientTcp {
 ## TODO
 
 * orm支持[postgresql](https://www.postgresql.org/)
-* orm支持[clickhouse](https://clickhouse.yandex/)
 
 QQ交流群: 731475644
 
