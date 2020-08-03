@@ -15,7 +15,7 @@ trait Pools
 {
 
     /**
-     * @var array｜Channel[]
+     * @var Channel[]|array
      */
     private static $pools = [];
 
@@ -65,7 +65,7 @@ trait Pools
 
     /**
      * @param bool $sw 是否事物
-     * @return \PDO | \Redis
+     * @return \PDO | \Redis | \SeasClick
      */
     public function pop($sw = false)
     {
