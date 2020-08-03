@@ -37,13 +37,12 @@ curl http://127.0.0.1:8081/
 - 高性能路由，支持贪婪匹配和优先级，支持websocket/tcp/http……任意协议，即使你添加几万条路由也不会降低解析性能
 - 可以无限嵌套的路由分组
 - 灵活的中间件
-- ORM模型，高效的关系处理一对一，一对多，多态……
+- ORM模型(mysql,clickHouse)，高效的关系处理一对一，一对多，多态……
 - 自动化sql模板日志
 - 统一的session处理，可在fpm和swoole之间互通
-- mysql连接池
-- clickHouse连接池
-- redis连接池
-- 协程 tcp-client 连接池
+- 自动化mysql连接池
+- 自动化redis连接池
+- 自动化协程 tcp-client 连接池
 - HTTP/TCP/WEBOSCKET/UDP服务器
 - 缓存
 - 进程间数据共享
