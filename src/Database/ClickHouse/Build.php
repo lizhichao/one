@@ -5,6 +5,7 @@ namespace One\Database\ClickHouse;
 use One\Database\Mysql\Join;
 use One\Database\Mysql\ListModel;
 use One\Database\Mysql\PageInfo;
+use function Sodium\add;
 
 class Build
 {
@@ -485,8 +486,7 @@ class Build
             if ($v[0] === null) {
                 $sql .= $v[1];
             } else {
-                $data[] = $v[2];
-                $sql    .= $v[0] . $v[1] . '?';
+                $sql    .= $v[0] . $v[1] . "'".addslashes($v[2])."'";
             }
             if (isset($v[3])) {
                 $prev = $v[0];
