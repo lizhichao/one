@@ -30,80 +30,16 @@ class CacheBuild extends Build
         }, $this->cache_time, $this->cache_tag));
     }
 
-    public function exec($sql, array $build = [])
-    {
-        parent::exec($sql, $build);
-        $this->flushCache();
-    }
-
-    public function insert($data)
-    {
-        $ret = parent::insert($data);
-        $this->flushCache($data);
-        return $ret;
-    }
-
     public function join($table, $first, $second = null, $type = 'inner')
     {
         $this->cache_tag[] = 'join+' . $table;
         return parent::join($table, $first, $second, $type);
     }
 
-
-    private $columns = [];
-
-    public function cacheColumn($columns)
-    {
-        sort($columns, SORT_STRING);
-        $this->columns = $columns;
-    }
-
-    private $ignore_column = [];
-
-    public function ignoreColumn($columns)
-    {
-        $this->ignore_column = $columns;
-    }
-
-    private function getCacheColumnValue($data = [])
-    {
-        if ($this->columns) {
-            $w = [];
-            foreach ($this->where as $v) {
-                if (trim($v[1]) == '=') {
-                    $w[$v[0]] = $v[2];
-                }
-            }
-            $data = $data + $w;
-
-            $keys = [];
-            foreach ($this->columns as $f) {
-                if (isset($data[$f])) {
-                    $keys[] = $f . '_' . $data[$f];
-                }
-            }
-            if ($keys) {
-                return '-' . implode('+', $keys);
-            }
-        }
-        return '';
-    }
-
     private function getCacheKey($str = '')
     {
         $table = $this->from;
-        $key   = $this->getCacheColumnValue();
         $hash  = sha1($str . $this->getSelectSql() . json_encode($this->build));
-        return "DB#{$table}{$key}#{$hash}";
-    }
-
-    private function flushCache($data = [])
-    {
-        if ($this->cache_time > 0) {
-            $table = $this->from;
-            $key   = $this->getCacheColumnValue($data);
-            Cache::delRegex("*#{$table}{$key}#*");
-            Cache::flush('join+' . $table);
-        }
+        return "DB#{$table}#{$hash}";
     }
 }

@@ -19,15 +19,9 @@ class Model extends ArrayModel
 
     protected $_cache_time = 600;
 
-    protected $_cache_key_column = [];
-
-    protected $_ignore_flush_cache_column = [];
-
     private $_relation = null;
 
     CONST TABLE = '';
-
-    protected $_pri_key = '';
 
     private $_build = null;
 
@@ -48,15 +42,6 @@ class Model extends ArrayModel
         }
         if ($this->_cache_time > 0) {
             $this->_build->cache($this->_cache_time);
-        }
-        if ($this->_cache_key_column) {
-            $this->_build->cacheColumn($this->_cache_key_column);
-        }
-        if ($this->_ignore_flush_cache_column) {
-            $this->_build->ignoreColumn($this->_ignore_flush_cache_column);
-        }
-        if ($this->_pri_key) {
-            $this->_build->setPrikey($this->_pri_key);
         }
         return $this->_build;
     }
