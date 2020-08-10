@@ -77,10 +77,11 @@ class Connect
      */
     public function select($sql, $data = [])
     {
-        $this->debugLog($sql, 0, $data);
-        $ck  = $this->pop();
-        $res = $ck->select($sql, $data);
+        $time = microtime(true);
+        $ck   = $this->pop();
+        $res  = $ck->select($sql, $data);
         $this->push($ck);
+        $this->debugLog($sql, $time, $data);
         foreach ($res as $i => $arr) {
             $res[$i] = array_to_object($arr, $this->model);
         }
@@ -94,10 +95,12 @@ class Connect
      */
     public function insert($table, $fields, $data)
     {
-        $this->debugLog([$table, $fields, $data]);
-        $ck = $this->pop();
+        $time = microtime(true);
+        $ck   = $this->pop();
         $ck->insert($table, $fields, $data);
         $this->push($ck);
+        $this->debugLog([$table, $fields, $data], $time);
+
     }
 
     /**
@@ -106,10 +109,12 @@ class Connect
      */
     public function exec($sql, $data = [])
     {
-        $this->debugLog($sql, 0, $data);
-        $ck = $this->pop();
+        $time = microtime(true);
+        $ck   = $this->pop();
         $ck->execute($sql, $data);
         $this->push($ck);
+        $this->debugLog($sql, $time, $data);
+
     }
 
     /**
