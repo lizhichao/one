@@ -19,6 +19,9 @@ class Connect
 
     private $transaction_id = null;
 
+    private $is_repeat_statement = false;
+
+
     /**
      * Connect constructor.
      * @param string $key
@@ -36,6 +39,12 @@ class Connect
         $this->transaction_id = $id;
     }
 
+    public function repeatStatement($p = true)
+    {
+        $this->is_repeat_statement = $p;
+    }
+
+
     /**
      * @param string $sql
      * @param array $data
@@ -46,23 +55,32 @@ class Connect
         $pdo  = $this->pop();
         $time = microtime(true);
         try {
-            $res = $pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
-            if (!$res) {
-                return $this->retry($sql, $time, $data, $pdo->errorInfo()[2], $retry, $return_pdo);
+            if ($this->is_repeat_statement === true) {
+                $ptid = 'p' . md5($sql);
+                if (property_exists($pdo, $ptid) === false) {
+                    $res = $pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
+                    if (!$res) {
+                        return $this->retry($sql, $time, $data, $pdo->errorInfo()[2], $retry, $return_pdo);
+                    }
+                    $res->setFetchMode(\PDO::FETCH_CLASS, $this->model);
+                    $pdo->{$ptid} = $res;
+                } else {
+                    $res = $pdo->{$ptid};
+                }
+            } else {
+                $res = $pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
+                if (!$res) {
+                    return $this->retry($sql, $time, $data, $pdo->errorInfo()[2], $retry, $return_pdo);
+                }
+                $res->setFetchMode(\PDO::FETCH_CLASS, $this->model);
             }
-            $res->setFetchMode(\PDO::FETCH_CLASS, $this->model);
             $res->execute($data);
             $this->debugLog($sql, $time, $data, '');
             if ($res->errorInfo()[0] !== '00000') {
                 $this->push($pdo);
                 throw new DbException(json_encode(['info' => $res->errorInfo(), 'sql' => $sql, 'data' => $data]), 8);
             }
-            if ($return_pdo) {
-                return [$res, $pdo];
-            } else {
-                $this->push($pdo);
-                return $res;
-            }
+            return [$res, $pdo];
         } catch (\PDOException $e) {
             $this->debugLog($sql, $time, $data, $e->getMessage());
             return $this->retry($sql, $time, $data, $e->getMessage(), $retry, $return_pdo);
@@ -153,7 +171,10 @@ class Connect
      */
     public function find($sql, $data = [])
     {
-        return $this->execute($sql, $data)->fetch();
+        list($res, $pdo) = $this->execute($sql, $data);
+        $r = $res->fetch();
+        $this->push($pdo);
+        return $r;
     }
 
     /**
@@ -163,7 +184,10 @@ class Connect
      */
     public function findAll($sql, $data = [])
     {
-        return $this->execute($sql, $data)->fetchAll();
+        list($res, $pdo) = $this->execute($sql, $data);
+        $r = $res->fetchAll();
+        $this->push($pdo);
+        return $r;
     }
 
     /**
@@ -196,10 +220,10 @@ class Connect
             }
             try {
                 $r = $this->pop(true)->beginTransaction();
-            }catch (\Throwable $e){
-                if($this->isBreak($e->getMessage())){
+            } catch (\Throwable $e) {
+                if ($this->isBreak($e->getMessage())) {
                     $r = false;
-                }else{
+                } else {
                     throw $e;
                 }
             }

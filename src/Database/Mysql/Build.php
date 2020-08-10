@@ -401,6 +401,16 @@ class Build
     }
 
     /**
+     * @param bool $p
+     * @return $this
+     */
+    public function repeatStatement($p = true)
+    {
+        $this->connect->repeatStatement($p);
+        return $this;
+    }
+
+    /**
      * @param array $column
      * @return $this
      */
