@@ -131,7 +131,7 @@ class Validator
      */
     public function isOk()
     {
-        return count($this->err) === 0 ? true : false;
+        return count($this->err) === 0;
     }
 
     /**
