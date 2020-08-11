@@ -28,7 +28,7 @@ namespace One\Database\Mysql;
  * @method static EventBuild where($key, $operator = null, $val = null, $link = ' and ')
  * @method static EventBuild whereOr($key, $operator = null, $val = null)
  * @method static EventBuild whereIn($key, array $val)
- * @method static EventBuild repeatStatement()
+ * @method static EventBuild repeatStatement($p = true)
  * @method static EventBuild whereRaw($str, array $build_data = null, $link = ' and ')
  * @method static EventBuild whereNull($key)
  * @method static void flushTableInfo()
