@@ -5,6 +5,37 @@ namespace One\Database\Mysql;
 
 /**
  * Class Model
+ * @method static EventBuild insert()
+ * @method static EventBuild cache()
+ * @method static EventBuild with()
+ * @method static EventBuild query()
+ * @method static EventBuild find()
+ * @method static EventBuild findAll()
+ * @method static EventBuild findToArray()
+ * @method static EventBuild findOrErr()
+ * @method static EventBuild chunk()
+ * @method static EventBuild findAllPageInfo()
+ * @method static EventBuild count()
+ * @method static EventBuild sum()
+ * @method static EventBuild exec()
+ * @method static EventBuild getConnect()
+ * @method static EventBuild setConnection()
+ * @method static EventBuild from()
+ * @method static EventBuild column()
+ * @method static EventBuild distinct()
+ * @method static EventBuild leftJoin()
+ * @method static EventBuild rightJoin()
+ * @method static EventBuild groupBy()
+ * @method static EventBuild orderBy()
+ * @method static EventBuild limit()
+ * @method static EventBuild where()
+ * @method static EventBuild whereOr()
+ * @method static EventBuild whereIn()
+ * @method static EventBuild whereNotIn()
+ * @method static EventBuild whereRaw()
+ * @method static EventBuild whereNotNull()
+ * @method static EventBuild whereNull()
+ * @method static EventBuild flushTableInfo()
  * @mixin CacheBuild
  * @mixin Relation
  */
