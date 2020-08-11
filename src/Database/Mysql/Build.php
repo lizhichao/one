@@ -283,7 +283,13 @@ class Build
      */
     public function exec($sql, array $build = [], $is_insert = false)
     {
-        $r = $this->connect->exec($sql, $build, $is_insert);
+        if (count($build) === 0) {
+            $p = $this->getConnect();
+            $r = $p->exec($sql);
+            $this->push($p);
+        } else {
+            $r = $this->connect->exec($sql, $build, $is_insert);
+        }
         unset($this->model);
         return $r;
     }
