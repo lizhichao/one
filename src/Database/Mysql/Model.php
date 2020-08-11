@@ -32,6 +32,7 @@ namespace One\Database\Mysql;
  * @method static EventBuild whereOr()
  * @method static EventBuild whereIn()
  * @method static EventBuild whereNotIn()
+ * @method static EventBuild repeatStatement()
  * @method static EventBuild whereRaw()
  * @method static EventBuild whereNotNull()
  * @method static EventBuild whereNull()
