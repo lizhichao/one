@@ -12,7 +12,7 @@ namespace One\Database\Mysql;
  * @method static Model|null|static find($id = null)
  * @method static ListModel|Model[]|static[] findAll()
  * @method static array findToArray($id = null)
- * @method static Model findOrErr($id = null, $msg = 'not find %s')
+ * @method static Model|static findOrErr($id = null, $msg = 'not find %s')
  * @method static \Generator|static[] chunk($count = 100)
  * @method static PageInfo findAllPageInfo()
  * @method static int count()

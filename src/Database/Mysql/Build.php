@@ -183,7 +183,7 @@ class Build
 
     /**
      * @param null $id
-     * @return Model
+     * @return Model|static
      */
     public function findOrErr($id = null, $msg = 'not find %s')
     {
