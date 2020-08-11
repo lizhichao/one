@@ -275,6 +275,12 @@ class Build
         return $res->sum_value;
     }
 
+    /**
+     * @param $sql
+     * @param array $build
+     * @param bool $is_insert
+     * @return mixed
+     */
     public function exec($sql, array $build = [], $is_insert = false)
     {
         $r = $this->connect->exec($sql, $build, $is_insert);
