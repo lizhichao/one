@@ -183,7 +183,7 @@ class Build
 
     /**
      * @param null $id
-     * @return Model|static
+     * @return Model|static|Model
      */
     public function findOrErr($id = null, $msg = 'not find %s')
     {
@@ -199,7 +199,7 @@ class Build
     /**
      * 迭代所有数据
      * @param int $count 每次从数据库读取的数量
-     * @return \Generator|static[]
+     * @return \Generator|static[]|Model[]
      */
     public function chunk($count = 100)
     {
@@ -283,7 +283,13 @@ class Build
      */
     public function exec($sql, array $build = [], $is_insert = false)
     {
-        $r = $this->connect->exec($sql, $build, $is_insert);
+        if (count($build) === 0) {
+            $p = $this->getConnect();
+            $r = $p->exec($sql);
+            $this->push($p);
+        } else {
+            $r = $this->connect->exec($sql, $build, $is_insert);
+        }
         unset($this->model);
         return $r;
     }
