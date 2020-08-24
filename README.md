@@ -18,6 +18,10 @@ cd app
 php App/swoole.php 
 ```
 
+> 停止 ： `php App/swoole.php -o stop`  
+> 重启 ： `php App/swoole.php -o reload`  
+> 守护进程启动 ： `php App/swoole.php -o start`  
+
 测试
 
 ```shell
