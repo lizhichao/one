@@ -1,8 +1,14 @@
 ## One - 一个极简高性能php框架，支持[swoole | php-fpm ]环境
 
-简单、灵活、高效，让你在fpm下也能在`1ms`内响应请求。不需要改一行代码就可以在`swoole`和`php-fpm`之间来回切换，甚至可以共存。
-
-QQ交流群: 731475644
+- 简单 - 让你重点关心用`one`做什么，而不是怎么用`one`
+- 灵活 - 各个组件松耦合，可以灵活搭配使用，使用方法保持一致
+    - 原生sql可以和模型关系`with`搭配使用，关系可以跨数据库类型
+    - session 可以在http,websocket甚至tcp,udp和cli下使用
+    - ...
+- 高效 - 运行性能，开发效率，易维护。
+- 轻量 - 无其他依赖，从路由、orm所有组件代码量不超过500k，若看原理二次开发也很方便
+    
+QQ交流群：731475644
 
 珍爱生命，抵制996
 <a href="https://github.com/996icu/996.ICU/blob/master/LICENSE"><img src="https://camo.githubusercontent.com/41215df7ff78cefe41536bf897fe1c7e55b10bd2/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d416e74692532303939362d626c75652e737667" alt="LICENSE" data-canonical-src="https://img.shields.io/badge/license-Anti%20996-blue.svg" style="max-width:100%;"></a>
@@ -16,15 +22,11 @@ QQ交流群: 731475644
 composer create-project lizhichao/one-app app
 cd app
 php App/swoole.php 
-```
 
-> 停止 ： `php App/swoole.php -o stop`  
-> 重启 ： `php App/swoole.php -o reload`  
-> 守护进程启动 ： `php App/swoole.php -o start`  
+# 停止 ： `php App/swoole.php -o stop`  
+# 重启 ： `php App/swoole.php -o reload`  
+# 守护进程启动 ： `php App/swoole.php -o start`  
 
-测试
-
-```shell
 curl http://127.0.0.1:8081/
 ```
 
@@ -32,27 +34,36 @@ curl http://127.0.0.1:8081/
 
 **参考：**
 
-* [性能测试](https://github.com/the-benchmarker/web-frameworks)
+* [性能测试1 (mysql + orm)](https://www.techempower.com/benchmarks/#section=test&runid=57b25c85-082a-4013-b572-b0939006eaff&hw=ph&test=query&d=dz&a=2&o=e)
+* [性能测试2](https://github.com/the-benchmarker/web-frameworks)
 
 
 ## 主要特点
 
-- 高性能路由，支持贪婪匹配和优先级，支持websocket/tcp/http……任意协议，即使你添加几万条路由也不会降低解析性能
-- 可以无限嵌套的路由分组
-- 灵活的中间件
-- ORM模型(mysql,clickHouse)，高效的关系处理一对一，一对多，多态……
-- 自动化sql模板日志
-- 统一的session处理，可在fpm和swoole之间互通
-- 自动化mysql连接池
-- 自动化redis连接池
-- 自动化协程 tcp-client 连接池
-- HTTP/TCP/WEBOSCKET/UDP服务器
-- 缓存
-- 进程间数据共享
-- 高性能RPC(http,tcp,udp)
-- 自动化traceId跟踪
-- 原生支持分布式长连接,分布式事务……
-- 极简的Actor并发模型 ，Actor之间 可跨进程，跨机器通讯
+- 路由
+    - 支持贪婪匹配和优先级
+    - 支持ws/tcp/http……任意协议
+    - 性能好，添加几万条路由也不会降低解析性能
+    - 路由分组，中间件……该有的都有
+- ORM模型
+    - 支持数据库：mysql,clickHouse，
+    - 关系处理：一对一，一对多，多对一，多态…… 各种关系的都有，可以跨数据库类型关联
+    - 缓存：自动刷新数据 支持配置各种缓存粒度
+    - 事件：所有操作都能捕获 包括你用原生sql操作数据库
+    - 数据库连接：同步、异步、阻塞、断线重连都支持
+    - sql模板： 自动生成模板id，可了解项目有哪些类型sql，以及调用次数占比情况，对后期数据优化提供数据支持。
+    - statement复用：提供sql执行性能
+- rpc
+    - 可自动生成远程方法映射，支持ide提示
+    - 直接调用映射方法 == 调用远程方法，支持链式调用
+    - 支持`rpc中间件`，鉴权、加解密、缓存……
+- 日志
+    - 信息完整：记录完整的文件名+行号可快速定位代码位置
+    - requestId：可轻松查看整个请求日志信息和服务关系
+
+- ...
+    - QQ交流群: 731475644
+
 
 ## 路由
 
