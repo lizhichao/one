@@ -38,7 +38,7 @@ curl http://127.0.0.1:8081/
 * [性能测试2](https://github.com/the-benchmarker/web-frameworks)
 
 
-## 主要特点
+## 主要组件
 
 - 路由
     - 支持贪婪匹配和优先级
