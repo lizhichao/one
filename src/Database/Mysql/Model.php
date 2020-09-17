@@ -32,6 +32,10 @@ namespace One\Database\Mysql;
  * @method static EventBuild whereRaw($str, array $build_data = null, $link = ' and ')
  * @method static EventBuild whereNull($key)
  * @method static void flushTableInfo()
+ * @method static bool beginTransaction()
+ * @method static bool rollBack()
+ * @method static bool commit()
+ * @method static void transaction(\Closure $call)
  * @mixin CacheBuild
  * @mixin Relation
  */
