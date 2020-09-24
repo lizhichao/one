@@ -5,6 +5,8 @@ namespace One\Database\ClickHouse;
 use One\ConfigTrait;
 use One\Facades\Log;
 use One\Swoole\Pools;
+use OneCk\CkException;
+use OneCk\Client;
 
 class Connect
 {
@@ -77,11 +79,7 @@ class Connect
      */
     public function select($sql, $data = [])
     {
-        $time = microtime(true);
-        $ck   = $this->pop();
-        $res  = $ck->select($sql, $data);
-        $this->push($ck);
-        $this->debugLog($sql, $time, $data);
+        $res = $this->exec($sql, $data);
         foreach ($res as $i => $arr) {
             $res[$i] = array_to_object($arr, $this->model);
         }
@@ -93,14 +91,11 @@ class Connect
      * @param array $fields
      * @param array $data
      */
-    public function insert($table, $fields, $data)
+    public function insert($table, $data)
     {
         $time = microtime(true);
-        $ck   = $this->pop();
-        $ck->insert($table, $fields, $data);
-        $this->push($ck);
-        $this->debugLog([$table, $fields, $data], $time);
-
+        $this->send('insert', $table, $data);
+        $this->debugLog([$table, $data], $time);
     }
 
     /**
@@ -110,11 +105,33 @@ class Connect
     public function exec($sql, $data = [])
     {
         $time = microtime(true);
-        $ck   = $this->pop();
-        $ck->execute($sql, $data);
-        $this->push($ck);
+        $res  = $this->send('query', $sql);
         $this->debugLog($sql, $time, $data);
+        return $res;
+    }
 
+    private function send($m, ...$args)
+    {
+        $ck        = $this->pop();
+        $max_times = $this->config['max_connect_count'] + 1;
+        while ($max_times--) {
+            $err = null;
+            try {
+                $res = $ck->{$m}(...$args);
+                break;
+            } catch (\Exception $e) {
+                $err = $e;
+                if (_CLI_ === false) {
+                    unset(static::$pools[$this->key]);
+                }
+                self::$connect_count--;
+            }
+        }
+        if ($err) {
+            throw new ClickHouseException($err->getMessage(), $err->getCode());
+        }
+        $this->push($ck);
+        return $res;
     }
 
     /**
@@ -124,7 +141,8 @@ class Connect
     private function createRes()
     {
         try {
-            return new \SeasClick($this->config);
+            return new Client($dsn = "tcp://{$this->config['host']}:{$this->config['port']}",
+                $this->config['user'], $this->config['password'], $this->config['database']);
         } catch (\PDOException $e) {
             throw new ClickHouseException('connection failed ' . $e->getMessage(), $e->getCode());
         }

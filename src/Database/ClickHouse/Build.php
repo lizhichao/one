@@ -5,7 +5,7 @@ namespace One\Database\ClickHouse;
 use One\Database\Mysql\Join;
 use One\Database\Mysql\ListModel;
 use One\Database\Mysql\PageInfo;
-use function Sodium\add;
+use OneCk\Client;
 
 class Build
 {
@@ -13,8 +13,6 @@ class Build
     use StructTrait;
 
     protected $from = '';
-
-    protected $pri_key = '';
 
     private $columns = [];
 
@@ -166,12 +164,11 @@ class Build
     }
 
     /**
-     * @param null $id
      * @return array
      */
-    public function findToArray($id = null)
+    public function findToArray()
     {
-        $res = $this->find($id);
+        $res = $this->find();
         if ($res === null) {
             return [];
         } else {
@@ -180,14 +177,14 @@ class Build
     }
 
     /**
-     * @param null $id
+     * @param string $msg
      * @return Model
      */
-    public function findOrErr($id = null, $msg = 'not find %s')
+    public function findOrErr($msg = 'not find %s')
     {
-        $res = $this->find($id);
+        $res = $this->find();
         if ($res === null) {
-            throw new \InvalidArgumentException(sprintf($msg, $id), 4004);
+            throw new \InvalidArgumentException(sprintf($msg), 4004);
         } else {
             return $res;
         }
@@ -288,13 +285,12 @@ class Build
      */
     public function insert($data)
     {
-        list($keys, $build) = $this->getInsertSql($data);
-        $this->connect->insert($this->from, $keys, $build);
+        $this->connect->insert($this->from, $data);
         unset($this->model);
     }
 
     /**
-     * @return \PDO
+     * @return Client
      */
     public function getConnect()
     {
@@ -302,7 +298,7 @@ class Build
     }
 
     /**
-     * 返回pdo对象到列队
+     * @param Client $pdo
      */
     public function push($pdo)
     {
@@ -326,16 +322,6 @@ class Build
     public function from($from)
     {
         $this->from = $from;
-        return $this;
-    }
-
-    /**
-     * @param $key
-     * @return $this
-     */
-    public function setPrikey($key)
-    {
-        $this->pri_key = $key;
         return $this;
     }
 
@@ -486,7 +472,7 @@ class Build
             if ($v[0] === null) {
                 $sql .= $v[1];
             } else {
-                $sql    .= $v[0] . $v[1] . "'".addslashes($v[2])."'";
+                $sql .= $v[0] . $v[1] . "'" . addslashes($v[2]) . "'";
             }
             if (isset($v[3])) {
                 $prev = $v[0];
@@ -518,7 +504,7 @@ class Build
         }
     }
 
-    private $count_str = 'count(*) as row_count';
+    private $count_str = 'count() as row_count';
 
     protected function getSelectSql()
     {
@@ -554,18 +540,6 @@ class Build
             $sql .= ' limit ' . $this->limit;
         }
         return $sql;
-    }
-
-
-    private function getInsertSql($data)
-    {
-        $build = [];
-        $keys  = array_keys($this->filter($data[0]));
-        foreach ($data as $v) {
-            $build[] = array_values($this->filter($v));
-        }
-        $this->build = $build;
-        return [$keys, $build];
     }
 
 

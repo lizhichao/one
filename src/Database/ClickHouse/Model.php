@@ -3,12 +3,40 @@
 namespace One\Database\ClickHouse;
 
 use One\Database\Mysql\ArrayModel;
+use One\Database\Mysql\ListModel;
+use One\Database\Mysql\PageInfo;
 use One\Database\Mysql\Relation;
 use One\Database\Mysql\RelationTrait;
 
 /**
  * Class Model
- * @mixin CacheBuild
+ * @method static string insert($data, $is_mulit = false)
+ * @method static EventBuild cache($time)
+ * @method static EventBuild with($relation, array $closure = null)
+ * @method static ListModel|static[]|Model[] query($sql, array $build = [])
+ * @method static Model|null|static find($id = null)
+ * @method static ListModel|Model[]|static[] findAll()
+ * @method static array findToArray($id = null)
+ * @method static Model|static findOrErr($id = null, $msg = 'not find %s')
+ * @method static \Generator|static[] chunk($count = 100)
+ * @method static PageInfo findAllPageInfo()
+ * @method static int count()
+ * @method static int sum($column)
+ * @method static mixed exec($sql, array $build = [], $is_insert = false)
+ * @method static \PDO getConnect()
+ * @method static EventBuild setConnection($key)
+ * @method static EventBuild from($from)
+ * @method static EventBuild column(array $columns)
+ * @method static EventBuild distinct($column)
+ * @method static EventBuild leftJoin($table, $first, $second = null)
+ * @method static EventBuild limit($limit, $skip = 0)
+ * @method static EventBuild where($key, $operator = null, $val = null, $link = ' and ')
+ * @method static EventBuild whereOr($key, $operator = null, $val = null)
+ * @method static EventBuild whereIn($key, array $val)
+ * @method static EventBuild whereRaw($str, array $build_data = null, $link = ' and ')
+ * @method static EventBuild whereNull($key)
+ * @method static void flushTableInfo()
+ * @mixin EventBuild
  * @mixin Relation
  */
 class Model extends ArrayModel
