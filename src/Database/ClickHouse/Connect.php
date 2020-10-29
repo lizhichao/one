@@ -112,9 +112,9 @@ class Connect
 
     private function send($m, ...$args)
     {
-        $ck        = $this->pop();
         $max_times = $this->config['max_connect_count'] + 1;
         while ($max_times--) {
+            $ck  = $this->pop();
             $err = null;
             try {
                 $res = $ck->{$m}(...$args);
