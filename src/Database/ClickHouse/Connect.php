@@ -31,8 +31,8 @@ class Connect
      */
     public function __construct($key, $model)
     {
-        $this->key    = $key;
-        $this->model  = $model;
+        $this->key = $key;
+        $this->model = $model;
         $this->config = self::$conf[$key];
     }
 
@@ -42,15 +42,15 @@ class Connect
             $time = $time ? (microtime(true) - $time) * 1000 : $time;
             if (is_string($sql)) {
                 $sql1 = str_replace('%', "```", $sql);
-                $s    = vsprintf(str_replace('?', "'%s'", $sql1), $build);
-                $s    = str_replace('```', "%", $s);
-                $id   = md5(str_replace('()', '', str_replace(['?', ','], '', $sql)));
+                $s = vsprintf(str_replace('?', "'%s'", $sql1), $build);
+                $s = str_replace('```', "%", $s);
+                $id = md5(str_replace('()', '', str_replace(['?', ','], '', $sql)));
             } else {
-                $s  = $sql;
+                $s = $sql;
                 $id = $sql[0];
             }
             $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 13);
-            $k     = 1;
+            $k = 1;
             foreach ($trace as $i => $v) {
                 if (strpos($v['file'], DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'lizhichao' . DIRECTORY_SEPARATOR) === false) {
                     $k = $i + 1;
@@ -105,7 +105,7 @@ class Connect
     public function exec($sql, $data = [])
     {
         $time = microtime(true);
-        $res  = $this->send('query', $sql);
+        $res = $this->send('query', $sql);
         $this->debugLog($sql, $time, $data);
         return $res;
     }
@@ -114,7 +114,7 @@ class Connect
     {
         $max_times = $this->config['max_connect_count'] + 1;
         while ($max_times--) {
-            $ck  = $this->pop();
+            $ck = $this->pop();
             $err = null;
             try {
                 $res = $ck->{$m}(...$args);
@@ -141,8 +141,11 @@ class Connect
     private function createRes()
     {
         try {
-            return new Client($dsn = "tcp://{$this->config['host']}:{$this->config['port']}",
+            $key = $this->key;
+            $r = new Client($dsn = "tcp://{$this->config['host']}:{$this->config['port']}",
                 $this->config['user'], $this->config['password'], $this->config['database']);
+            $r->mykey = $key;
+            return $r;
         } catch (\PDOException $e) {
             throw new ClickHouseException('connection failed ' . $e->getMessage(), $e->getCode());
         }

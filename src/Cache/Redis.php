@@ -65,7 +65,7 @@ class Redis extends Cache
 
     public function setConnection($key)
     {
-        $this->key    = $key;
+        $this->key = $key;
         $this->config = self::$conf[$key];
         return $this;
     }
@@ -75,21 +75,24 @@ class Redis extends Cache
      */
     private function createRes()
     {
-        if (isset($this->config['is_cluster']) && $this->config['is_cluster'] === true) {
-            return new \RedisCluster(...$this->config['args']);
+        $config = $this->config;
+        $mykey = $this->key;
+        if (isset($config['is_cluster']) && $config['is_cluster'] === true) {
+            return new \RedisCluster(...$config['args']);
         } else {
             $r = new \Redis();
-            $r->connect($this->config['host'], $this->config['port'], 0);
-            if (empty($this->config['auth']) === false) {
-                $r->auth($this->config['auth']);
+            $r->mykey = $mykey;
+            $r->connect($config['host'], $config['port'], 0);
+            if (empty($config['auth']) === false) {
+                $r->auth($config['auth']);
             }
 
-            if (empty($this->config['db']) === false) {
-                $r->select($this->config['db']);
+            if (empty($config['db']) === false) {
+                $r->select($config['db']);
             }
-            
-            if (empty($this->config['prefix']) === false) {
-                $r->setOption(\Redis::OPT_PREFIX, $this->config['prefix']);
+
+            if (empty($config['prefix']) === false) {
+                $r->setOption(\Redis::OPT_PREFIX, $config['prefix']);
             }
             return $r;
         }
@@ -116,8 +119,8 @@ class Redis extends Cache
     public function get($key, \Closure $closure = null, $ttl = null, $tags = [])
     {
         try {
-            $tk  = $this->getTagKey($key, $tags);
-            $rs  = $this->pop();
+            $tk = $this->getTagKey($key, $tags);
+            $rs = $this->pop();
             $val = $rs->get($tk);
             $this->push($rs);
             if ((!$val) && $closure) {
@@ -140,7 +143,7 @@ class Redis extends Cache
             if (is_string($key)) {
                 $key = $this->getTagKey($key);
             }
-            $rs  = $this->pop();
+            $rs = $this->pop();
             $ret = $rs->del($key);
             $this->push($rs);
             $this->setRetryCount();
@@ -168,8 +171,8 @@ class Redis extends Cache
     public function set($key, $val, $ttl = null, $tags = [])
     {
         try {
-            $tk  = $this->getTagKey($key, $tags);
-            $rs  = $this->pop();
+            $tk = $this->getTagKey($key, $tags);
+            $rs = $this->pop();
             $ret = $rs->set($tk, $val, $ttl);
             $this->push($rs);
             $this->setRetryCount();

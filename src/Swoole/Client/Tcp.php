@@ -56,7 +56,9 @@ class Tcp
 
     private function createRes()
     {
+        $mykey = $this->key;
         $client = new \Swoole\Coroutine\Client(SWOOLE_TCP);
+        $client->mykey = $mykey;
         if (isset($this->config['set'])) {
             $client->set($this->config['set']);
         }

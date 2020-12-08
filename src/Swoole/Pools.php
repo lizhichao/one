@@ -51,15 +51,16 @@ trait Pools
      */
     public function push($obj, $s = false)
     {
+        $key = $obj->mykey;
         if (_CLI_) {
-            $id = $this->key . '_' . $this->getTsId();
+            $id = $key . '_' . $this->getTsId();
             if (isset(self::$sw[$id])) {
                 if ($s || $obj !== self::$sw[$id]) {
                     unset(self::$sw[$id]);
-                    self::$pools[$this->key]->push($obj,$this->time_limit);
+                    self::$pools[$key]->push($obj,$this->time_limit);
                 }
             } else {
-                self::$pools[$this->key]->push($obj,$this->time_limit);
+                self::$pools[$key]->push($obj,$this->time_limit);
             }
         }
     }
@@ -88,14 +89,15 @@ trait Pools
 
     private function getCliRes($key)
     {
+        $config = $this->config;
         $time = time();
         if (!isset(self::$pools[$key])) {
-            self::$pools[$key] = new Channel($this->config['max_connect_count']);
+            self::$pools[$key] = new Channel($config['max_connect_count']);
         }
         $sp = self::$pools[$key];
 
         if ($sp->isEmpty()) {
-            if (self::$connect_count < $this->config['max_connect_count']) {
+            if (self::$connect_count < $config['max_connect_count']) {
                 self::$connect_count++;
                 $rs = $this->createRes();
                 $rs->create_time = time();
@@ -104,8 +106,8 @@ trait Pools
         } else if (self::$last_use_time > 0 && (self::$last_use_time + $this->free_time) < $time && $sp->length() > 1) {
             $sp->pop($this->time_limit);
             self::$connect_count--;
-            if(isset($this->config['free_call'])){
-                $this->config['free_call']->call($this);
+            if(isset($config['free_call'])){
+                $config['free_call']->call($this);
             }
         }
         self::$last_use_time = $time;

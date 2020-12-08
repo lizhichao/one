@@ -29,8 +29,8 @@ class Connect
      */
     public function __construct($key, $model)
     {
-        $this->key    = $key;
-        $this->model  = $model;
+        $this->key = $key;
+        $this->model = $model;
         $this->config = self::$conf[$key];
     }
 
@@ -52,7 +52,7 @@ class Connect
      */
     private function execute($sql, $data = [], $retry = 0, $return_pdo = false)
     {
-        $pdo  = $this->pop();
+        $pdo = $this->pop();
         $time = microtime(true);
         try {
             if ($this->is_repeat_statement === true) {
@@ -113,13 +113,13 @@ class Connect
     private function debugLog($sql, $time = 0, $build = [], $err = [])
     {
         if (self::$conf['debug_log']) {
-            $time  = $time ? (microtime(true) - $time) * 1000 : $time;
-            $sql1  = str_replace('%', "```", $sql);
-            $s     = vsprintf(str_replace('?', "'%s'", $sql1), $build);
-            $s     = str_replace('```', "%", $s);
-            $id    = md5(str_replace('()', '', str_replace(['?', ','], '', $sql)));
+            $time = $time ? (microtime(true) - $time) * 1000 : $time;
+            $sql1 = str_replace('%', "```", $sql);
+            $s = vsprintf(str_replace('?', "'%s'", $sql1), $build);
+            $s = str_replace('```', "%", $s);
+            $id = md5(str_replace('()', '', str_replace(['?', ','], '', $sql)));
             $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 13);
-            $k     = 1;
+            $k = 1;
             foreach ($trace as $i => $v) {
                 if (strpos($v['file'], DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'lizhichao' . DIRECTORY_SEPARATOR) === false) {
                     $k = $i + 1;
@@ -255,7 +255,7 @@ class Connect
         if ($this->inTransaction()) {
             $this->debugLog('rollBack');
             $pdo = $this->pop();
-            $r   = $pdo->rollBack();
+            $r = $pdo->rollBack();
             $this->push($pdo, true);
             return $r;
         }
@@ -270,7 +270,7 @@ class Connect
         if ($this->inTransaction()) {
             $this->debugLog('commit');
             $pdo = $this->pop();
-            $r   = $pdo->commit();
+            $r = $pdo->commit();
             $this->push($pdo, true);
             return $r;
         }
@@ -283,7 +283,7 @@ class Connect
     public function inTransaction()
     {
         $pdo = $this->pop();
-        $r   = $pdo->inTransaction();
+        $r = $pdo->inTransaction();
         if (!$r) {
             $this->push($pdo);
         }
@@ -297,7 +297,10 @@ class Connect
     private function createRes()
     {
         try {
-            return new \PDO($this->config['dns'], $this->config['username'], $this->config['password'], $this->config['ops']);
+            $mykey = $this->key;
+            $r = new \PDO($this->config['dns'], $this->config['username'], $this->config['password'], $this->config['ops']);
+            $r->mykey = $mykey;
+            return $r;
         } catch (\PDOException $e) {
             throw new DbException('connection failed ' . $e->getMessage(), $e->getCode());
         }
