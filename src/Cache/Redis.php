@@ -37,7 +37,7 @@ class Redis extends Cache
             $this->setRetryCount();
             return $ret;
         } catch (\RedisException $e) {
-            return $this->retry($name, $arguments, $e->getMessage(), $e->getCode());
+            return $this->retry($name, $arguments, $e->getMessage(), $e->getCode(), $rs->mykey);
         }
     }
 
@@ -46,10 +46,10 @@ class Redis extends Cache
         $this->retry_count = $this->config['max_connect_count'] + 1;
     }
 
-    private function retry($name, $arguments, $msg, $code)
+    private function retry($name, $arguments, $msg, $code, $mykey)
     {
         Log::warn('retry ' . $name);
-        self::$connect_count--;
+        $this->setConnCount($mykey, -1);
         if ($this->retry_count > 0) {
             $this->retry_count--;
             if (_CLI_ === false) {
@@ -65,7 +65,7 @@ class Redis extends Cache
 
     public function setConnection($key)
     {
-        $this->key = $key;
+        $this->key    = $key;
         $this->config = self::$conf[$key];
         return $this;
     }
@@ -76,11 +76,11 @@ class Redis extends Cache
     private function createRes()
     {
         $config = $this->config;
-        $mykey = $this->key;
+        $mykey  = $this->key;
         if (isset($config['is_cluster']) && $config['is_cluster'] === true) {
             return new \RedisCluster(...$config['args']);
         } else {
-            $r = new \Redis();
+            $r        = new \Redis();
             $r->mykey = $mykey;
             $r->connect($config['host'], $config['port'], 0);
             if (empty($config['auth']) === false) {
@@ -118,9 +118,10 @@ class Redis extends Cache
 
     public function get($key, \Closure $closure = null, $ttl = null, $tags = [])
     {
+        $mykey = $this->key;
         try {
-            $tk = $this->getTagKey($key, $tags);
-            $rs = $this->pop();
+            $tk  = $this->getTagKey($key, $tags);
+            $rs  = $this->pop();
             $val = $rs->get($tk);
             $this->push($rs);
             if ((!$val) && $closure) {
@@ -132,24 +133,24 @@ class Redis extends Cache
             $this->setRetryCount();
             return $val;
         } catch (\RedisException $e) {
-            return $this->retry('get', func_get_args(), $e->getMessage(), $e->getCode());
+            return $this->retry('get', func_get_args(), $e->getMessage(), $e->getCode(), $mykey);
         }
     }
 
     public function del($key)
     {
-
+        $mykey = $this->key;
         try {
             if (is_string($key)) {
                 $key = $this->getTagKey($key);
             }
-            $rs = $this->pop();
+            $rs  = $this->pop();
             $ret = $rs->del($key);
             $this->push($rs);
             $this->setRetryCount();
             return $ret;
         } catch (\RedisException $e) {
-            return $this->retry('del', func_get_args(), $e->getMessage(), $e->getCode());
+            return $this->retry('del', func_get_args(), $e->getMessage(), $e->getCode(), $mykey);
         }
 
     }
@@ -170,15 +171,16 @@ class Redis extends Cache
 
     public function set($key, $val, $ttl = null, $tags = [])
     {
+        $mykey = $this->key;
         try {
-            $tk = $this->getTagKey($key, $tags);
-            $rs = $this->pop();
+            $tk  = $this->getTagKey($key, $tags);
+            $rs  = $this->pop();
             $ret = $rs->set($tk, $val, $ttl);
             $this->push($rs);
             $this->setRetryCount();
             return $ret;
         } catch (\RedisException $e) {
-            return $this->retry('set', func_get_args(), $e->getMessage(), $e->getCode());
+            return $this->retry('set', func_get_args(), $e->getMessage(), $e->getCode(), $mykey);
         }
 
     }

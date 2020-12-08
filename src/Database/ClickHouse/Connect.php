@@ -113,6 +113,7 @@ class Connect
     private function send($m, ...$args)
     {
         $max_times = $this->config['max_connect_count'] + 1;
+        $mykey = $this->key;
         while ($max_times--) {
             $ck = $this->pop();
             $err = null;
@@ -124,7 +125,7 @@ class Connect
                 if (_CLI_ === false) {
                     unset(static::$pools[$this->key]);
                 }
-                self::$connect_count--;
+                $this->setConnCount($mykey, -1);
             }
         }
         if ($err) {

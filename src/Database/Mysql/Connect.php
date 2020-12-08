@@ -29,8 +29,8 @@ class Connect
      */
     public function __construct($key, $model)
     {
-        $this->key = $key;
-        $this->model = $model;
+        $this->key    = $key;
+        $this->model  = $model;
         $this->config = self::$conf[$key];
     }
 
@@ -52,15 +52,16 @@ class Connect
      */
     private function execute($sql, $data = [], $retry = 0, $return_pdo = false)
     {
-        $pdo = $this->pop();
-        $time = microtime(true);
+        $mykey = $this->key;
+        $pdo   = $this->pop();
+        $time  = microtime(true);
         try {
             if ($this->is_repeat_statement === true) {
                 $ptid = 'p' . md5($sql);
                 if (property_exists($pdo, $ptid) === false) {
                     $res = $pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
                     if (!$res) {
-                        return $this->retry($sql, $time, $data, $pdo->errorInfo()[2], $retry, $return_pdo);
+                        return $this->retry($sql, $time, $data, $pdo->errorInfo()[2], $retry, $return_pdo, $mykey);
                     }
                     $res->setFetchMode(\PDO::FETCH_CLASS, $this->model);
                     $pdo->{$ptid} = $res;
@@ -70,7 +71,7 @@ class Connect
             } else {
                 $res = $pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
                 if (!$res) {
-                    return $this->retry($sql, $time, $data, $pdo->errorInfo()[2], $retry, $return_pdo);
+                    return $this->retry($sql, $time, $data, $pdo->errorInfo()[2], $retry, $return_pdo, $mykey);
                 }
                 $res->setFetchMode(\PDO::FETCH_CLASS, $this->model);
             }
@@ -83,18 +84,18 @@ class Connect
             return [$res, $pdo];
         } catch (\PDOException $e) {
             $this->debugLog($sql, $time, $data, $e->getMessage());
-            return $this->retry($sql, $time, $data, $e->getMessage(), $retry, $return_pdo);
+            return $this->retry($sql, $time, $data, $e->getMessage(), $retry, $return_pdo, $mykey);
         } catch (DbException $e) {
             throw $e;
         } catch (\Throwable $e) {
-            self::$connect_count--;
+            $this->setConnCount($mykey, -1);
             throw new DbException(json_encode(['info' => $e->getMessage(), 'sql' => $sql]), $e->getCode());
         }
     }
 
-    private function retry($sql, $time, $data, $err, $retry, $return_pdo)
+    private function retry($sql, $time, $data, $err, $retry, $return_pdo, $mykey)
     {
-        self::$connect_count--;
+        $this->setConnCount($mykey, -1);
         $this->debugLog($sql, $time, $data, $err);
         if ($this->isBreak($err) && $retry < ($this->config['max_connect_count'] + 1)) {
             if (_CLI_ === false) {
@@ -113,13 +114,13 @@ class Connect
     private function debugLog($sql, $time = 0, $build = [], $err = [])
     {
         if (self::$conf['debug_log']) {
-            $time = $time ? (microtime(true) - $time) * 1000 : $time;
-            $sql1 = str_replace('%', "```", $sql);
-            $s = vsprintf(str_replace('?', "'%s'", $sql1), $build);
-            $s = str_replace('```', "%", $s);
-            $id = md5(str_replace('()', '', str_replace(['?', ','], '', $sql)));
+            $time  = $time ? (microtime(true) - $time) * 1000 : $time;
+            $sql1  = str_replace('%', "```", $sql);
+            $s     = vsprintf(str_replace('?', "'%s'", $sql1), $build);
+            $s     = str_replace('```', "%", $s);
+            $id    = md5(str_replace('()', '', str_replace(['?', ','], '', $sql)));
             $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 13);
-            $k = 1;
+            $k     = 1;
             foreach ($trace as $i => $v) {
                 if (strpos($v['file'], DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'lizhichao' . DIRECTORY_SEPARATOR) === false) {
                     $k = $i + 1;
@@ -213,6 +214,7 @@ class Connect
     public function beginTransaction()
     {
         $rc = 0;
+        $mykey = $this->key;
         retry:
         {
             if ($this->inTransaction()) {
@@ -229,7 +231,7 @@ class Connect
             }
         }
         if ($r === false) {
-            self::$connect_count--;
+            $this->setConnCount($mykey,-1);
             $co_id = $this->key . '_' . $this->getTsId();
             if (isset(self::$sw[$co_id])) {
                 unset(self::$sw[$co_id]);
@@ -255,7 +257,7 @@ class Connect
         if ($this->inTransaction()) {
             $this->debugLog('rollBack');
             $pdo = $this->pop();
-            $r = $pdo->rollBack();
+            $r   = $pdo->rollBack();
             $this->push($pdo, true);
             return $r;
         }
@@ -270,7 +272,7 @@ class Connect
         if ($this->inTransaction()) {
             $this->debugLog('commit');
             $pdo = $this->pop();
-            $r = $pdo->commit();
+            $r   = $pdo->commit();
             $this->push($pdo, true);
             return $r;
         }
@@ -283,7 +285,7 @@ class Connect
     public function inTransaction()
     {
         $pdo = $this->pop();
-        $r = $pdo->inTransaction();
+        $r   = $pdo->inTransaction();
         if (!$r) {
             $this->push($pdo);
         }
@@ -297,8 +299,8 @@ class Connect
     private function createRes()
     {
         try {
-            $mykey = $this->key;
-            $r = new \PDO($this->config['dns'], $this->config['username'], $this->config['password'], $this->config['ops']);
+            $mykey    = $this->key;
+            $r        = new \PDO($this->config['dns'], $this->config['username'], $this->config['password'], $this->config['ops']);
             $r->mykey = $mykey;
             return $r;
         } catch (\PDOException $e) {

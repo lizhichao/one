@@ -20,7 +20,7 @@ trait Pools
      */
     private static $pools = [];
 
-    private static $connect_count = 0;
+    private static $connect_count = [];
 
     private static $sw = [];
 
@@ -34,6 +34,14 @@ trait Pools
 
     private static $last_use_time = 0;
 
+
+    private function setConnCount($key, $i)
+    {
+        if (!isset(self::$connect_count[$key])) {
+            self::$connect_count[$key] = 0;
+        }
+        self::$connect_count[$key] += $i;
+    }
 
     private function getTsId()
     {
@@ -57,10 +65,10 @@ trait Pools
             if (isset(self::$sw[$id])) {
                 if ($s || $obj !== self::$sw[$id]) {
                     unset(self::$sw[$id]);
-                    self::$pools[$key]->push($obj,$this->time_limit);
+                    self::$pools[$key]->push($obj, $this->time_limit);
                 }
             } else {
-                self::$pools[$key]->push($obj,$this->time_limit);
+                self::$pools[$key]->push($obj, $this->time_limit);
             }
         }
     }
@@ -90,23 +98,23 @@ trait Pools
     private function getCliRes($key)
     {
         $config = $this->config;
-        $time = time();
+        $time   = time();
         if (!isset(self::$pools[$key])) {
             self::$pools[$key] = new Channel($config['max_connect_count']);
         }
         $sp = self::$pools[$key];
 
         if ($sp->isEmpty()) {
-            if (self::$connect_count < $config['max_connect_count']) {
-                self::$connect_count++;
-                $rs = $this->createRes();
+            if (!isset(self::$connect_count[$key]) || self::$connect_count[$key] < $config['max_connect_count']) {
+                $this->setConnCount($key, 1);
+                $rs              = $this->createRes();
                 $rs->create_time = time();
-                $sp->push($rs,$this->time_limit);
+                $sp->push($rs, $this->time_limit);
             }
         } else if (self::$last_use_time > 0 && (self::$last_use_time + $this->free_time) < $time && $sp->length() > 1) {
-            $sp->pop($this->time_limit);
-            self::$connect_count--;
-            if(isset($config['free_call'])){
+            $rs = $sp->pop($this->time_limit);
+            $this->setConnCount($rs->mykey, -1);
+            if (isset($config['free_call'])) {
                 $config['free_call']->call($this);
             }
         }

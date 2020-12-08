@@ -106,7 +106,7 @@ class Tcp
             retry:{
                 do {
                     $cli->close();
-                    self::$connect_count--;
+                    $this->setConnCount($cli->mykey,-1);
                     if (isset($this->config['close_call'])) {
                         $this->config['close_call']->call($this, $cli);
                     }
