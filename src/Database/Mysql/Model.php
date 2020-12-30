@@ -36,6 +36,14 @@ namespace One\Database\Mysql;
  * @method static bool rollBack()
  * @method static bool commit()
  * @method static void transaction(\Closure $call)
+ * @method bool onBeforeGet(EventBuild $call, $args)
+ * @method bool onBeforeUpdate(EventBuild $call, array $data)
+ * @method bool onBeforeDeletet(EventBuild $call, $args)
+ * @method bool onBeforeInsert(EventBuild $call, array $data)
+ * @method void onAfterGet($result, $args)
+ * @method void onAfterUpdate($result, $args)
+ * @method void onAfterDeletet($result, $args)
+ * @method void onAfterInsert($result, $args)
  * @mixin CacheBuild
  * @mixin Relation
  */
@@ -53,7 +61,7 @@ class Model extends ArrayModel
 
     private $_relation = null;
 
-    CONST TABLE = '';
+    const TABLE = '';
 
     protected $_pri_key = '';
 
@@ -127,9 +135,4 @@ class Model extends ArrayModel
         return $obj;
     }
 
-
-    public function events()
-    {
-        return [];
-    }
 }

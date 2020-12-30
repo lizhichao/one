@@ -4,13 +4,6 @@ namespace One\Database\Mysql;
 
 class EventBuild extends CacheBuild
 {
-    private $events = [];
-
-    public function __construct($connection, $model, $model_name, $table)
-    {
-        parent::__construct($connection, $model, $model_name, $table);
-        $this->events = $this->model->events();
-    }
 
     protected function get($sql = '', $build = [], $all = false)
     {
@@ -62,9 +55,9 @@ class EventBuild extends CacheBuild
 
     private function callBefre($name, & $arg = null)
     {
-        $key = 'before' . ucfirst($name);
-        if (isset($this->events[$key])) {
-            return $this->events[$key]($this, $arg);
+        $m = 'onBefore' . ucfirst($name);
+        if(method_exists($this->model,$m)){
+            return $this->model->$m($this, $arg);
         } else {
             return true;
         }
@@ -72,9 +65,9 @@ class EventBuild extends CacheBuild
 
     private function callAfter($name, & $result, & $arg = null)
     {
-        $key = 'after' . ucfirst($name);
-        if (isset($this->events[$key])) {
-            $this->events[$key]($result, $arg);
+        $m = 'onAfter' . ucfirst($name);
+        if(method_exists($this->model,$m)){
+            $this->model->$m($result, $arg);
         }
     }
 
