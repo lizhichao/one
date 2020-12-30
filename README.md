@@ -378,10 +378,12 @@ class ClientAbc extends RpcClientTcp {
 
 ## TODO
 
+* 支持[Workerman](https://github.com/walkor/Workerman)
 * orm支持[postgresql](https://www.postgresql.org/)
 
 QQ交流群: 731475644
 
 ## 我的其他开源项目
-[纯php的分词](https://github.com/lizhichao/VicWord)
+* [纯php的分词](https://github.com/lizhichao/VicWord)
+* [clickhouse tcp 客户端](https://github.com/lizhichao/one-ck)
 
