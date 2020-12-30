@@ -384,6 +384,6 @@ class ClientAbc extends RpcClientTcp {
 QQ交流群: 731475644
 
 ## 我的其他开源项目
-[纯php的分词](https://github.com/lizhichao/VicWord)
-[clickhouse tcp 客户端](https://github.com/lizhichao/one-ck)
+* [纯php的分词](https://github.com/lizhichao/VicWord)
+* [clickhouse tcp 客户端](https://github.com/lizhichao/one-ck)
 
