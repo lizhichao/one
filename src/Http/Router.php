@@ -19,7 +19,7 @@ class Router
 
     public static function clearCache()
     {
-        self::$info = [];
+        self::$info    = [];
         self::$as_info = [];
     }
 
@@ -93,13 +93,12 @@ class Router
         }
         $keys = array_keys($arr);
         foreach ($keys as $key) {
-            $s = substr($key, 0, 1);
-            if ($s == '{') {
+            if ($key[0] === '{') {
                 $_k = substr($key, 1, -1);
                 if (substr($v, 0, 1) == '#') {
                     $v = substr($v, 1);
                 }
-                if ($_k == 'id') {
+                if ($_k === 'id') {
                     if (is_numeric($v)) {
                         $this->args[] = $v;
                         return $arr[$key];
@@ -108,7 +107,7 @@ class Router
                     $this->args[] = $v;
                     return $arr[$key];
                 }
-            } else if ($s == '`') {
+            } else if ($key[0] === '`') {
                 if (preg_match('/' . substr($key, 1, -1) . '/', $v)) {
                     $this->args[] = $v;
                     return $arr[$key];
@@ -147,9 +146,9 @@ class Router
 
     public function explain($method, $uri, ...$other_args)
     {
-        $info = $this->getAction($method, $uri);
+        $info    = $this->getAction($method, $uri);
         $as_name = isset($info[0]['as']) ? $info[0]['as'] : '';
-        
+
         $str = is_array($info[0]) ? $info[0]['use'] : $info[0];
         list($class, $fun) = explode('@', $str);
 
@@ -187,7 +186,7 @@ class Router
     }
 
 
-    private static $group_info = [];
+    private static $group_info      = [];
     private static $max_group_depth = 200;
 
     /**
@@ -255,6 +254,10 @@ class Router
         }
         if (is_array($action)) {
             self::createAsInfo($path, $action);
+
+            if (isset($action['middle'])) {
+                $action['middle'] = array_reverse($action['middle']);
+            }
         }
         $arr = explode('/', $method . $path);
         if (is_array($action)) {
