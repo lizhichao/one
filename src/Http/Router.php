@@ -93,7 +93,9 @@ class Router
         }
         $keys = array_keys($arr);
         foreach ($keys as $key) {
-            if ($key[0] === '{') {
+            if($key === 0){
+                continue;
+            }else if ($key[0] === '{') {
                 $_k = substr($key, 1, -1);
                 if (substr($v, 0, 1) == '#') {
                     $v = substr($v, 1);
