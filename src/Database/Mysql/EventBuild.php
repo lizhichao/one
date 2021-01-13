@@ -20,11 +20,13 @@ class EventBuild extends CacheBuild
      */
     public function update($data)
     {
+        $ret = null;
         if ($this->callBefre(__FUNCTION__, $data) !== false) {
             $ret = parent::update($data);
             $this->callAfter(__FUNCTION__, $ret, $data);
-            return $ret;
         }
+        unsert($this->model);
+        return $ret;
     }
 
     /**
@@ -32,11 +34,13 @@ class EventBuild extends CacheBuild
      */
     public function delete()
     {
+        $ret = null;
         if ($this->callBefre(__FUNCTION__) !== false) {
             $ret = parent::delete();
             $this->callAfter(__FUNCTION__, $ret);
-            return $ret;
         }
+        unsert($this->model);
+        return $ret;
     }
 
     /**
@@ -46,11 +50,13 @@ class EventBuild extends CacheBuild
      */
     public function insert($data, $is_mulit = false)
     {
+        $ret = null;
         if ($this->callBefre(__FUNCTION__, $data) !== false) {
             $ret = parent::insert($data, $is_mulit);
             $this->callAfter(__FUNCTION__, $ret, $data);
-            return $ret;
         }
+        unset($this->model);
+        return $ret;
     }
 
     private function callBefre($name, & $arg = null)

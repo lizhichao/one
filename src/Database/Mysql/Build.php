@@ -301,7 +301,6 @@ class Build
     public function insert($data, $is_mulit = false)
     {
         $r = $this->connect->exec($this->getInsertSql($data, $is_mulit), $this->build, true);
-        unset($this->model);
         return $r;
     }
 
@@ -312,7 +311,6 @@ class Build
     public function update($data)
     {
         $r = $this->connect->exec($this->getUpdateSql($data), $this->build);
-        unset($this->model);
         return $r;
 
     }
@@ -323,7 +321,6 @@ class Build
     public function delete()
     {
         $r = $this->connect->exec($this->getDeleteSql(), $this->build);
-        unset($this->model);
         return $r;
 
     }
