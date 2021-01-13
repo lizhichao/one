@@ -25,7 +25,7 @@ class EventBuild extends CacheBuild
             $ret = parent::update($data);
             $this->callAfter(__FUNCTION__, $ret, $data);
         }
-        unsert($this->model);
+        unset($this->model);
         return $ret;
     }
 
@@ -39,7 +39,7 @@ class EventBuild extends CacheBuild
             $ret = parent::delete();
             $this->callAfter(__FUNCTION__, $ret);
         }
-        unsert($this->model);
+        unset($this->model);
         return $ret;
     }
 
