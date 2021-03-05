@@ -6,6 +6,8 @@ class ListModel implements \Iterator, \JsonSerializable, \ArrayAccess
 {
     private $index = 0;
     private $data = [];
+    private $len = 0;
+
 
     public function pluck($column, $is_key = false, $unique = false)
     {
@@ -48,8 +50,8 @@ class ListModel implements \Iterator, \JsonSerializable, \ArrayAccess
     public function offsetUnset($offset)
     {
         unset($this->data[$offset]);
+        $this->len--;
     }
-
 
     public function jsonSerialize()
     {
@@ -58,7 +60,8 @@ class ListModel implements \Iterator, \JsonSerializable, \ArrayAccess
 
     public function __construct($data)
     {
-        $this->data = $data;
+        $this->data = $data ? $data : [];
+        $this->len = count($this->data);
     }
 
     public function rewind()
@@ -68,7 +71,7 @@ class ListModel implements \Iterator, \JsonSerializable, \ArrayAccess
 
     public function valid()
     {
-        return $this->index < count($this->data);
+        return $this->index < $this->len;
     }
 
     public function current()
