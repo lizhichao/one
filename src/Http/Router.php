@@ -93,9 +93,9 @@ class Router
         }
         $keys = array_keys($arr);
         foreach ($keys as $key) {
-            if($key === 0){
+            if ($key === 0) {
                 continue;
-            }else if ($key[0] === '{') {
+            } else if ($key[0] === '{') {
                 $_k = substr($key, 1, -1);
                 if (substr($v, 0, 1) == '#') {
                     $v = substr($v, 1);
@@ -136,6 +136,7 @@ class Router
         if (is_array($info)) {
             $fm[] = $info;
             if (isset($info['middle'])) {
+                $info['middle'] = array_reverse($info['middle']);
                 foreach ($info['middle'] as $v) {
                     $fm[] = $v;
                 }
@@ -217,7 +218,7 @@ class Router
                 if (!isset($action['middle'])) {
                     $action['middle'] = [];
                 }
-                $action['middle'] = array_merge($action['middle'], array_reverse($group_info['middle']));
+                $action['middle'] = array_merge($group_info['middle'], $action['middle']);
             }
             if (isset($group_info['cache'])) {
                 $action['cache'] = $group_info['cache'];
@@ -228,7 +229,7 @@ class Router
             }
             $action = ['use' => $action, 'middle' => []];
             if (isset($group_info['middle'])) {
-                $action['middle'] = array_merge($action['middle'], array_reverse($group_info['middle']));
+                $action['middle'] = array_merge($group_info['middle'], $action['middle']);
             }
             if (isset($group_info['cache'])) {
                 $action['cache'] = $group_info['cache'];
@@ -256,10 +257,6 @@ class Router
         }
         if (is_array($action)) {
             self::createAsInfo($path, $action);
-
-            if (isset($action['middle'])) {
-                $action['middle'] = array_reverse($action['middle']);
-            }
         }
         $arr = explode('/', $method . $path);
         if (is_array($action)) {
