@@ -23,9 +23,13 @@ class Event
      * @param string $class class name
      * @param string $event event name
      */
-    public static function remove($class, $event)
+    public static function remove($class, $event = null)
     {
-        unset(self::$es[$class][$event]);
+        if($event){
+            unset(self::$es[$class][$event]);
+        }else{
+            unset(self::$es[$class]);
+        }
     }
 
     /**
