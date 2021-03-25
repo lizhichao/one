@@ -39,7 +39,7 @@ class Event
      * @param false $is_async true -> Run outside a process
      * @return bool
      */
-    public static function dispatch($event, $class, $args = [], $is_async = false)
+    public static function dispatch($class, $event, $args = [], $is_async = false)
     {
         $c = get_class($class);
         if (!isset(self::$es[$c][$event])) {
