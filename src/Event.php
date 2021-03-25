@@ -25,9 +25,9 @@ class Event
      */
     public static function remove($class, $event = null)
     {
-        if($event){
+        if ($event) {
             unset(self::$es[$class][$event]);
-        }else{
+        } else {
             unset(self::$es[$class]);
         }
     }
@@ -35,17 +35,18 @@ class Event
     /**
      * @param string $event event name
      * @param object $class dispatch object
+     * @param array $args params
      * @param false $is_async true -> Run outside a process
      * @return bool
      */
-    public static function dispatch($event, $class, $is_async = false)
+    public static function dispatch($event, $class, $args = [], $is_async = false)
     {
         $c = get_class($class);
         if (!isset(self::$es[$c][$event])) {
             return false;
         }
         foreach (self::$es[$c][$event] as $val) {
-            $val->call($class);
+            $val->call($class, ...$args);
         }
         return true;
     }
