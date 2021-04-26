@@ -70,7 +70,7 @@ Router::get('/user/{id}', \App\Controllers\IndexController::class . '@user');
 
 // router with group
 Router::group(['namespace'=>'App\\Test\\WebSocket'],function (){
-	// websocket 路由
+	// websocket router
     Router::set('ws','/a','TestController@abc'); 
     Router::set('ws','/b','TestController@bbb'); 
 });
