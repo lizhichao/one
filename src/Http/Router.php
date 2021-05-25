@@ -193,7 +193,7 @@ class Router
     private static $max_group_depth = 200;
 
     /**
-     * @param array $rule ['prefix' => '','namespace'=>'','cache'=>1,'middle'=>[]]
+     * @param array $rule ['prefix' => '','namespace'=>'','middle'=>[]]
      * @param \Closure $route
      */
     public static function group($rule, $route)
@@ -220,9 +220,6 @@ class Router
                 }
                 $action['middle'] = array_merge($group_info['middle'], $action['middle']);
             }
-            if (isset($group_info['cache'])) {
-                $action['cache'] = $group_info['cache'];
-            }
         } else {
             if (isset($group_info['namespace'])) {
                 $action = '\\' . $group_info['namespace'] . '\\' . trim($action, '\\');
@@ -230,9 +227,6 @@ class Router
             $action = ['use' => $action, 'middle' => []];
             if (isset($group_info['middle'])) {
                 $action['middle'] = array_merge($group_info['middle'], $action['middle']);
-            }
-            if (isset($group_info['cache'])) {
-                $action['cache'] = $group_info['cache'];
             }
         }
         return $action;
