@@ -256,7 +256,7 @@ class Build
         $res            = $this->getData();
         $this->is_count = 0;
         unset($this->model);
-        return $res->row_count;
+        return $res[0]->row_count;
     }
 
     protected $sum_column = '';
