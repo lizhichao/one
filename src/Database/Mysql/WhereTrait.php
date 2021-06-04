@@ -4,7 +4,7 @@ namespace One\Database\Mysql;
 
 trait WhereTrait
 {
-    protected $where = [];
+    public $where = [];
 
     /**
      * @param $key

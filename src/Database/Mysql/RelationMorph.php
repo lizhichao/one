@@ -90,4 +90,12 @@ class RelationMorph
         return $this->setRelation();
     }
 
+    public function __call($name, $arguments)
+    {
+        foreach ($this->remote_type as $remote_model) {
+            $remote_model->$name(...$arguments);
+        }
+        return $this;
+    }
+
 }
