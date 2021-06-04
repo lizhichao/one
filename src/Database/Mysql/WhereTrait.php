@@ -4,7 +4,12 @@ namespace One\Database\Mysql;
 
 trait WhereTrait
 {
-    public $where = [];
+    protected $where = [];
+
+    public function getModelWhere()
+    {
+        return $this->where;
+    }
 
     /**
      * @param $key
