@@ -10,6 +10,7 @@
     - ...
 - High efficiency - operational performance, development efficiency, and easy maintenance.
 - Lightweight - no other dependencies, the total code amount of all components from routing and orm does not exceed 500k. If there is no complicated calling relationship in secondary development, you can quickly grasp the design principle
+- Distributed ORM - orm supports wireless sub-databases and sub-tables. The usage method remains the same
     
 
 ## hello world
@@ -51,6 +52,7 @@ curl http://127.0.0.1:8081/
     - Database connection: synchronous, asynchronous, blocking, disconnection and reconnection are all supported
     - sql template: automatically generate template id, you can understand what types of sql the project has, and the proportion of the number of calls, and provide data support for later data optimization.
     - Statement reuse: Provide SQL execution performance
+    - The model supports dynamic sub-database sub-table and massive data
 - rpc
     - Can automatically generate remote method mapping, support ide prompt
     - Direct call mapping method == call remote method, support chain call
