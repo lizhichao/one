@@ -128,7 +128,7 @@ class Build
 
     protected function getData($all = false)
     {
-        if ($all === false) {
+        if ($all === false && $this->limit === 0) {
             $this->limit(1);
         }
         return $this->get('', [], $all);
