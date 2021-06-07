@@ -173,6 +173,21 @@ class Response
         return '';
     }
 
+    /**
+     * 执行路径
+     * @param $method
+     * @param $url
+     * @param null $server
+     */
+    public function redirectCall($method, $url, $server = null)
+    {
+        $router = new Router();
+        $req    = $this->httpRequest;
+        $res    = $this;
+        list($req->class, $req->func, $mids, $action, $req->args, $req->as_name) = $router->explain($method, $url, $req, $res, $server);
+        $f = $router->getExecAction($mids, $action, $res, $server);
+        return $f();
+    }
 
     /**
      * @param string $file
