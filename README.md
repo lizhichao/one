@@ -10,7 +10,7 @@
     - ...
 - High efficiency - operational performance, development efficiency, and easy maintenance.
 - Lightweight - no other dependencies, the total code amount of all components from routing and orm does not exceed 500k. If there is no complicated calling relationship in secondary development, you can quickly grasp the design principle
-- Distributed ORM - orm supports wireless sub-databases and sub-tables. The usage method remains the same
+- Sub-database and sub-table - Supports wireless sub-database and table, and the upper-layer usage method remains the same
     
 
 ## hello world
