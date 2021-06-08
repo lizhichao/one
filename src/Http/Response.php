@@ -179,7 +179,7 @@ class Response
      * @param $url
      * @param null $server
      */
-    public function redirectCall($method, $url, $server = null)
+    public function redirectCall($url, $method = 'get', $server = null)
     {
         $router = new Router();
         $req    = $this->httpRequest;
