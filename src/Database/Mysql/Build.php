@@ -644,7 +644,7 @@ class Build
         if ($is_mulit) {
             $build  = [];
             $keys   = array_keys($this->filter($data[0], true));
-            $sql    .= ' (' . implode(',', $keys) . ')';
+            $sql    .= ' (`' . implode('`,`', $keys) . '`)';
             $values = [];
             foreach ($data as $v) {
                 $v        = $this->filter($v, true);
@@ -655,7 +655,7 @@ class Build
         } else {
             $data  = $this->filter($data, true);
             $keys  = array_keys($data);
-            $sql   .= ' (' . implode(',', $keys) . ')';
+            $sql   .= ' (`' . implode('`,`', $keys) . '`)';
             $build = array_values($data);
             $sql   .= ' values (' . substr(str_repeat(',?', count($keys)), 1) . ')';
         }
@@ -670,9 +670,9 @@ class Build
         $data  = $this->filter($data);
         foreach ($data as $k => $v) {
             if (is_array($v)) {
-                $sql .= "{$k}={$v[0]},";
+                $sql .= "`{$k}`={$v[0]},";
             } else {
-                $sql     .= "{$k}=?,";
+                $sql     .= "`{$k}`=?,";
                 $build[] = $v;
             }
         }
