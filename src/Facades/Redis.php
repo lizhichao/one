@@ -12,7 +12,7 @@ namespace One\Facades;
  * @method bool del($key) static
  * @method bool flush($tag) static
  * @method bool set($key, $val, $ttl = 0, $tags = []) static
- * @method Redis setConnection($key)
+ * @method Redis setConnection($key) static
  */
 class Redis extends Facade
 {
