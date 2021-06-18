@@ -98,7 +98,8 @@ class Build
 
         if ($this->is_count === 1 && count($this->group_by) > 0) {
             $sql = str_replace($this->count_str, implode(',', $this->group_by), $sql);
-            $sql = substr($sql, 0, stripos($sql,'limit'));
+            $i   = strripos($sql, ' limit ');
+            $sql = substr($sql, 0, $i ? $i : null);
             $sql = "select {$this->count_str} from ({$sql}) as a";
         }
 
