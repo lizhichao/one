@@ -48,7 +48,12 @@ class Response extends \One\Http\Response
 
     public function cookie(...$args)
     {
-        $this->httpResponse->cookie(...$args);
+        if (is_array($args[2])) {
+            $this->httpResponse->cookie($args[0], $args[1], ...$args[2]);
+        } else {
+            $this->httpResponse->cookie(...$args);
+        }
+
     }
 
     public function write($html)
