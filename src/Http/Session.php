@@ -28,6 +28,7 @@ class Session
             $time = $config['lifetime'];
         } else {
             $time = intval(ini_get('session.gc_maxlifetime'));
+            $config['lifetime'] = $time;
         }
         if ($config['drive'] == 'redis') {
             session_set_save_handler(new \One\Cache\SessionHandler($time), true);
