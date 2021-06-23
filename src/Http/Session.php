@@ -24,14 +24,11 @@ class Session
         }
         session_name($config['name']);
         unset($config['name']);
-        if (isset($config['lifetime'])) {
-            $time = $config['lifetime'];
-        } else {
-            $time = intval(ini_get('session.gc_maxlifetime'));
-            $config['lifetime'] = $time;
+        if (!isset($config['lifetime'])) {
+            $config['lifetime'] = intval(ini_get('session.gc_maxlifetime'));
         }
         if ($config['drive'] == 'redis') {
-            session_set_save_handler(new \One\Cache\SessionHandler($time), true);
+            session_set_save_handler(new \One\Cache\SessionHandler($config['lifetime']), true);
         }
         unset($config['drive']);
         if ($id) {
@@ -40,7 +37,7 @@ class Session
         if (version_compare(PHP_VERSION, '7.3.0') >= 0) {
             session_set_cookie_params($config);
         } else {
-            session_set_cookie_params($time, $config['path'], $config['domain']);
+            session_set_cookie_params($config['lifetime'], $config['path'], $config['domain']);
         }
         session_start();
         $this->data = &$_SESSION;
