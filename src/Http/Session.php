@@ -31,7 +31,7 @@ class Session
             session_set_save_handler(new \One\Cache\SessionHandler($config['lifetime']), true);
         }
         unset($config['drive']);
-        if ($id) {
+        if ($id && preg_match('/^\w+$/', $id)) {
             session_id($id);
         }
         if (version_compare(PHP_VERSION, '7.3.0') >= 0) {

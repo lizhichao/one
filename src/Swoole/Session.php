@@ -22,18 +22,20 @@ class Session
 
     /**
      * Session constructor.
-     * @param null $response
+     * @param Response $response
      * @param null $id session.id
      */
     public function __construct($response = null, $id = null)
     {
-        if(config('session.fn_sid')){
-            $id = config('session.fn_sid')($response);
+        $config = config('session');
+        if (isset($config['fn_sid'])) {
+            $id = $config['fn_sid']($response);
+            unset($config['fn_sid']);
         }
 
-        $this->name = config('session.name');
+        $this->name = $config['name'];
 
-        if ($id) {
+        if ($id && preg_match('/^\w+$/', $id)) {
             $this->session_id = $id;
         } else if ($response) {
             $this->session_id = $response->getHttpRequest()->cookie($this->name);
@@ -46,16 +48,40 @@ class Session
             return;
         }
 
-        $this->time = intval(ini_get('session.gc_maxlifetime'));
+        if (!isset($config['path'])) {
+            $config['path'] = '/';
+        }
+        if (!isset($config['lifetime'])) {
+            $config['lifetime'] = intval(ini_get('session.gc_maxlifetime'));
+        }
+        $this->time = $config['lifetime'];
 
-        if (config('session.drive') == 'redis') {
+        if ($config['drive'] == 'redis') {
             $this->drive = new Redis();
         } else {
             $this->drive = new File();
         }
 
+        // secure，httponly 以及 samesite
+        //$secure = null, $httponly = null, $samesite = null, $priority = null
+        $args = [
+            time() + $this->time, $config['path'], $config['domain'],
+            null, null, null
+        ];
+
+        if (isset($config['secure'])) {
+            $args[3] = $config['secure'];
+        }
+
+        if (isset($config['httponly'])) {
+            $args[4] = $config['httponly'];
+        }
+        if (isset($config['samesite'])) {
+            $args[5] = $config['samesite'];
+        }
+
         if ($response) {
-            $response->cookie($this->name, $this->session_id, time() + $this->time, '/', config('session.domain'));
+            $response->cookie($this->name, $this->session_id, $args);
         }
 
         $this->data = unserialize($this->drive->get($this->prefix . $this->session_id));
