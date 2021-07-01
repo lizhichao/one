@@ -240,6 +240,7 @@ class Build
             $ret = $this->fillSelectWith($ret, 'setRelationList');
         }
         $this->is_count = 1;
+        $this->limit    = 0;
         $res            = $this->getData();
         $this->is_count = 0;
         $page->total    = $res->row_count;

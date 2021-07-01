@@ -101,8 +101,8 @@ class Build
 
         if ($this->is_count === 1 && count($this->group_by) > 0) {
             $sql = str_replace($this->count_str, implode(',', $this->group_by), $sql);
-            $i = strripos($sql,' limit ');
-            $sql = substr($sql, 0 , $i ? $i : null);
+            $i   = strripos($sql, ' limit ');
+            $sql = substr($sql, 0, $i ? $i : null);
             $sql = "select {$this->count_str} from ({$sql}) as a";
         }
 
@@ -238,6 +238,7 @@ class Build
             $ret = $this->fillSelectWith($ret, 'setRelationList');
         }
         $this->is_count = 1;
+        $this->limit    = 0;
         $res            = $this->getData()[0];
         $this->is_count = 0;
         $page->total    = $res->row_count;
