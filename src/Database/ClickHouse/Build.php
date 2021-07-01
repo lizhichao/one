@@ -58,7 +58,7 @@ class Build
             list($drel, $nrel) = $this->getRel($relation);
             $q = $this->model->$drel();
             if ($closure !== null && $closure[0]) {
-                $closure[0]($q);
+                $closure[0]->call($res,$q);
                 unset($closure[0]);
             }
             if ($nrel) {
