@@ -169,7 +169,7 @@ class Build
                 }
                 return new ListModel($r);
             } else {
-                return arrLine($arr[$k], $k1);
+                return $this->mvData($arr[$k], $k1);
             }
         } else {
             return $arr[$key];
