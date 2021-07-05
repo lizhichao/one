@@ -135,6 +135,49 @@ class Build
         return $this->get('', [], $all);
     }
 
+    private $set_top = [];
+
+    public function setTop($key,$alias_name = null)
+    {
+        $ar = explode('.', $key);
+        if (count($ar) < 2) {
+            return $this;
+        }
+        $this->set_top[] = [
+            $alias_name === null ? $ar[0] : $alias_name,
+            $ar[0],
+            $key
+        ];
+        return $this;
+    }
+
+
+    private function mvData($arr, $key)
+    {
+        $i  = strpos($key, '.');
+        $k  = substr($key, 0, $i);
+        $k1 = substr($key, $i + 1);
+        $r  = [];
+        if ($i && strlen($key) > $i) {
+            if ($arr[$k] instanceof ListModel) {
+                foreach ($arr[$k] as $val) {
+                    $ret = $this->mvData($val, $k1);
+                    if ($ret instanceof ListModel) {
+                        $r = array_merge($r, $ret->jsonSerialize());
+                    } else {
+                        $r[] = $this->mvData($val, $k1);
+                    }
+                }
+                return new ListModel($r);
+            } else {
+                return arrLine($arr[$k], $k1);
+            }
+        } else {
+            return $arr[$key];
+        }
+    }
+
+
     /**
      * @param null $id
      * @return Model|null|static
@@ -150,6 +193,12 @@ class Build
         } else {
             $info = $this->fillSelectWith($info, 'setRelationModel');
         }
+        if(isset($this->set_top[0])){
+            foreach ($this->set_top as $nr){
+                $info->{$nr[0]} = $this->mvData($info, $nr[2]);
+                unset($info->{$nr[1]});
+            }
+        }
         unset($this->model);
         return $info;
     }
@@ -163,6 +212,14 @@ class Build
         $ret  = new ListModel($info);
         if ($info) {
             $ret = $this->fillSelectWith($ret, 'setRelationList');
+        }
+        if(isset($this->set_top[0])){
+            foreach ($ret as $item){
+                foreach ($this->set_top as $nr){
+                    $item->{$nr[0]} = $this->mvData($item, $nr[2]);
+                    unset($item->{$nr[1]});
+                }
+            }
         }
         unset($this->model);
         return $ret;
