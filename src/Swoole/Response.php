@@ -7,22 +7,22 @@ use One\Facades\Log;
 /**
  * Class Response
  * @package One\Swoole
- * @mixin \swoole_http_response
+ * @mixin \Swoole\Http\Response
  */
 class Response extends \One\Http\Response
 {
 
     /**
-     * @var \swoole_http_response
+     * @var \Swoole\Http\Response
      */
     private $httpResponse;
 
     /**
-     * @var \swoole_http_request
+     * @var \Swoole\Http\Request
      */
     protected $httpRequest;
 
-    public function __construct(Request $request, \swoole_http_response $response)
+    public function __construct(Request $request, \Swoole\Http\Response $response)
     {
         $this->httpResponse = $response;
         $this->httpRequest  = $request;

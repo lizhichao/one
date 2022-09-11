@@ -13,7 +13,7 @@ use One\Facades\Log;
 class WsController
 {
     /**
-     * @var \swoole_websocket_frame
+     * @var \Swoole\Websocket\Frame
      */
     protected $frame;
 

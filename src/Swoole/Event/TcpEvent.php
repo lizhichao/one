@@ -17,13 +17,13 @@ use One\Protocol\TcpRouterData;
 trait TcpEvent
 {
 
-    public function onConnect(\swoole_server $server, $fd, $reactor_id)
+    public function onConnect(\Swoole\Server $server, $fd, $reactor_id)
     {
 
     }
 
 
-    public function __receive(\swoole_server $server, $fd, $reactor_id, $data)
+    public function __receive(\Swoole\Server $server, $fd, $reactor_id, $data)
     {
         if ($this->protocol) {
             $data = $this->protocol::decode($data);
@@ -32,31 +32,31 @@ trait TcpEvent
     }
 
 
-    public function onReceive(\swoole_server $server, $fd, $reactor_id, $data)
+    public function onReceive(\Swoole\Server $server, $fd, $reactor_id, $data)
     {
 
 
     }
 
-    public function onBufferFull(\swoole_server $server, $fd)
+    public function onBufferFull(\Swoole\Server $server, $fd)
     {
 
 
     }
 
-    public function onBufferEmpty(\swoole_server $server, $fd)
+    public function onBufferEmpty(\Swoole\Server $server, $fd)
     {
 
 
     }
 
     /**
-     * @param \swoole_server $server
+     * @param \Swoole\Server $server
      * @param $fd
      * @param $reactor_id
      * @param TcpRouterData $data
      */
-    protected function tcpRouter(\swoole_server $server, $fd, $reactor_id, $data)
+    protected function tcpRouter(\Swoole\Server $server, $fd, $reactor_id, $data)
     {
         $data->fd   = $fd;
         try {

@@ -10,12 +10,12 @@ namespace One\Swoole\Event;
 
 trait TaskEvent
 {
-    public function onTask(\swoole_server $server, $task_id, $src_worker_id, $data)
+    public function onTask(\Swoole\Server $server, $task_id, $src_worker_id, $data)
     {
 
     }
 
-    public function onFinish(\swoole_server $server, $task_id, $data)
+    public function onFinish(\Swoole\Server $server, $task_id, $data)
     {
 
     }
