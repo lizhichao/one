@@ -1,5 +1,11 @@
 <?php
 
+if ( !function_exists('__') ) {
+    function __(string $key, array $parameters=[])
+    {
+        return (new \One\I18n\Lang)->getTranslate(key: $key, parameters: $parameters);
+    }
+}
 
 if (function_exists('config') === false) {
     /**
@@ -49,11 +55,11 @@ if (function_exists('array_to_object') === false) {
 function call($fn, $args)
 {
     if (strpos($fn, '@') !== false) {
-        $cl = explode('@', $fn);
-        return call_user_func_array([new $cl[0], $cl[1]], $args);
+        $fire = \One\Caller\Fire::callingFunctionsThatHaveAtsign(fn: $fn, args: $args);
     } else {
-        return call_user_func_array($fn, $args);
+        $fire = \One\Caller\Fire::callingFunctionsThatHaveNotAtsign(fn: $fn, args: $args);
     }
+    return $fire;
 }
 
 

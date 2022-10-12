@@ -17,6 +17,16 @@ class Router
 
     private $args = [];
 
+    /**
+     * @var string
+     */
+    private static $path;
+
+    public static function setConfig($path): void
+    {
+        self::$path = rtrim($path, '/');
+    }
+
     public static function clearCache()
     {
         self::$info    = [];
@@ -26,14 +36,20 @@ class Router
     public static function loadRouter()
     {
         if (_CLI_) {
-            require self::$conf['path'];
+            require self::$path;
         } else {
-            $key = md5(__FILE__ . self::$conf['path'] . filemtime(self::$conf['path']));
+            $key = md5(__FILE__ . self::$path . filemtime(self::$path));
 
-            $info          = unserialize(Cache::get($key, function () {
-                require self::$conf['path'];
-                return serialize([self::$info, self::$as_info]);
-            }, 60 * 60 * 24 * 30));
+            $info          = unserialize(
+                Cache::get(
+                    $key, 
+                    function () {
+                        require self::$path;
+                        return serialize([self::$info, self::$as_info]);
+                    }, 
+                    60 * 60 * 24 * 30
+                )
+            );
             self::$info    = $info[0];
             self::$as_info = $info[1];
         }

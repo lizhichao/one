@@ -19,7 +19,8 @@
     "php": ">=7.1",
     "ext-json": "*",
     "ext-pdo": "*",
-    "lizhichao/one-ck": ">=0.1.11"
+    "lizhichao/one-ck": ">=0.1.11",
+    "rakit/validation": "^1.4"
   },
   "autoload": {
     "psr-4": {

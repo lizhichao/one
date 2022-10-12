@@ -33,13 +33,27 @@ class Event
     }
 
     /**
+     * @param string $event class name
+     * @param array $listeners array of class name (all classes has method handle)
+     */
+    protected static function setListeners(string $event, array $listeners)
+    {
+        foreach ($listeners as $listener) {
+            Event::addListener(class: $event, event: 'default', fn: function(...$args) use ($listener) {
+                array_unshift($args, $this);
+                call_user_func_array(callback: [$listener, 'handle'], args: $args);
+            });
+        }
+    }
+
+    /**
      * @param string $event event name
      * @param object $class dispatch object
      * @param array $args params
      * @param false $is_async true -> Run outside a process
      * @return bool
      */
-    public static function dispatch($class, $event, $args = [], $is_async = false)
+    public static function dispatch($class, $event='default', $args = [], $is_async = false)
     {
         $c = get_class($class);
         if (!isset(self::$es[$c][$event])) {

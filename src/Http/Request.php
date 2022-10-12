@@ -29,6 +29,8 @@ class Request
     
     public $as_name = '';
 
+    private $attr = [];
+
     public function __construct()
     {
         $this->server  = &$_SERVER;
@@ -88,11 +90,30 @@ class Request
     /**
      * @return string
      */
-    public function uri()
+    private function getFullUri()
     {
         $path  = urldecode(array_get_not_null($this->server, ['request_uri', 'REQUEST_URI', 'argv.1']));
         $paths = explode('?', $path);
         return '/' . trim($paths[0], '/');
+    }
+
+    public function setAttr(string $key, mixed $value): void
+    {
+        $this->attr[$key] = $value;
+    }
+
+    public function getAttr(string $key): mixed
+    {
+        return $this->attr[$key] ?? Null;
+    }
+
+    public function uri()
+    {
+        $appPath = str_replace('\\', '/', _APP_PATH_);
+        $subDirectory = str_replace($this->server('DOCUMENT_ROOT'), '', $appPath.'/public');
+        $reqUri = str_replace($subDirectory, '', $this->getFullUri());
+
+        return $reqUri;
     }
 
     /**
