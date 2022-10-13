@@ -2,15 +2,10 @@
 
 namespace One\Http;
 
-use One\ConfigTrait;
-use One\Exceptions\HttpException;
 use One\Facades\Cache;
 
 class Router
 {
-
-    use ConfigTrait;
-
     private static $info = [];
 
     public static $as_info = [];
@@ -22,7 +17,7 @@ class Router
      */
     private static $path;
 
-    public static function setConfig($path): void
+    public static function setConfig(string $path): void
     {
         self::$path = rtrim($path, '/');
     }

@@ -9,7 +9,7 @@ class Lang
      */
     private static $path;
 
-    public static function setPath($path): void
+    public static function setConfig(string $path): void
     {
         self::$path = rtrim($path, '/');
     }
