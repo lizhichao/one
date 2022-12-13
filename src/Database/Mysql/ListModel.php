@@ -5,8 +5,8 @@ namespace One\Database\Mysql;
 class ListModel implements \Iterator, \JsonSerializable, \ArrayAccess
 {
     private $index = 0;
-    private $data = [];
-    private $len = 0;
+    private $data  = [];
+    private $len   = 0;
 
 
     public function pluck($column, $is_key = false, $unique = false)
@@ -32,28 +32,28 @@ class ListModel implements \Iterator, \JsonSerializable, \ArrayAccess
         }
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return property_exists($this->data, $offset);
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->data[$offset] = $value;
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->data[$offset];
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->data[$offset]);
         $this->len--;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->data;
     }
@@ -61,30 +61,30 @@ class ListModel implements \Iterator, \JsonSerializable, \ArrayAccess
     public function __construct($data)
     {
         $this->data = $data ? $data : [];
-        $this->len = count($this->data);
+        $this->len  = count($this->data);
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->index = 0;
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return $this->index < $this->len;
     }
 
-    public function current()
+    public function current(): mixed
     {
         return $this->data[$this->index];
     }
 
-    public function next()
+    public function next(): void
     {
-        return $this->index++;
+        $this->index++;
     }
 
-    public function key()
+    public function key(): mixed
     {
         return $this->index;
     }

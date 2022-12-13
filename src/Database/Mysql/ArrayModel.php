@@ -5,22 +5,22 @@ namespace One\Database\Mysql;
 class ArrayModel implements \ArrayAccess
 {
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return (property_exists($this, $offset) || method_exists($this, $offset));
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->$offset = $value;
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->$offset;
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->$offset);
     }
