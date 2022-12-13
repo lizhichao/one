@@ -58,15 +58,15 @@ class Connect
         try {
             if ($this->is_repeat_statement === true) {
                 $ptid = 'p' . md5($sql);
-                if (property_exists($pdo, $ptid) === false) {
+                if (!isset($pdo->statements[$ptid])) {
                     $res = $pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
                     if (!$res) {
                         return $this->retry($sql, $time, $data, $pdo->errorInfo()[2], $retry, $return_pdo, $mykey);
                     }
                     $res->setFetchMode(\PDO::FETCH_CLASS, $this->model);
-                    $pdo->{$ptid} = $res;
+                    $pdo->statements[$ptid] = $res;
                 } else {
-                    $res = $pdo->{$ptid};
+                    $res = $pdo->statements[$ptid];
                 }
             } else {
                 $res = $pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
@@ -300,7 +300,7 @@ class Connect
     {
         try {
             $mykey    = $this->key;
-            $r        = new \PDO($this->config['dns'], $this->config['username'], $this->config['password'], $this->config['ops']);
+            $r        = new OnePDO($this->config['dns'], $this->config['username'], $this->config['password'], $this->config['ops']);
             $r->mykey = $mykey;
             return $r;
         } catch (\PDOException $e) {

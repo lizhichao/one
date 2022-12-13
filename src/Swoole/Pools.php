@@ -9,6 +9,7 @@
 namespace One\Swoole;
 
 
+use One\Database\Mysql\OnePDO;
 use OneCk\Client;
 use Swoole\Coroutine\Channel;
 
@@ -75,7 +76,7 @@ trait Pools
 
     /**
      * @param bool $sw 是否事物
-     * @return \PDO | \Redis | Client
+     * @return OnePDO | \Redis | Client
      */
     public function pop($sw = false)
     {
