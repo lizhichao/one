@@ -72,7 +72,7 @@ class Server
         $this->pid       = $server->worker_pid;
 
         @swoole_set_process_name(($server->taskworker ? 'one_task' : 'one_worker') . '_' . $this->server->p_name . '_' . $worker_id);
-        Process::signal(SIGPIPE, function ($signo) {
+        @Process::signal(SIGPIPE, function ($signo) {
             echo "socket close\n";
         });
     }

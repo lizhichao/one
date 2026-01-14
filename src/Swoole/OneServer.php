@@ -103,7 +103,7 @@ class OneServer
             self::$_server = $server;
             self::e('server start');
             self::e('one version : ' . _ONE_V_);
-            $swoole->p_name = array_get(self::$conf, 'server.name', basename(dirname(_APP_PATH_)));
+            @$swoole->p_name = array_get(self::$conf, 'server.name', basename(dirname(_APP_PATH_)));
             @swoole_set_process_name('one_master_' . $swoole->p_name);
             $server->start();
         }
