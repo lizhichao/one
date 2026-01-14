@@ -10,12 +10,12 @@ namespace One\Swoole\Event;
 
 trait UdpEvent
 {
-    public function onPacket(\swoole_server $server, $data, array $client_info)
+    public function onPacket(\Swoole\Server $server, $data, array $client_info)
     {
 
     }
 
-    public function onReceive(\swoole_server $server, $fd, $reactor_id, $data)
+    public function onReceive(\Swoole\Server $server, $fd, $reactor_id, $data)
     {
 
     }

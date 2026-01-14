@@ -17,12 +17,12 @@ use One\Swoole\Session;
 
 trait WsEvent
 {
-    public function onMessage(\swoole_websocket_server $server, \swoole_websocket_frame $frame)
+    public function onMessage(\Swoole\WebSocket\Server $server, \Swoole\Websocket\Frame $frame)
     {
 
     }
 
-    public function onHandShake(\swoole_http_request $request, \swoole_http_response $response)
+    public function onHandShake(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
         $secWebSocketKey = $request->header['sec-websocket-key'];
         $patten          = '#^[+/0-9A-Za-z]{21}[AQgw]==$#';
@@ -59,17 +59,17 @@ trait WsEvent
         return true;
     }
 
-    public function onOpen(\swoole_websocket_server $server, \swoole_http_request $request)
+    public function onOpen(\Swoole\WebSocket\Server $server, \Swoole\Http\Request $request)
     {
         return true;
     }
 
     /**
-     * @param \swoole_websocket_server $server
-     * @param \swoole_websocket_frame $frame
+     * @param \Swoole\WebSocket\Server $server
+     * @param \Swoole\Websocket\Frame $frame
      * @return bool
      */
-    protected function wsRouter(\swoole_websocket_server $server, \swoole_websocket_frame $frame)
+    protected function wsRouter(\Swoole\WebSocket\Server $server, \Swoole\Websocket\Frame $frame)
     {
         $info = json_decode($frame->data, true);
         if (!$info || !isset($info['u']) || !isset($info['d'])) {

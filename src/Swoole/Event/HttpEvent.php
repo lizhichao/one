@@ -18,16 +18,16 @@ use One\Swoole\Server;
 
 trait HttpEvent
 {
-    public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
+    public function onRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
 
     }
 
     /**
-     * @param \swoole_http_request $request
-     * @param \swoole_http_response $response
+     * @param \Swoole\Http\Request $request
+     * @param \Swoole\Http\Response $response
      */
-    protected function httpRouter(\swoole_http_request $request, \swoole_http_response $response)
+    protected function httpRouter(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
         $req   = new \One\Swoole\Request($request);
         $res   = new \One\Swoole\Response($req, $response);

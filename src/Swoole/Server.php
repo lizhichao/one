@@ -28,7 +28,7 @@ class Server
     protected $protocol = null;
 
     /**
-     * @var \swoole_websocket_server
+     * @var \Swoole\WebSocket\Server
      */
     protected $server = null;
 
@@ -37,7 +37,7 @@ class Server
     public $pid = 0;
 
 
-    public function __construct(\swoole_server $server, array $conf)
+    public function __construct(\Swoole\Server $server, array $conf)
     {
         $this->server = $server;
         $this->conf   = $conf;
@@ -55,17 +55,17 @@ class Server
     }
 
 
-    public function onStart(\swoole_server $server)
+    public function onStart(\Swoole\Server $server)
     {
 
     }
 
-    public function onShutdown(\swoole_server $server)
+    public function onShutdown(\Swoole\Server $server)
     {
 
     }
 
-    public function onWorkerStart(\swoole_server $server, $worker_id)
+    public function onWorkerStart(\Swoole\Server $server, $worker_id)
     {
         $this->worker_id = $worker_id;
         $this->is_task   = $server->taskworker ? true : false;
@@ -77,37 +77,37 @@ class Server
         });
     }
 
-    public function onWorkerStop(\swoole_server $server, $worker_id)
+    public function onWorkerStop(\Swoole\Server $server, $worker_id)
     {
 
     }
 
-    public function onWorkerExit(\swoole_server $server, $worker_id)
+    public function onWorkerExit(\Swoole\Server $server, $worker_id)
     {
 
     }
 
-    public function onWorkerError(\swoole_server $server, $worker_id, $worker_pid, $exit_code, $signal)
+    public function onWorkerError(\Swoole\Server $server, $worker_id, $worker_pid, $exit_code, $signal)
     {
 
     }
 
-    public function onClose(\swoole_server $server, $fd, $reactor_id)
+    public function onClose(\Swoole\Server $server, $fd, $reactor_id)
     {
 
     }
 
-    public function onPipeMessage(\swoole_server $server, $src_worker_id, $message)
+    public function onPipeMessage(\Swoole\Server $server, $src_worker_id, $message)
     {
 
     }
 
-    public function onManagerStart(\swoole_server $server)
+    public function onManagerStart(\Swoole\Server $server)
     {
         @swoole_set_process_name('one_manager_'.$this->server->p_name);
     }
 
-    public function onManagerStop(\swoole_server $server)
+    public function onManagerStop(\Swoole\Server $server)
     {
 
     }

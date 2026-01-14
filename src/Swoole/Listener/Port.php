@@ -50,7 +50,7 @@ class Port
     }
 
 
-    public function onClose(\swoole_server $server, $fd, $reactor_id)
+    public function onClose(\Swoole\Server $server, $fd, $reactor_id)
     {
 
     }

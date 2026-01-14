@@ -16,7 +16,7 @@ use One\Swoole\Server\WsServer;
 
 /**
  * Class Protocol
- * @mixin \swoole_websocket_server
+ * @mixin \Swoole\WebSocket\Server
  * @package One\Swoole
  */
 class OneServer
@@ -28,7 +28,7 @@ class OneServer
     const SWOOLE_WEBSOCKET_SERVER = 2;
 
     /**
-     * @var \swoole_websocket_server
+     * @var \Swoole\WebSocket\Server
      */
     private static $_server = null;
 
@@ -109,7 +109,7 @@ class OneServer
         }
     }
 
-    private static function addServer(\swoole_server $swoole, $server)
+    private static function addServer(\Swoole\Server $swoole, $server)
     {
         if (!isset(self::$conf['add_listener'])) {
             return false;
@@ -130,13 +130,13 @@ class OneServer
         $server = null;
         switch ($conf['server_type']) {
             case self::SWOOLE_WEBSOCKET_SERVER:
-                $server = new \swoole_websocket_server($conf['ip'], $conf['port'], $conf['mode'], $conf['sock_type']);
+                $server = new \Swoole\WebSocket\Server($conf['ip'], $conf['port'], $conf['mode'], $conf['sock_type']);
                 break;
             case self::SWOOLE_HTTP_SERVER:
-                $server = new \swoole_http_server($conf['ip'], $conf['port'], $conf['mode'], $conf['sock_type']);
+                $server = new \Swoole\Http\Server($conf['ip'], $conf['port'], $conf['mode'], $conf['sock_type']);
                 break;
             case self::SWOOLE_SERVER:
-                $server = new \swoole_server($conf['ip'], $conf['port'], $conf['mode'], $conf['sock_type']);
+                $server = new \Swoole\Server($conf['ip'], $conf['port'], $conf['mode'], $conf['sock_type']);
                 break;
             default:
                 echo "未知的服务类型\n";
@@ -162,6 +162,9 @@ class OneServer
     }
 
 
+    /**
+     * @throws \ReflectionException
+     */
     private static function onEvent($sev, $class, $server, $conf, $call = [])
     {
         $rf    = new \ReflectionClass($class);

@@ -11,11 +11,11 @@ class Request extends \One\Http\Request
     private $id = 'Request_id';
 
     /**
-     * @var \swoole_http_request
+     * @var \Swoole\Http\Request
      */
     private $httpRequest;
 
-    public function __construct(\swoole_http_request $request)
+    public function __construct(\Swoole\Http\Request $request)
     {
         $this->server      = &$request->server;
         $this->fd          = $request->fd;
