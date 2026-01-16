@@ -67,6 +67,8 @@ class Model extends ArrayModel
 
     private $_build = null;
 
+    protected $_casts = [];
+
     public function __construct($relation = null)
     {
         $this->_relation = $relation;
@@ -122,6 +124,40 @@ class Model extends ArrayModel
             }
             return $this->$name;
         }
+    }
+
+    public function __set($name, $value)
+    {
+        if (!isset($this->_casts[$name])) {
+            $this->{$name} = $value;
+        }
+        switch ($this->_casts[$name]) {
+            case 'int':
+                $this->{$name} = (int)$value;
+                break;
+            case 'string':
+                $this->{$name} = (string)$value;
+                break;
+            case 'float':
+                $this->{$name} = (float)$value;
+                break;
+            case 'bool':
+                $this->{$name} = (bool)$value;
+                break;
+            case 'array':
+                $this->{$name} = json_decode($value, true);
+                break;
+            case 'object':
+                $this->{$name} = json_decode($value);
+                break;
+            default:
+                if (class_exists($this->_casts[$name])) {
+                    $this->{$name} = json_to_object($value, $this->_casts[$name]);
+                } else {
+                    throw new DbException('casts ' . $name . ' fail , class ' . $this->_casts[$name] . ' not exists');
+                }
+        }
+
     }
 
     public function toArray()

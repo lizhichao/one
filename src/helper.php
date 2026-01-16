@@ -13,7 +13,7 @@ if (function_exists('config') === false) {
         if (!$res || $flush) {
             $p = strpos($path, '.');
             if ($p !== false) {
-                $name          = substr($path, 0, $p);
+                $name = substr($path, 0, $p);
                 $config[$name] = require(_APP_PATH_ . '/Config/' . $name . '.php');
             } else {
                 $config[$path] = require(_APP_PATH_ . '/Config/' . $path . '.php');
@@ -24,19 +24,33 @@ if (function_exists('config') === false) {
     }
 }
 
+/**
+ * @template T of object
+ *
+ * @param array|stdClass|string $data
+ * @param T|class-string<T> $class
+ * @return array<T>|T
+ */
 if (function_exists('array_to_object') === false) {
     /**
      * @param array $arr
      * @param string $class_name
      * @return Object $class_name
      */
-    function array_to_object($arr, $class_name)
+    function json_to_object(array|stdClass|string $data, object|string $class): array|object
     {
-        $class = new $class_name;
-        foreach ($arr as $key => $val) {
-            $class->{$key} = $val;
+        if (is_string($data)) {
+            $data = json_decode($data);
         }
-        return $class;
+        $jp = new \One\JsonMapper();
+        if (is_array($data) && array_is_list($data)) {
+            $ret = [];
+            foreach ($data as $val) {
+                $ret[] = $jp->map($val, $class);
+            }
+            return $ret;
+        }
+        return $jp->map($data, $class);
     }
 }
 
@@ -126,10 +140,10 @@ function bc_base_convert($num, $in, $out)
     $str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $num = "$num";
     $len = strlen($num);
-    $n   = 0;
+    $n = 0;
     for ($i = 0; $i < $len; $i++) {
         $sc = bcmul(strpos($str, $num[$i]), bcpow($in, $len - $i - 1));
-        $n  = bcadd($n, $sc, 0);
+        $n = bcadd($n, $sc, 0);
     }
     $e = '';
     while ($n > 0) {
@@ -151,7 +165,7 @@ function filter_xss($str, $allow_tags = null)
     $str = strip_tags($str, $allow_tags);
     if ($allow_tags !== null) {
         while (true) {
-            $l   = strlen($str);
+            $l = strlen($str);
             $str = preg_replace('/(<[^>]+?)([\'\"\s]+on[a-z]+)([^<>]+>)/i', '$1$3', $str);
             $str = preg_replace('/(<[^>]+?)(javascript\:)([^<>]+>)/i', '$1$3', $str);
             if (strlen($str) == $l) {
@@ -172,13 +186,13 @@ function router($str, $data = [])
 {
     $url = array_get(\One\Http\Router::$as_info, $str);
     if ($data) {
-        $key  = array_map(function ($v) {
+        $key = array_map(function ($v) {
             return '{' . $v . '}';
         }, array_keys($data));
         $data = array_map(function ($v) {
             return urlencode($v);
         }, $data);
-        $url  = str_replace($key, array_values($data), $url);
+        $url = str_replace($key, array_values($data), $url);
     }
     return $url;
 }
@@ -262,7 +276,7 @@ function get_co_id()
 function redis_lock($tag)
 {
     $time = time();
-    $key  = 'linelock:' . $tag;
+    $key = 'linelock:' . $tag;
     while (!\One\Facades\Redis::setnx($key, $time + 3)) {
         $time = time();
         if ($time > \One\Facades\Redis::get($key) && $time > \One\Facades\Redis::getSet($key, $time + 3)) {
@@ -308,9 +322,9 @@ if (function_exists('error_report') === false) {
     function error_report(\Throwable $e)
     {
         \One\Facades\Log::error([
-            'file'  => $e->getFile() . ':' . $e->getLine(),
-            'msg'   => $e->getMessage(),
-            'code'  => $e->getCode(),
+            'file' => $e->getFile() . ':' . $e->getLine(),
+            'msg' => $e->getMessage(),
+            'code' => $e->getCode(),
             'trace' => $e->getTrace()
         ]);
     }
