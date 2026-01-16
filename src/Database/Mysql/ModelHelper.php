@@ -6,10 +6,10 @@ namespace One\Database\Mysql;
 
 class ModelHelper
 {
-    protected $namespace   = 'App\\Model';
-    protected $extend      = Model::class;
+    protected $namespace = 'App\\Model';
+    protected $extend = Model::class;
     protected $extend_name = 'Model';
-    protected $dir         = 'App/Model/';
+    protected $dir = 'App/Model/';
 
     public function __construct($namespace = '', $extend = '')
     {
@@ -18,12 +18,12 @@ class ModelHelper
         }
         if ($extend) {
             $this->extend = trim($extend, '\\');
-            $i            = strrpos($this->extend, '\\');
+            $i = strrpos($this->extend, '\\');
             if ($i !== false) {
                 $this->extend_name = substr($this->extend, $i + 1);
             } else {
                 $this->extend_name = $this->extend;
-                $this->extend      = '';
+                $this->extend = '';
             }
         }
         $this->dir = str_replace('\\', '/', $this->namespace) . '/';
@@ -35,17 +35,18 @@ class ModelHelper
 
     public function set($table)
     {
-        $res = Model::cache(0)->query('show full fields from ' . $table)->toArray();
-        $r   = [];
+        $res = Model::cache(0)->query('show full fields from `' . $table . '`')->toArray();
+        $r = [];
         foreach ($res as $val) {
             $r[] = [
                 strpos($val['Type'], 'int') !== false ? 'int' : 'string',
                 $val['Field'],
-                $val['Comment']
+                $val['Comment'],
+                $val['Null'] == 'YES',
             ];
         }
         $this->fields = $r;
-        $this->table  = $table;
+        $this->table = $table;
         return $this;
     }
 
@@ -56,7 +57,7 @@ class ModelHelper
     {
         $res = Model::cache(0)->query('show tables')->toArray();
         $k = key($res[0]);
-        return array_values(array_column($res,$k));
+        return array_values(array_column($res, $k));
     }
 
     /**
@@ -84,10 +85,10 @@ class ModelHelper
      */
     public function info()
     {
-        $table  = $this->table;
+        $table = $this->table;
         $fields = $this->fields;
-        $model  = $this->getModelName($table);
-        $str    = [
+        $model = $this->getModelName($table);
+        $str = [
             '<?php',
             '',
             'namespace ' . $this->namespace . ';',
@@ -99,13 +100,18 @@ class ModelHelper
         }
         $str[] = '/**';
         $str[] = ' * Class ' . $model;
-        foreach ($fields as $field) {
-            $str[] = " * @property {$field[0]} \${$field[1]} {$field[2]}";
-        }
         $str[] = ' */';
         $str[] = 'class ' . $model . ' extends ' . $this->extend_name;
         $str[] = '{';
         $str[] = '    CONST TABLE = \'' . $table . '\';';
+        foreach ($fields as $field) {
+            $note = '';
+            if (!empty($field[2])) {
+                $note = '//' . $field[2];
+            }
+            $isNull = $field[3] ? '?' : '';
+            $str[] = "    public {$isNull}{$field[0]} \${$field[1]}; {$note}";
+        }
         $str[] = '}';
         return implode(PHP_EOL, $str);
     }

@@ -73,7 +73,7 @@ class Response
         }
     }
 
-    public function header($key, $val, $replace = false, $code = null)
+    public function header($key, $val, $replace = true, $code = 0)
     {
         header($key . ':' . $val, $replace, $code);
     }

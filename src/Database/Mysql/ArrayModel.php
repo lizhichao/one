@@ -2,7 +2,7 @@
 
 namespace One\Database\Mysql;
 
-class ArrayModel implements \ArrayAccess
+class ArrayModel extends \stdClass implements \ArrayAccess
 {
 
     public function offsetExists($offset): bool

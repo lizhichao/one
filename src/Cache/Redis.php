@@ -80,7 +80,7 @@ class Redis extends Cache
         if (isset($config['is_cluster']) && $config['is_cluster'] === true) {
             return new \RedisCluster(...$config['args']);
         } else {
-            $r        = new \Redis();
+            $r        = new \One\Raw\Redis();
             $r->mykey = $mykey;
             $r->connect($config['host'], $config['port'], 0);
             if (empty($config['auth']) === false) {

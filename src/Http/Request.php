@@ -204,7 +204,7 @@ class Request
      */
     public function method()
     {
-        return strtolower($this->server('REQUEST_METHOD'));
+        return strtolower($this->server('REQUEST_METHOD',''));
     }
 
     /**
@@ -212,7 +212,7 @@ class Request
      */
     public function isJson()
     {
-        if ($this->server('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest' || strpos($this->server('HTTP_ACCEPT'), '/json') !== false) {
+        if ($this->server('HTTP_X_REQUESTED_WITH','') == 'XMLHttpRequest' || strpos($this->server('HTTP_ACCEPT',''), '/json') !== false) {
             return true;
         } else {
             return false;
