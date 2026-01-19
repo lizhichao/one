@@ -605,7 +605,7 @@ class Build
     public function __call($name, $arguments)
     {
         if (method_exists($this->model->relation(), $name)) {
-            return $this->model->relation()->$name(...$arguments);
+            return $this->model->__relation()->$name(...$arguments);
         } else if (method_exists($this->model, $name)) {
             return $this->model->$name(...$arguments);
         } else {

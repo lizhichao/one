@@ -74,7 +74,7 @@ class Model extends ArrayModel
         $this->_relation = $relation;
     }
 
-    public function relation()
+    public function __relation()
     {
         return $this->_relation;
     }
@@ -118,7 +118,7 @@ class Model extends ArrayModel
         if (method_exists($this, $name)) {
             $obj = $this->$name();
             if ($obj instanceof Build) {
-                $this->$name = $obj->model->relation()->setRelation()->get();
+                $this->$name = $obj->model->__relation()->setRelation()->get();
             } else {
                 $this->$name = $obj->setRelation()->get();
             }
@@ -131,7 +131,15 @@ class Model extends ArrayModel
         if (!isset($this->_casts[$name])) {
             $this->{$name} = $value;
         }
-        switch ($this->_casts[$name]) {
+        $type = $this->_casts[$name];
+        if ($type[0] == '?') {
+            if (is_null($value)) {
+                $this->{$name} = $value;
+                return;
+            }
+            $type = substr($type, 1);
+        }
+        switch ($type) {
             case 'int':
                 $this->{$name} = (int)$value;
                 break;
@@ -151,10 +159,10 @@ class Model extends ArrayModel
                 $this->{$name} = json_decode($value);
                 break;
             default:
-                if (class_exists($this->_casts[$name])) {
-                    $this->{$name} = json_to_object($value, $this->_casts[$name]);
+                if (class_exists($type)) {
+                    $this->{$name} = json_to_object($value, $type);
                 } else {
-                    throw new DbException('casts ' . $name . ' fail , class ' . $this->_casts[$name] . ' not exists');
+                    throw new DbException('casts ' . $name . ' fail , class ' . $type . ' not exists');
                 }
         }
 

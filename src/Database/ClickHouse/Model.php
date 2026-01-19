@@ -59,7 +59,7 @@ class Model extends ArrayModel
         $this->_relation = $relation;
     }
 
-    public function relation()
+    public function __relation()
     {
         return $this->_relation;
     }
@@ -94,7 +94,7 @@ class Model extends ArrayModel
         if (method_exists($this, $name)) {
             $obj = $this->$name();
             if ($obj instanceof Build) {
-                $this->$name = $obj->model->relation()->setRelation()->get();
+                $this->$name = $obj->model->__relation()->setRelation()->get();
             } else {
                 $this->$name = $obj->setRelation()->get();
             }

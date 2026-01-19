@@ -76,7 +76,12 @@ class ModelHelper
             mkdir($dir, 0755, true);
         }
 
-        return file_put_contents($dir . $this->getModelName($this->table) . '.php', $this->info());
+        $file = $dir . $this->getModelName($this->table) . '.php';
+        if (file_exists($file)) {
+            return false;
+        }
+
+        return file_put_contents($file, $this->info());
     }
 
     /**
