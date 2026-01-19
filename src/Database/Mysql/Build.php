@@ -17,6 +17,8 @@ class Build
 
     protected $build = [];
 
+    protected $_castIn = [];
+
     /**
      * @var Connect
      */
@@ -27,12 +29,13 @@ class Build
      */
     public $model;
 
-    public function __construct($connection, $model, $model_name, $table)
+    public function __construct($connection, $model, $model_name, $table, $castIn = [])
     {
-        $this->from       = $table;
-        $this->model      = $model;
+        $this->from = $table;
+        $this->model = $model;
         $this->model_name = $model_name;
-        $this->connect    = new Connect($connection, $this->model_name);
+        $this->connect = new Connect($connection, $this->model_name);
+        $this->_castIn = $castIn;
     }
 
     private $withs = [];
@@ -55,7 +58,7 @@ class Build
             list($drel, $nrel) = $this->getRel($relation);
             $q = $this->model->$drel();
             if ($closure !== null && $closure[0]) {
-                $closure[0]->call($res,$q);
+                $closure[0]->call($res, $q);
                 unset($closure[0]);
             }
             if ($nrel) {
@@ -92,13 +95,13 @@ class Build
     protected function get($sql = '', $build = [], $all = false)
     {
         if ($sql === '') {
-            $sql   = $this->getSelectSql();
+            $sql = $this->getSelectSql();
             $build = $this->build;
         }
 
         if ($this->is_count === 1 && count($this->group_by) > 0) {
             $sql = str_replace($this->count_str, implode(',', $this->group_by), $sql);
-            $i   = strripos($sql, ' limit ');
+            $i = strripos($sql, ' limit ');
             $sql = substr($sql, 0, $i ? $i : null);
             $sql = "select {$this->count_str} from ({$sql}) as a";
         }
@@ -118,7 +121,7 @@ class Build
     public function query($sql, array $build = [])
     {
         $info = $this->get($sql, $build, true);
-        $ret  = new ListModel($info);
+        $ret = new ListModel($info);
         if ($info) {
             $ret = $this->fillSelectWith($ret, 'setRelationList');
         }
@@ -137,7 +140,7 @@ class Build
 
     private $set_top = [];
 
-    public function setTop($key,$alias_name = null)
+    public function setTop($key, $alias_name = null)
     {
         $ar = explode('.', $key);
         if (count($ar) < 2) {
@@ -154,10 +157,10 @@ class Build
 
     private function mvData($arr, $key)
     {
-        $i  = strpos($key, '.');
-        $k  = substr($key, 0, $i);
+        $i = strpos($key, '.');
+        $k = substr($key, 0, $i);
         $k1 = substr($key, $i + 1);
-        $r  = [];
+        $r = [];
         if ($i && strlen($key) > $i) {
             if ($arr[$k] instanceof ListModel) {
                 foreach ($arr[$k] as $val) {
@@ -193,8 +196,8 @@ class Build
         } else {
             $info = $this->fillSelectWith($info, 'setRelationModel');
         }
-        if(isset($this->set_top[0])){
-            foreach ($this->set_top as $nr){
+        if (isset($this->set_top[0])) {
+            foreach ($this->set_top as $nr) {
                 $info->{$nr[0]} = $this->mvData($info, $nr[2]);
                 unset($info->{$nr[1]});
             }
@@ -209,13 +212,13 @@ class Build
     public function findAll()
     {
         $info = $this->getData(true);
-        $ret  = new ListModel($info);
+        $ret = new ListModel($info);
         if ($info) {
             $ret = $this->fillSelectWith($ret, 'setRelationList');
         }
-        if(isset($this->set_top[0])){
-            foreach ($ret as $item){
-                foreach ($this->set_top as $nr){
+        if (isset($this->set_top[0])) {
+            foreach ($ret as $item) {
+                foreach ($this->set_top as $nr) {
                     $item->{$nr[0]} = $this->mvData($item, $nr[2]);
                     unset($item->{$nr[1]});
                 }
@@ -261,10 +264,10 @@ class Build
      */
     public function chunk($count = 100)
     {
-        $val    = null;
-        $arr    = isset($this->order_by[0]) ? explode(' ', $this->order_by[0]) : [$this->getPriKey()];
+        $val = null;
+        $arr = isset($this->order_by[0]) ? explode(' ', $this->order_by[0]) : [$this->getPriKey()];
         $arr[1] = isset($arr[1]) ? strtolower(trim($arr[1])) : 'asc';
-        $op     = $arr[1] === 'asc' ? '>' : '<';
+        $op = $arr[1] === 'asc' ? '>' : '<';
         $this->limit($count)->orderBy($arr[0] . ' ' . $arr[1]);
         $where = $this->where;
         $model = $this->model;
@@ -274,7 +277,7 @@ class Build
             if ($val) {
                 $this->where($arr[0], $op, $val);
             }
-            $i   = 0;
+            $i = 0;
             $ret = $this->findAll();
             foreach ($ret as $v) {
                 $val = $v[$arr[0]];
@@ -292,15 +295,15 @@ class Build
     {
         $page = new PageInfo();
         $info = $this->getData(true);
-        $ret  = new ListModel($info);
+        $ret = new ListModel($info);
         if ($info) {
             $ret = $this->fillSelectWith($ret, 'setRelationList');
         }
         $this->is_count = 1;
-        $this->limit    = 0;
-        $res            = $this->getData();
+        $this->limit = 0;
+        $res = $this->getData();
         $this->is_count = 0;
-        $page->total    = $res->row_count;
+        $page->total = $res->row_count;
         unset($this->model);
         $page->list = $ret;
         return $page;
@@ -314,7 +317,7 @@ class Build
     public function count()
     {
         $this->is_count = 1;
-        $res            = $this->getData();
+        $res = $this->getData();
         $this->is_count = 0;
         unset($this->model);
         return $res->row_count;
@@ -329,7 +332,7 @@ class Build
     public function sum($column)
     {
         $this->sum_column = $column;
-        $res              = $this->getData();
+        $res = $this->getData();
         unset($this->model);
         return $res->sum_value;
     }
@@ -594,7 +597,7 @@ class Build
             $key($this);
             $this->having[] = [null, ')'];
         } else if ($val === null) {
-            $val      = $operator;
+            $val = $operator;
             $operator = '=';
         }
         $this->having[] = [$key, $operator, $val, $link];
@@ -617,7 +620,7 @@ class Build
     {
         $prev = null;
         $data = [];
-        $sql  = '';
+        $sql = '';
         foreach ($this->having as $v) {
             if ($prev && isset($v[3])) {
                 $sql .= $v[3];
@@ -626,7 +629,7 @@ class Build
                 $sql .= $v[1];
             } else {
                 $data[] = $v[2];
-                $sql    .= $v[0] . $v[1] . '?';
+                $sql .= $v[0] . $v[1] . '?';
             }
             if (isset($v[3])) {
                 $prev = $v[0];
@@ -684,7 +687,7 @@ class Build
         }
         if ($this->having) {
             list($d, $s) = $this->getHaving();
-            $sql         .= $s;
+            $sql .= $s;
             $this->build = array_merge($this->build, $d);
         }
         if ($this->order_by && $this->is_count == 0) {
@@ -701,22 +704,22 @@ class Build
     {
         $sql = 'insert into `' . $this->from . '`';
         if ($is_mulit) {
-            $build  = [];
-            $keys   = array_keys($this->filter($data[0], true));
-            $sql    .= ' (`' . implode('`,`', $keys) . '`)';
+            $build = [];
+            $keys = array_keys($this->filter($data[0], true));
+            $sql .= ' (`' . implode('`,`', $keys) . '`)';
             $values = [];
             foreach ($data as $v) {
-                $v        = $this->filter($v, true);
-                $build    = array_merge($build, array_values($v));
+                $v = $this->filter($v, true);
+                $build = array_merge($build, array_values($v));
                 $values[] = '(' . substr(str_repeat(',?', count($keys)), 1) . ')';
             }
             $sql .= ' values ' . implode(',', $values);
         } else {
-            $data  = $this->filter($data, true);
-            $keys  = array_keys($data);
-            $sql   .= ' (`' . implode('`,`', $keys) . '`)';
+            $data = $this->filter($data, true);
+            $keys = array_keys($data);
+            $sql .= ' (`' . implode('`,`', $keys) . '`)';
             $build = array_values($data);
-            $sql   .= ' values (' . substr(str_repeat(',?', count($keys)), 1) . ')';
+            $sql .= ' values (' . substr(str_repeat(',?', count($keys)), 1) . ')';
         }
         $this->build = $build;
         return $sql;
@@ -724,20 +727,22 @@ class Build
 
     private function getUpdateSql($data)
     {
-        $sql   = 'update `' . $this->from . '` set ';
+        $sql = 'update `' . $this->from . '` set ';
         $build = [];
-        $data  = $this->filter($data);
+        $data = $this->filter($data);
         foreach ($data as $k => $v) {
-            if (is_array($v)) {
+            if (isset($this->_castIn[$k])) {
+                $v = call_user_func($this->_castIn[$k], $v);
+            } else if (is_array($v)) {
                 $sql .= "`{$k}`={$v[0]},";
             } else {
-                $sql     .= "`{$k}`=?,";
+                $sql .= "`{$k}`=?,";
                 $build[] = $v;
             }
         }
         $sql = substr($sql, 0, -1);
         $this->setPriWhere();
-        $sql         .= $this->getWhere();
+        $sql .= $this->getWhere();
         $this->build = array_merge($build, $this->build);
         return $sql;
     }

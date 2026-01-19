@@ -67,7 +67,9 @@ class Model extends ArrayModel
 
     private $_build = null;
 
-    protected $_casts = [];
+    protected $_castIn = [];
+
+    protected $_castOut = [];
 
     public function __construct($relation = null)
     {
@@ -82,7 +84,7 @@ class Model extends ArrayModel
     private function build()
     {
         if (!$this->_build) {
-            $this->_build = new EventBuild($this->_connection, $this, get_called_class(), static::TABLE);
+            $this->_build = new EventBuild($this->_connection, $this, get_called_class(), static::TABLE, $this->_castIn);
         }
         if ($this->_cache_time > 0) {
             $this->_build->cache($this->_cache_time);
@@ -128,10 +130,10 @@ class Model extends ArrayModel
 
     public function __set($name, $value)
     {
-        if (!isset($this->_casts[$name])) {
+        if (!isset($this->_castOut[$name])) {
             $this->{$name} = $value;
         }
-        $type = $this->_casts[$name];
+        $type = $this->_castOut[$name];
         if ($type[0] == '?') {
             if (is_null($value)) {
                 $this->{$name} = $value;

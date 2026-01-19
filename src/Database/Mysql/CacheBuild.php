@@ -37,7 +37,7 @@ class CacheBuild extends Build
         return $ret;
     }
 
-    public function update($data)
+    public function update(array $data)
     {
         $ret = parent::update($data);
         if ($this->isIgnoreColumn($data) === false) {
