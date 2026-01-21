@@ -19,6 +19,9 @@ class Build
 
     protected $_castIn = [];
 
+    // ON DUPLICATE KEY UPDATE
+    protected $_duplicate = [];
+
     /**
      * @var Connect
      */
@@ -48,6 +51,12 @@ class Build
     public function with($relation, array $closure = null)
     {
         $this->withs[] = [$relation, $closure];
+        return $this;
+    }
+
+    public function onDuplicate(array $duplicate)
+    {
+        $this->_duplicate = $duplicate;
         return $this;
     }
 
@@ -370,7 +379,7 @@ class Build
      * @param $data
      * @return int
      */
-    public function update($data)
+    public function update(array $data)
     {
         $r = $this->connect->exec($this->getUpdateSql($data), $this->build);
         return $r;
@@ -721,6 +730,16 @@ class Build
             $build = array_values($data);
             $sql .= ' values (' . substr(str_repeat(',?', count($keys)), 1) . ')';
         }
+
+        if (count($this->_duplicate) > 0) {
+            $sql .= ' as new on duplicate key update ';
+            $field = [];
+            foreach ($this->_duplicate as $k => $v) {
+                $field[] = "`{$k}`={$v[0]}";
+            }
+            $sql .= implode(',', $field);
+        }
+
         $this->build = $build;
         return $sql;
     }

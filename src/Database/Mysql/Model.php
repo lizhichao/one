@@ -36,6 +36,7 @@ namespace One\Database\Mysql;
  * @method static bool rollBack()
  * @method static bool commit()
  * @method static void transaction(\Closure $call)
+ * @method static EventBuild onDuplicate(array $duplicate)
  * @method bool onBeforeGet(EventBuild $call, $args)
  * @method bool onBeforeUpdate(EventBuild $call, array $data)
  * @method bool onBeforeDeletet(EventBuild $call, $args)
@@ -132,6 +133,7 @@ class Model extends ArrayModel
     {
         if (!isset($this->_castOut[$name])) {
             $this->{$name} = $value;
+            return;
         }
         $type = $this->_castOut[$name];
         if ($type[0] == '?') {
@@ -148,21 +150,14 @@ class Model extends ArrayModel
             case 'string':
                 $this->{$name} = (string)$value;
                 break;
-            case 'float':
-                $this->{$name} = (float)$value;
-                break;
             case 'bool':
                 $this->{$name} = (bool)$value;
-                break;
-            case 'array':
-                $this->{$name} = json_decode($value, true);
-                break;
-            case 'object':
-                $this->{$name} = json_decode($value);
                 break;
             default:
                 if (class_exists($type)) {
                     $this->{$name} = json_to_object($value, $type);
+                } else if (is_callable($type)) {
+                    $this->{$name} = call_user_func($type, $value);
                 } else {
                     throw new DbException('casts ' . $name . ' fail , class ' . $type . ' not exists');
                 }

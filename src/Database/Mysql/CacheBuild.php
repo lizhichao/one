@@ -36,7 +36,7 @@ class CacheBuild extends Build
         $this->flushCache();
         return $ret;
     }
-
+    
     public function update(array $data)
     {
         $ret = parent::update($data);

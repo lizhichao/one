@@ -18,7 +18,7 @@ class EventBuild extends CacheBuild
      * @param $data
      * @return int
      */
-    public function update($data)
+    public function update(array $data)
     {
         $ret = null;
         if ($this->callBefre(__FUNCTION__, $data) !== false) {
